@@ -58,16 +58,21 @@ async function main() {
     const timeline = await wclService.getEncounterEvents(reportId, fightId);
     console.log(`Successfully fetched ${timeline.length} encounter events.`);
 
-    // 3. Load Skill Data
+    // 3. Get Community Practices
+    const communityLogs = await wclService.getCommunityPulls(eventId); // Using eventId as a generic identifier here
+    const communityStrategy = await agent.analyzeCommunityPractices(communityLogs);
+    console.log(`\nExtracted Community Strategy:\n${communityStrategy}\n`);
+
+    // 4. Load Skill Data
     const skillsPath = path.join(__dirname, 'src', 'data', 'mop_skills.json');
     const skillsData = JSON.parse(fs.readFileSync(skillsPath, 'utf8'));
 
-    // 4. Generate Initial Assignments via AI
-    let assignments = await agent.generateAssignments(timeline, roleMappings, skillsData);
+    // 5. Generate Initial Assignments via AI (incorporating strategy)
+    let assignments = await agent.generateAssignments(timeline, roleMappings, skillsData, communityStrategy);
     console.log(`AI successfully generated ${assignments.length} assignments.`);
     await writeAssignments(assignments, roleMappings, "_initial");
 
-    // 5. Interactive Loop
+    // 6. Interactive Loop
     while (true) {
       console.log("\n--- Interactive Mode ---");
       console.log("1. Provide feedback to adjust assignments (e.g., 'add an assignment for everyone to move to blue')");

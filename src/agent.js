@@ -5,6 +5,35 @@ class AIAgent {
     this.ai = new GoogleGenAI({ apiKey: apiKey });
   }
 
+  async analyzeCommunityPractices(communityLogs) {
+    console.log("Analyzing community practices from top guild logs...");
+
+    const prompt = `
+You are an expert World of Warcraft combat log analyst.
+Review the following log data from successful pulls by top guilds.
+Extract the "community practices"—specifically, which major cooldowns are used in response to which boss abilities or phases.
+
+Community Logs:
+${JSON.stringify(communityLogs, null, 2)}
+
+Provide a concise summary of the standard strategy. For example:
+- "Desperate Measures Sun: Typically covered by Healing Tide Totem and Spirit Link Totem."
+- "Mark of Anguish: Tanks receive Hand of Sacrifice and Pain Suppression."
+`;
+
+    try {
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-pro',
+        contents: prompt
+      });
+
+      return response.text;
+    } catch (error) {
+      console.error("Error analyzing community practices:", error);
+      throw error;
+    }
+  }
+
   async refineAssignments(currentAssignments, humanFeedback) {
     console.log(`Refining assignments based on feedback: "${humanFeedback}"...`);
 
@@ -68,8 +97,13 @@ Output format MUST be valid JSON in this EXACT schema:
     }
   }
 
-  async generateAssignments(timeline, availableRoles, skillsData) {
+  async generateAssignments(timeline, availableRoles, skillsData, communityStrategy = "") {
     console.log("Analyzing encounter timeline with AI...");
+
+    const strategySection = communityStrategy ? `
+Community Practices (Highly Recommended Strategy to Mimic):
+${communityStrategy}
+` : "";
 
     const prompt = `
 You are an expert World of Warcraft: Mists of Pandaria raid leader.
@@ -83,7 +117,7 @@ ${JSON.stringify(Object.keys(availableRoles))}
 
 Encounter Timeline:
 ${JSON.stringify(timeline, null, 2)}
-
+${strategySection}
 Rules for assignment:
 1. Assign appropriate defensive and utility cooldowns to high-damage or high-risk events (like "Desperate Measures Sun", "Calamity", "Mark of Anguish").
 2. Respect cooldown durations. If a spell has a 180s cooldown, do not assign that exact player (e.g., DISC1) to use it again within 180 seconds.
@@ -91,6 +125,7 @@ Rules for assignment:
 4. For heavy raid damage (like "Calamity"), assign raid cooldowns like "Devotion Aura", "Healing Tide Totem", "Power Word: Barrier", or "Spirit Link Totem".
 5. For "Encounter Start", always assign "ALL" -> "Bloodlust".
 6. Do your best to spread out cooldowns so the raid is covered across all dangerous events.
+7. If Community Practices are provided, strongly prioritize mimicking those cooldown assignments for the respective events, assuming the required roles are available in the current roster.
 
 Output format MUST be valid JSON in this EXACT schema:
 [
