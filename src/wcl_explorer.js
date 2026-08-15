@@ -89,7 +89,7 @@ Analyze the returned data and provide a concise answer.`;
     try {
       // Create a chat session with the tool
       const chat = this.ai.chats.create({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         config: {
           tools: tools,
           systemInstruction: systemInstruction

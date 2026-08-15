@@ -40,7 +40,7 @@ async function main() {
   }
 
   // Initialize Services
-  const rhService = new RaidHelperService(process.env.RAIDHELPER_API_KEY);
+  const rhService = new RaidHelperService(process.env.RAID_HELPER_API_KEY);
   const wclService = new WCLService(process.env.WCL_CLIENT_ID, process.env.WCL_CLIENT_SECRET);
   const agent = new AIAgent(process.env.GEMINI_API_KEY);
   const explorerAgent = new WCLExplorerAgent(

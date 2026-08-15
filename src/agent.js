@@ -23,7 +23,7 @@ Provide a concise summary of the standard strategy. For example:
 
     try {
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: prompt
       });
 
@@ -67,7 +67,7 @@ Output format MUST be valid JSON in this EXACT schema:
 
     try {
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -143,7 +143,7 @@ Output format MUST be valid JSON in this EXACT schema:
 
     try {
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
