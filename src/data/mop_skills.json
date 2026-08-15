@@ -1,0 +1,169 @@
+{
+  "roles": {
+    "PROTPALA": {
+      "name": "Protection Paladin",
+      "skills": [
+        {
+          "name": "Devotion Aura",
+          "description": "Reduces magic damage taken by 20% for 6 sec.",
+          "cooldown": 180
+        },
+        {
+          "name": "Hand of Sacrifice",
+          "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
+          "cooldown": 120
+        }
+      ]
+    },
+    "HPALA": {
+      "name": "Holy Paladin",
+      "skills": [
+        {
+          "name": "Devotion Aura",
+          "description": "Reduces magic damage taken by 20% for 6 sec.",
+          "cooldown": 180
+        },
+        {
+          "name": "Hand of Sacrifice",
+          "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
+          "cooldown": 120
+        }
+      ]
+    },
+    "CDSHA": {
+      "name": "Cooldown Shaman",
+      "skills": [
+        {
+          "name": "Healing Tide Totem",
+          "description": "Summons a Water Totem that pulses powerful AoE healing.",
+          "cooldown": 180
+        },
+        {
+          "name": "Ancestral Guidance",
+          "description": "Converts damage/healing into group healing for 10 sec.",
+          "cooldown": 120
+        }
+      ]
+    },
+    "RSHAM": {
+      "name": "Restoration Shaman",
+      "skills": [
+        {
+          "name": "Healing Tide Totem",
+          "description": "Summons a Water Totem that pulses powerful AoE healing.",
+          "cooldown": 180
+        },
+        {
+          "name": "Spirit Link Totem",
+          "description": "Reduces damage taken by 10% and redistributes health.",
+          "cooldown": 180
+        }
+      ]
+    },
+    "DPSWARR": {
+      "name": "DPS Warrior",
+      "skills": [
+        {
+          "name": "Rallying Cry",
+          "description": "Increases max health of raid members by 20% for 10 sec.",
+          "cooldown": 180
+        },
+        {
+          "name": "Demoralizing Banner",
+          "description": "Reduces damage dealt by all enemies within 30 yards by 10%.",
+          "cooldown": 180
+        },
+        {
+          "name": "Vigilance",
+          "description": "Reduces damage taken by the target by 30% for 12 sec.",
+          "cooldown": 120
+        },
+        {
+          "name": "Shield Wall",
+          "description": "Reduces all damage taken by 40% for 12 sec.",
+          "cooldown": 180
+        }
+      ]
+    },
+    "UHDK": {
+      "name": "Unholy Death Knight",
+      "skills": [
+        {
+          "name": "Anti-Magic Zone",
+          "description": "Places a large anti-magic zone that reduces spell damage taken by raid members by 40%.",
+          "cooldown": 120
+        }
+      ]
+    },
+    "DISC": {
+      "name": "Discipline Priest",
+      "skills": [
+        {
+          "name": "Power Word: Barrier",
+          "description": "Summons a holy barrier that reduces all damage taken by 25% for 10 sec.",
+          "cooldown": 180
+        },
+        {
+          "name": "Spirit Shell",
+          "description": "Converts healing into absorption shields for the next 15 sec.",
+          "cooldown": 60
+        },
+        {
+          "name": "Pain Suppression",
+          "description": "Reduces all damage taken by a friendly target by 40% for 8 sec.",
+          "cooldown": 180
+        },
+        {
+          "name": "Mass Dispel",
+          "description": "Dispels magic from 15 friendly targets and 15 enemy targets.",
+          "cooldown": 15
+        }
+      ]
+    },
+    "ROGUE": {
+      "name": "Rogue",
+      "skills": [
+        {
+          "name": "Smoke Bomb",
+          "description": "Creates a cloud of thick smoke, preventing enemies outside from targeting those inside and reducing damage taken by 20%.",
+          "cooldown": 180
+        }
+      ]
+    },
+    "SPRIEST": {
+      "name": "Shadow Priest",
+      "skills": [
+        {
+          "name": "Vampiric Embrace",
+          "description": "Fills you with the embrace of Shadow energy, causing you and your allies to be healed for 15% of any single-target Shadow damage you deal.",
+          "cooldown": 180
+        }
+      ]
+    },
+    "SURVIVAL": {
+      "name": "Survival Hunter",
+      "skills": [
+        {
+          "name": "Double Deterrence",
+          "description": "Deflects incoming attacks. Handled as a custom survival assignment.",
+          "cooldown": 120
+        }
+      ]
+    },
+    "ALL": {
+      "name": "All Players",
+      "skills": [
+        {
+          "name": "Bloodlust",
+          "description": "Increases Haste by 30% for all party and raid members for 40 sec.",
+          "cooldown": 600
+        },
+        {
+          "name": "Custom Spell Assignment",
+          "description": "A unique interaction or specific assignment for the encounter.",
+          "cooldown": 0
+        }
+      ]
+    }
+  }
+}
