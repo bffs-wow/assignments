@@ -31,4 +31,4 @@ class CSVFormatter {
   }
 }
 
-module.exports = CSVFormatter;
+export default CSVFormatter;
