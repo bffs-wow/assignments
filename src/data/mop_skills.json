@@ -6,12 +6,14 @@
         {
           "name": "Devotion Aura",
           "description": "Reduces magic damage taken by 20% for 6 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 31821
         },
         {
           "name": "Hand of Sacrifice",
           "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": 6940
         }
       ]
     },
@@ -21,12 +23,14 @@
         {
           "name": "Devotion Aura",
           "description": "Reduces magic damage taken by 20% for 6 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 31821
         },
         {
           "name": "Hand of Sacrifice",
           "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": 6940
         }
       ]
     },
@@ -36,12 +40,14 @@
         {
           "name": "Healing Tide Totem",
           "description": "Summons a Water Totem that pulses powerful AoE healing.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 108280
         },
         {
           "name": "Ancestral Guidance",
           "description": "Converts damage/healing into group healing for 10 sec.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": 108281
         }
       ]
     },
@@ -51,12 +57,14 @@
         {
           "name": "Healing Tide Totem",
           "description": "Summons a Water Totem that pulses powerful AoE healing.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 108280
         },
         {
           "name": "Spirit Link Totem",
           "description": "Reduces damage taken by 10% and redistributes health.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 98008
         }
       ]
     },
@@ -66,22 +74,26 @@
         {
           "name": "Rallying Cry",
           "description": "Increases max health of raid members by 20% for 10 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 97462
         },
         {
           "name": "Demoralizing Banner",
           "description": "Reduces damage dealt by all enemies within 30 yards by 10%.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 114203
         },
         {
           "name": "Vigilance",
           "description": "Reduces damage taken by the target by 30% for 12 sec.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": 114030
         },
         {
           "name": "Shield Wall",
           "description": "Reduces all damage taken by 40% for 12 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 871
         }
       ]
     },
@@ -91,7 +103,8 @@
         {
           "name": "Anti-Magic Zone",
           "description": "Places a large anti-magic zone that reduces spell damage taken by raid members by 40%.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": 51052
         }
       ]
     },
@@ -101,22 +114,26 @@
         {
           "name": "Power Word: Barrier",
           "description": "Summons a holy barrier that reduces all damage taken by 25% for 10 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 62618
         },
         {
           "name": "Spirit Shell",
           "description": "Converts healing into absorption shields for the next 15 sec.",
-          "cooldown": 60
+          "cooldown": 60,
+          "spellId": 109964
         },
         {
           "name": "Pain Suppression",
           "description": "Reduces all damage taken by a friendly target by 40% for 8 sec.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 33206
         },
         {
           "name": "Mass Dispel",
           "description": "Dispels magic from 15 friendly targets and 15 enemy targets.",
-          "cooldown": 15
+          "cooldown": 15,
+          "spellId": null
         }
       ]
     },
@@ -126,7 +143,8 @@
         {
           "name": "Smoke Bomb",
           "description": "Creates a cloud of thick smoke, preventing enemies outside from targeting those inside and reducing damage taken by 20%.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 76577
         }
       ]
     },
@@ -136,7 +154,8 @@
         {
           "name": "Vampiric Embrace",
           "description": "Fills you with the embrace of Shadow energy, causing you and your allies to be healed for 15% of any single-target Shadow damage you deal.",
-          "cooldown": 180
+          "cooldown": 180,
+          "spellId": 15286
         }
       ]
     },
@@ -146,7 +165,8 @@
         {
           "name": "Double Deterrence",
           "description": "Deflects incoming attacks. Handled as a custom survival assignment.",
-          "cooldown": 120
+          "cooldown": 120,
+          "spellId": null
         }
       ]
     },
@@ -156,14 +176,301 @@
         {
           "name": "Bloodlust",
           "description": "Increases Haste by 30% for all party and raid members for 40 sec.",
-          "cooldown": 600
+          "cooldown": 600,
+          "spellId": 2825
         },
         {
           "name": "Custom Spell Assignment",
           "description": "A unique interaction or specific assignment for the encounter.",
-          "cooldown": 0
+          "cooldown": 0,
+          "spellId": null
+        }
+      ]
+    },
+    "PROTWARR": {
+      "name": "Protection Warrior",
+      "skills": [
+        {
+          "name": "Shield Wall",
+          "description": "Reduces all damage taken by 40% for 12 sec.",
+          "cooldown": 180,
+          "spellId": 871
+        },
+        {
+          "name": "Last Stand",
+          "description": "Increases max health by 20% for 20 sec.",
+          "cooldown": 180,
+          "spellId": 12975
+        },
+        {
+          "name": "Vigilance",
+          "description": "Reduces damage taken by the target by 30% for 12 sec.",
+          "cooldown": 120,
+          "spellId": 114030
+        }
+      ]
+    },
+    "HOLYPRIEST": {
+      "name": "Holy Priest",
+      "skills": [
+        {
+          "name": "Guardian Spirit",
+          "description": "Reduces damage taken by 40% for 12 sec; prevents death.",
+          "cooldown": 180,
+          "spellId": 47788
+        },
+        {
+          "name": "Divine Hymn",
+          "description": "Channels a powerful heal over 8 sec to the whole raid.",
+          "cooldown": 180,
+          "spellId": 64843
+        },
+        {
+          "name": "Hymn of Hope",
+          "description": "Channels mana + healing over 8 sec to the whole raid.",
+          "cooldown": 180,
+          "spellId": 64901
+        }
+      ]
+    },
+    "MISTWEAVE": {
+      "name": "Mistweaver Monk",
+      "skills": [
+        {
+          "name": "Revival",
+          "description": "Instantly heals all raid members and cleanses harmful effects.",
+          "cooldown": 180,
+          "spellId": 115310
+        },
+        {
+          "name": "Life Cocoon",
+          "description": "Shields the friendly target, absorbing damage for 12 sec.",
+          "cooldown": 120,
+          "spellId": 116849
+        }
+      ]
+    },
+    "RDRUID": {
+      "name": "Restoration Druid",
+      "skills": [
+        {
+          "name": "Tranquility",
+          "description": "Channels a large raid-wide heal over 8 sec.",
+          "cooldown": 180,
+          "spellId": 740
+        },
+        {
+          "name": "Ironbark",
+          "description": "Reduces damage taken by the friendly target by 20% for 12 sec.",
+          "cooldown": 90,
+          "spellId": 102342
+        }
+      ]
+    },
+    "BOOMIE": {
+      "name": "Balance Druid",
+      "skills": [
+        {
+          "name": "Tranquility",
+          "description": "Channels a large raid-wide heal over 8 sec.",
+          "cooldown": 180,
+          "spellId": 740
+        },
+        {
+          "name": "Stampeding Roar",
+          "description": "Increases party/raid movement speed by 60% for 8 sec.",
+          "cooldown": 120,
+          "spellId": 106898
+        }
+      ]
+    },
+    "FROSTDK": {
+      "name": "Frost Death Knight",
+      "skills": [
+        {
+          "name": "Anti-Magic Zone",
+          "description": "Places a large anti-magic zone reducing spell damage taken by raid members by 40%.",
+          "cooldown": 120,
+          "spellId": 51052
+        }
+      ]
+    },
+    "RETPALA": {
+      "name": "Retribution Paladin",
+      "skills": [
+        {
+          "name": "Devotion Aura",
+          "description": "Reduces magic damage taken by 20% for 6 sec.",
+          "cooldown": 180,
+          "spellId": 31821
+        },
+        {
+          "name": "Hand of Sacrifice",
+          "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
+          "cooldown": 120,
+          "spellId": 6940
+        },
+        {
+          "name": "Hand of Protection",
+          "description": "Blesses a friendly target, making them immune to physical damage.",
+          "cooldown": 300,
+          "spellId": 1022
+        }
+      ]
+    },
+    "FERAL": {
+      "name": "Feral Druid",
+      "skills": [
+        {
+          "name": "Stampeding Roar",
+          "description": "Increases party/raid movement speed by 60% for 8 sec.",
+          "cooldown": 120,
+          "spellId": 106898
+        }
+      ]
+    },
+    "LOCK": {
+      "name": "Warlock",
+      "skills": [
+        {
+          "name": "Dark Bargain",
+          "description": "Reduces damage taken by 25% for 8 sec, then damages you afterwards.",
+          "cooldown": 180,
+          "spellId": 110913
+        },
+        {
+          "name": "Healthstone (custom)",
+          "description": "Friendly target consumes a Healthstone; handled as a custom assignment.",
+          "cooldown": 0,
+          "spellId": null
+        }
+      ]
+    },
+    "RANGEDDPS": {
+      "name": "Ranged DPS (generic)",
+      "skills": [
+        {
+          "name": "Personal Defensives",
+          "description": "Pure DPS role; no assignable raid-wide cooldown.",
+          "cooldown": 0,
+          "spellId": null
+        }
+      ]
+    },
+    "MELEEDPS": {
+      "name": "Melee DPS (generic)",
+      "skills": [
+        {
+          "name": "Personal Defensives",
+          "description": "Pure DPS role; no assignable raid-wide cooldown.",
+          "cooldown": 0,
+          "spellId": null
         }
       ]
     }
+  },
+  "spells": {
+    "498": "Divine Protection",
+    "586": "Fade",
+    "642": "Divine Shield",
+    "740": "Tranquility",
+    "871": "Shield Wall",
+    "1022": "Hand of Protection",
+    "1038": "Hand of Salvation",
+    "1044": "Hand of Freedom",
+    "1160": "Demoralizing Shout",
+    "1161": "Challenging Shout",
+    "1499": "Freezing Trap",
+    "1766": "Kick",
+    "1856": "Vanish",
+    "2062": "Earth Elemental Totem",
+    "2139": "Counterspell",
+    "2825": "Bloodlust",
+    "3411": "Intervene",
+    "5209": "Challenging Roar",
+    "5246": "Intimidating Shout",
+    "5277": "Evasion",
+    "6552": "Pummel",
+    "6940": "Hand of Sacrifice",
+    "8177": "Grounding Totem",
+    "12975": "Last Stand",
+    "13809": "Frost Trap",
+    "15286": "Vampiric Embrace",
+    "16190": "Mana Tide Totem",
+    "19236": "Desperate Prayer",
+    "19263": "Deterrence",
+    "22812": "Barkskin",
+    "22842": "Frenzied Regeneration",
+    "29166": "Innervate",
+    "30823": "Shamanistic Rage",
+    "31224": "Cloak of Shadows",
+    "31821": "Devotion Aura",
+    "31850": "Ardent Defender",
+    "33206": "Pain Suppression",
+    "33891": "Tree of Life",
+    "34477": "Misdirection",
+    "42650": "Army of the Dead",
+    "45438": "Ice Block",
+    "47476": "Strangulate",
+    "47528": "Mind Freeze",
+    "47568": "Empower Rune Weapon",
+    "47585": "Dispersion",
+    "47788": "Guardian Spirit",
+    "48707": "AMS",
+    "48792": "Icebound Fortitude",
+    "49028": "Dancing Rune Weapon",
+    "49222": "Bone Shield",
+    "51052": "Anti-Magic Zone",
+    "55233": "Vampiric Blood",
+    "55342": "Mirror Images",
+    "55694": "Enraged Regeneration",
+    "57934": "Tricks of the Trade",
+    "61336": "Survival Instincts",
+    "61668": "Earth Shock",
+    "62618": "Power Word: Barrier",
+    "64382": "Shattering Throw",
+    "64843": "Divine Hymn",
+    "64901": "Hymn of Hope",
+    "66940": "Hammer of Justice",
+    "69823": "Typhoon",
+    "73325": "Leap of Faith",
+    "76577": "Smoke Bomb",
+    "80353": "Time Warp",
+    "86150": "Guardian of Ancient Kings",
+    "97462": "Rallying Cry",
+    "98008": "Spirit Link Totem",
+    "102342": "Ironbark",
+    "102359": "Mass Entanglement",
+    "104773": "Unending Resolve",
+    "106898": "Stampeding Roar",
+    "106922": "Might of Ursoc",
+    "108269": "Capacitor Totem",
+    "108271": "Astral Shift",
+    "108280": "Healing Tide Totem",
+    "108281": "Ancestral Guidance",
+    "108359": "Dark Regeneration",
+    "109248": "Binding Shot",
+    "109964": "Spirit Shell",
+    "110913": "Dark Bargain",
+    "110959": "Greater Invisibility",
+    "111771": "Demonic Gateway",
+    "114028": "Mass Spell Reflection",
+    "114030": "Vigilance",
+    "114039": "Hand of Purity",
+    "114192": "Mocking Banner",
+    "114203": "Demoralizing Banner",
+    "114207": "Skull Banner",
+    "115176": "Zen Meditation",
+    "115203": "Fortifying Brew",
+    "115213": "Avert Harm",
+    "115310": "Revival",
+    "116844": "Ring of Peace",
+    "116849": "Life Cocoon",
+    "118038": "Die by the Sword",
+    "119381": "Leg Sweep",
+    "120668": "Stormlash Totem",
+    "122278": "Dampen Harm",
+    "122470": "Touch of Karma",
+    "122783": "Diffuse Magic"
   }
 }
