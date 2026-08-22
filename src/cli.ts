@@ -3,7 +3,7 @@
  * is invoked. The bare program opens the main menu; every operation is a
  * one-shot subcommand declaring exactly the options it needs.
  *
- * Handlers are injected so index.js can wire real operations and unit tests
+ * Handlers are injected so index.ts can wire real operations and unit tests
  * can spy on dispatch. Tests build fresh programs via createProgram() so
  * option/env state never leaks between cases.
  */
@@ -11,10 +11,27 @@ import { Command, Option, InvalidArgumentError } from 'commander';
 
 const INSTANCE_CHOICES = ['retail', 'classic', 'fresh', 'vanilla', 'sod'];
 
+/** Options as dispatched to a handler (commander's parsed option bag). */
+export type CliOptions = Record<string, any>;
+
+/** One handler per subcommand; wired by the entry point, spied on by tests. */
+export interface Handlers {
+  /** Bare invocation — the entry point's menu (not dispatched by the program itself). */
+  menu?: () => void | Promise<void>;
+  timeline: (opts: CliOptions) => void | Promise<void>;
+  mappings: (opts: CliOptions) => void | Promise<void>;
+  community: (opts: CliOptions) => void | Promise<void>;
+  generate: (opts: CliOptions) => void | Promise<void>;
+  run: (opts: CliOptions) => void | Promise<void>;
+  review: (opts: CliOptions) => void | Promise<void>;
+  refine: (opts: CliOptions) => void | Promise<void>;
+  explore: (opts: CliOptions) => void | Promise<void>;
+}
+
 // Strict integer coercion: rejects "1.5" and "abc" outright instead of letting
 // parseInt silently produce NaN/truncation (the old manual parser turned such
 // values into a misleading "missing required input" error).
-function parseFightId(value) {
+function parseFightId(value: string): number {
   const n = Number.parseInt(value, 10);
   if (Number.isNaN(n) || String(n) !== value.trim()) {
     throw new InvalidArgumentError('must be an integer');
@@ -23,18 +40,18 @@ function parseFightId(value) {
 }
 
 // Fresh Option per command: a shared Option instance is stateful in commander.
-function instanceOption() {
+function instanceOption(): Option {
   return new Option('-i, --instance <x>', 'WCL instance: retail | classic | fresh | vanilla | sod')
     .env('WCL_INSTANCE')
     .choices(INSTANCE_CHOICES)
     .default('classic');
 }
 
-function stateOption() {
+function stateOption(): Option {
   return new Option('--state <dir>', 'state directory for artifacts (default: .cache/cli)');
 }
 
-export function createProgram(handlers) {
+export function createProgram(handlers: Handlers): Command {
   const program = new Command();
   program
     .name('index.js')

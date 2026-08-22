@@ -6,37 +6,41 @@ import readline from 'node:readline';
 import { init } from '@flue/runtime';
 import { start, sqlite } from '@flue/runtime/node';
 
-import RaidHelperService from './src/services/raidhelper.js';
-import WCLService from './src/services/wcl.js';
-import CSVFormatter from './src/utils/csv_formatter.js';
-import { createProgram } from './src/cli.js';
-import { resolveRoleMappings } from './src/shared/roster-roles.js';
-import { CommunityAnalyst } from './src/agents/community-analyst.ts';
-import { AssignmentGenerator } from './src/agents/assignment-generator.ts';
-import { AssignmentRefiner } from './src/agents/assignment-refiner.ts';
-import { WCLExplorer } from './src/agents/wcl-explorer.ts';
+import RaidHelperService from './services/raidhelper.ts';
+import WCLService from './services/wcl.ts';
+import CSVFormatter from './utils/csv_formatter.ts';
+import { createProgram } from './cli.ts';
+import type { Handlers, CliOptions } from './cli.ts';
+import { resolveRoleMappings } from './shared/roster-roles.ts';
+import type { RoleMappings } from './shared/roster-roles.ts';
+import type { TimelineEvent } from './services/wcl.ts';
+import type { Assignment } from './shared/assignments-schema.ts';
+import { CommunityAnalyst } from './agents/community-analyst.ts';
+import { AssignmentGenerator } from './agents/assignment-generator.ts';
+import { AssignmentRefiner } from './agents/assignment-refiner.ts';
+import { WCLExplorer } from './agents/wcl-explorer.ts';
 
 // ---------------------------------------------------------------------------
 // State dir + small JSON helpers (artifacts land in .cache/cli by default)
 // ---------------------------------------------------------------------------
-const DEFAULT_STATE = path.join(import.meta.dirname, '.cache', 'cli');
-const resolveState = (dir) => dir || DEFAULT_STATE;
-const readJSON = (dir, file) => {
+const DEFAULT_STATE = path.join(process.cwd(), '.cache', 'cli');
+const resolveState = (dir: string | undefined): string => dir || DEFAULT_STATE;
+const readJSON = (dir: string, file: string): any => {
   try { return JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')); } catch { return null; }
 };
-const writeJSON = (dir, file, data) => {
+const writeJSON = (dir: string, file: string, data: unknown): void => {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, file), JSON.stringify(data, null, 2));
 };
-const isPlaceholder = (v) => !v || /your_/i.test(v);
+const isPlaceholder = (v: string | undefined): boolean => !v || /your_/i.test(v);
 
 // ---------------------------------------------------------------------------
 // Prompt plumbing (works for interactive terminals AND piped stdin)
 // ---------------------------------------------------------------------------
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-const inputLines = [];
+const inputLines: string[] = [];
 let inputDone = false;
-let pendingPrompt = null;
+let pendingPrompt: ((line: string | null) => void) | null = null;
 rl.on('line', (line) => {
   if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(line); } else inputLines.push(line);
 });
@@ -45,9 +49,9 @@ rl.on('close', () => {
   if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(null); }
 });
 // null => EOF (piped run had no more input)
-function promptUser(query) {
+function promptUser(query: string): Promise<string | null> {
   process.stdout.write(query);
-  if (inputLines.length > 0) return Promise.resolve(inputLines.shift());
+  if (inputLines.length > 0) return Promise.resolve(inputLines.shift() ?? null);
   if (inputDone) return Promise.resolve(null);
   return new Promise((resolve) => { pendingPrompt = resolve; });
 }
@@ -56,17 +60,17 @@ function promptUser(query) {
 // Services + Flue runtime
 // ---------------------------------------------------------------------------
 const rhService = () => new RaidHelperService(process.env.RAID_HELPER_API_KEY);
-const wclService = (instance) => new WCLService(
+const wclService = (instance?: string) => new WCLService(
   process.env.WCL_CLIENT_ID, process.env.WCL_CLIENT_SECRET, { instance },
 );
 
-const runAgent = async (handle, message, initialData) => {
+const runAgent = async (handle: any, message: string, initialData?: unknown): Promise<any> => {
   const receipt = await handle.dispatch(initialData === undefined ? message : { message, initialData });
   return handle.read(receipt);
 };
 
 // COMMUNITY_RANKS env: "100-500" => mid-tier average-guild kills.
-function communityRanks() {
+function communityRanks(): { rankStart: number | null; rankEnd: number | null } {
   const v = process.env.COMMUNITY_RANKS;
   if (!v) return { rankStart: null, rankEnd: null };
   const m = v.match(/^(\d*)\s*-\s*(\d+)$/);
@@ -76,7 +80,7 @@ function communityRanks() {
 // ---------------------------------------------------------------------------
 // Artifact-producing steps (shared by subcommands, `run` and the bare menu)
 // ---------------------------------------------------------------------------
-async function stepMappings(opts) {
+async function stepMappings(opts: { encounter?: string; state?: string }): Promise<RoleMappings> {
   const { encounter, state } = opts;
   const rosterEventId = encounter || process.env.RAID_HELPER_EVENT_ID;
   if (!rosterEventId) throw new Error('no RaidHelper event id — pass -e or set RAID_HELPER_EVENT_ID');
@@ -87,9 +91,9 @@ async function stepMappings(opts) {
   for (const [tag, info] of Object.entries(mappings)) {
     console.log(`  ${tag.padEnd(12)} ${info.name}  (${info.className || '?'}/${info.specName || '?'})`);
   }
-  const unresolved = unmapped.filter((p) => !['Bench', 'Absence', 'Tentative'].includes(p.className) && p.status !== 'Absence');
+  const unresolved = unmapped.filter((p) => !['Bench', 'Absence', 'Tentative'].includes(p.className ?? '') && p.status !== 'Absence');
   if (unresolved.length) {
-    console.log('\nUnresolved (in roster, not mapped) — add a pin in src/shared/roster-roles.js ROSTER_ROLE_OVERRIDES:');
+    console.log('\nUnresolved (in roster, not mapped) — add a pin in src/shared/roster-roles.ts ROSTER_ROLE_OVERRIDES:');
     for (const p of unresolved) {
       console.log(`  ${p.name}  (${p.className || '?'}/${p.specName || '?'})  [${p.status || ''}]`);
     }
@@ -98,7 +102,7 @@ async function stepMappings(opts) {
   return mappings;
 }
 
-async function stepTimeline(opts) {
+async function stepTimeline(opts: { report?: string; fight?: string | number; instance?: string; state?: string }): Promise<TimelineEvent[]> {
   const { report, fight, instance, state } = opts;
   if (!report || !fight) throw new Error('timeline needs -r/--report and -f/--fight');
   const wcl = wclService(instance);
@@ -108,7 +112,7 @@ async function stepTimeline(opts) {
   return timeline;
 }
 
-async function stepCommunity(opts) {
+async function stepCommunity(opts: { encounter?: string; instance?: string; state?: string }): Promise<string> {
   const { encounter, instance, state } = opts;
   if (!encounter) throw new Error('community needs -e/--encounter');
   const { rankStart, rankEnd } = communityRanks();
@@ -123,7 +127,7 @@ async function stepCommunity(opts) {
   return reply.text;
 }
 
-async function stepGenerate(opts, { initial = null } = {}) {
+async function stepGenerate(opts: { state?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
   const roleMappings = readJSON(dir, 'rolemappings.json')?.mappings ?? {};
   const timeline = readJSON(dir, 'timeline.json')?.timeline ?? null;
@@ -131,7 +135,7 @@ async function stepGenerate(opts, { initial = null } = {}) {
   if (!Object.keys(roleMappings).length) throw new Error('no rolemappings — run `mappings` first');
   if (!timeline) throw new Error('no timeline — run `timeline` first');
 
-  const skillsData = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'src', 'data', 'mop_skills.json'), 'utf8'));
+  const skillsData = JSON.parse(fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'));
   const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
   const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
     timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
@@ -147,7 +151,7 @@ async function stepGenerate(opts, { initial = null } = {}) {
   return assignments;
 }
 
-async function stepRefine(opts, feedback) {
+async function stepRefine(opts: { state?: string }, feedback: string): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
   const committed = readJSON(dir, 'committed.json');
   if (!committed) throw new Error('no committed assignments — run `generate` first');
@@ -164,15 +168,19 @@ async function stepRefine(opts, feedback) {
   return assignments;
 }
 
+function errMsg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
 // ---------------------------------------------------------------------------
 // CLI handlers (createProgram contracts)
 // ---------------------------------------------------------------------------
-const handlers = {
-  mappings: async (opts) => { try { await stepMappings({ encounter: opts.encounter, state: opts.state }); } catch (e) { console.error('mappings failed:', e.message); process.exitCode = 1; } },
-  timeline: async (opts) => { try { await stepTimeline(opts); } catch (e) { console.error('timeline failed:', e.message); process.exitCode = 1; } },
-  community: async (opts) => { try { await stepCommunity(opts); } catch (e) { console.error('community failed:', e.message); process.exitCode = 1; } },
-  generate: async (opts) => { try { await stepGenerate(opts); } catch (e) { console.error('generate failed:', e.message); process.exitCode = 1; } },
-  run: async (opts) => {
+const handlers: Handlers = {
+  mappings: async (opts: CliOptions) => { try { await stepMappings({ encounter: opts.encounter, state: opts.state }); } catch (e) { console.error('mappings failed:', errMsg(e)); process.exitCode = 1; } },
+  timeline: async (opts: CliOptions) => { try { await stepTimeline(opts); } catch (e) { console.error('timeline failed:', errMsg(e)); process.exitCode = 1; } },
+  community: async (opts: CliOptions) => { try { await stepCommunity(opts); } catch (e) { console.error('community failed:', errMsg(e)); process.exitCode = 1; } },
+  generate: async (opts: CliOptions) => { try { await stepGenerate(opts); } catch (e) { console.error('generate failed:', errMsg(e)); process.exitCode = 1; } },
+  run: async (opts: CliOptions) => {
     try {
       const { report, fight, encounter, instance, state } = opts;
       const r = report ?? (await promptUser('Report code: '));
@@ -185,18 +193,18 @@ const handlers = {
       await stepGenerate({ state });
     } catch (err) { console.error('run failed:', err); process.exitCode = 1; }
   },
-  review: async (opts) => {
+  review: async (opts: CliOptions) => {
     const committed = readJSON(resolveState(opts.state), 'committed.json');
     if (!committed) { console.error('no committed assignments'); process.exitCode = 1; return; }
     console.log(`${CSVFormatter.formatToTSV(committed.assignments, committed.roleMappings)}\n`);
   },
-  refine: async (opts) => { try { await stepRefine(opts, opts.feedback); } catch (e) { console.error('refine failed:', e.message); process.exitCode = 1; } },
-  explore: async (opts) => {
+  refine: async (opts: CliOptions) => { try { await stepRefine(opts, opts.feedback); } catch (e) { console.error('refine failed:', errMsg(e)); process.exitCode = 1; } },
+  explore: async (opts: CliOptions) => {
     try {
       const explorer = init(WCLExplorer, { id: `explorer-${Date.now()}` });
       const reply = await runAgent(explorer, opts.query);
       console.log(`\n[WCL Explorer Answer]:\n${reply.text}\n`);
-    } catch (e) { console.error('explore failed:', e.message); process.exitCode = 1; }
+    } catch (e) { console.error('explore failed:', errMsg(e)); process.exitCode = 1; }
   },
 };
 
@@ -229,15 +237,15 @@ async function interactiveMenu() {
         if (query) { const explorer = init(WCLExplorer, { id: `explorer-${Date.now()}` }); const r = await runAgent(explorer, query); console.log(`\n[Answer]:\n${r.text}\n`); }
       } else if (choice === '3' || /exit|quit/i.test(choice)) { console.log('Exiting. Final assignments are saved.'); break; }
     }
-  } catch (e) { console.error('An error occurred:', e); }
+  } catch (e) { console.error('An error occurred:', errMsg(e)); }
 }
 
 // ---------------------------------------------------------------------------
 // Entry
 // ---------------------------------------------------------------------------
 if (!isPlaceholder(process.env.OPENCODE_API_KEY) || !isPlaceholder(process.env.GEMINI_API_KEY)) {
-  fs.mkdirSync(path.join(import.meta.dirname, '.cache'), { recursive: true });
-  await start({ agents: [CommunityAnalyst, AssignmentGenerator, AssignmentRefiner, WCLExplorer], db: sqlite(path.join(import.meta.dirname, '.cache', 'flue.db')) });
+  fs.mkdirSync(path.join(process.cwd(), '.cache'), { recursive: true });
+  await start({ agents: [CommunityAnalyst, AssignmentGenerator, AssignmentRefiner, WCLExplorer], db: sqlite(path.join(process.cwd(), '.cache', 'flue.db')) });
 }
 
 const argv = process.argv;

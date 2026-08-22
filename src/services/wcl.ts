@@ -17,6 +17,88 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 // ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/** Instance string must match one of INSTANCE_HOSTS keys (validated at runtime). */
+type WCLInstance = keyof typeof INSTANCE_HOSTS;
+
+interface WCLServiceOptions {
+  instance?: string;
+  cacheDir?: string;
+}
+
+interface Token {
+  access_token: string;
+  token_type: string;
+  expires_at: number;
+}
+
+interface RateLimit {
+  pointsSpent: number;
+  limit: number;
+  resetIn: number;
+  ratio: number;
+}
+
+interface RequestOptions {
+  useCache?: boolean;
+  cacheTtlSeconds?: number;
+  force?: boolean;
+}
+
+export interface FetchEventsOptions {
+  dataType: string;
+  start: number;
+  end: number;
+  sourceID?: number;
+  targetID?: number;
+  abilityID?: number;
+  hostility?: string;
+  maxPages?: number;
+  useCache?: boolean;
+}
+
+/** Loose JSON from the WCL GraphQL API. */
+type WCLJson = Record<string, any>;
+
+interface CastEvent {
+  type: 'cast';
+  timestamp: number;
+  abilityGameID: number;
+  sourceID?: number;
+}
+
+interface DamageEvent {
+  type: 'damage';
+  timestamp: number;
+  abilityGameID: number;
+  amount: number;
+}
+
+/** One entry of the boss-ability timeline shaped for the assignment AI. */
+export interface TimelineEvent {
+  timestamp: number;
+  type: string;
+  name: string;
+  description: string;
+  damage: number;
+}
+
+/** A community pull's cooldown cast aligned to a boss ability. */
+export interface CommunityPullEvent {
+  timestamp: number;
+  type: 'cast';
+  abilityName: string;
+  context: string;
+}
+
+export interface CommunityPull {
+  guild: string;
+  events: CommunityPullEvent[];
+}
+
+// ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
@@ -53,13 +135,13 @@ const ALIGN_AFTER_MS = 5000;
 
 // Loading the full set of hardcoded spell IDs is deliberately avoided — the
 // authoritative assignable-spell list (id -> name) lives in src/data/mop_skills.json.
-let COOLDOWN_SPELLS = {};
+let COOLDOWN_SPELLS: Record<number, string> = {};
 try {
   const skillsFile = path.join(import.meta.dirname, '..', 'data', 'mop_skills.json');
   const skillsData = JSON.parse(fs.readFileSync(skillsFile, 'utf8'));
-  COOLDOWN_SPELLS = skillsData.spells || {};
+  COOLDOWN_SPELLS = (skillsData.spells ?? {}) as Record<number, string>;
 } catch (e) {
-  console.warn(`[wcl] could not load assignable spell list from mop_skills.json: ${e.message}`);
+  console.warn(`[wcl] could not load assignable spell list from mop_skills.json: ${errMsg(e)}`);
 }
 const COOLDOWN_IDS = new Set(Object.keys(COOLDOWN_SPELLS).map(Number));
 
@@ -68,12 +150,17 @@ const COOLDOWN_IDS = new Set(Object.keys(COOLDOWN_SPELLS).map(Number));
 // ---------------------------------------------------------------------------
 
 class WCLServiceError extends Error {
-  constructor(code, message, hint, details) {
+  readonly code: string;
+  readonly hint: string | undefined;
+  readonly details: unknown;
+
+  constructor(code: string, message: string, hint?: string, details?: unknown) {
     super(message);
     this.name = 'WCLServiceError';
     this.code = code;
     this.hint = hint;
     this.details = details;
+    Object.setPrototypeOf(this, WCLServiceError.prototype);
   }
 }
 
@@ -140,14 +227,23 @@ const SEARCH_QUERY = /* GraphQL */ `
 // ---------------------------------------------------------------------------
 
 class WCLService {
-  constructor(clientId, clientSecret, options = {}) {
+  private readonly clientId: string | undefined;
+  private readonly clientSecret: string | undefined;
+  private readonly instance: WCLInstance;
+  private readonly endpoint: string;
+  private readonly cacheDir: string;
+  private rateLimit: RateLimit | null = null;
+  private token: Token | null = null;
+
+  constructor(clientId: string | undefined, clientSecret: string | undefined, options: WCLServiceOptions = {}) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
-    this.instance = options.instance || process.env.WCL_INSTANCE || 'classic';
-    if (!INSTANCE_HOSTS[this.instance]) {
-      throw new WCLServiceError('BAD_INPUT', `unknown WCL instance: ${this.instance}`,
+    const instanceName = options.instance || process.env.WCL_INSTANCE || 'classic';
+    if (!(instanceName in INSTANCE_HOSTS)) {
+      throw new WCLServiceError('BAD_INPUT', `unknown WCL instance: ${instanceName}`,
         `one of: ${Object.keys(INSTANCE_HOSTS).join(', ')}`);
     }
+    this.instance = instanceName as WCLInstance;
     this.endpoint = `${INSTANCE_HOSTS[this.instance]}/api/v2/client`;
     this.cacheDir = options.cacheDir || path.join(import.meta.dirname, '..', '..', '.cache', 'wcl');
     this.rateLimit = null;
@@ -161,9 +257,9 @@ class WCLService {
 
   // -- auth ----------------------------------------------------------------
 
-  async _ensureToken() {
+  private async _ensureToken(): Promise<string> {
     const tokenFile = path.join(this.cacheDir, 'token.json');
-    let token = this.token;
+    let token: Token | null = this.token;
     if (!token) {
       try { token = JSON.parse(fs.readFileSync(tokenFile, 'utf8')); } catch { token = null; }
     }
@@ -176,13 +272,15 @@ class WCLService {
       throw new WCLServiceError('NOT_AUTHENTICATED', 'WCL credentials not configured', 'set WCL_CLIENT_ID / WCL_CLIENT_SECRET in .env');
     }
 
+    const clientId = this.clientId;
+    const clientSecret = this.clientSecret;
     const body = new URLSearchParams({
       grant_type: 'client_credentials',
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
+      client_id: clientId,
+      client_secret: clientSecret,
     });
 
-    let res;
+    let res: Response;
     try {
       res = await fetch(TOKEN_URL, {
         method: 'POST',
@@ -190,16 +288,16 @@ class WCLService {
         body,
       });
     } catch (e) {
-      throw new WCLServiceError('NETWORK_ERROR', `token endpoint unreachable: ${e.message}`, 'transient — retry');
+      throw new WCLServiceError('NETWORK_ERROR', `token endpoint unreachable: ${errMsg(e)}`, 'transient — retry');
     }
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       throw new WCLServiceError('NOT_AUTHENTICATED', `token endpoint returned ${res.status}: ${text.slice(0, 200)}`,
         'check WCL_CLIENT_ID / WCL_CLIENT_SECRET');
     }
-    let json;
+    let json: Record<string, any>;
     try { json = await res.json(); } catch (e) {
-      throw new WCLServiceError('NETWORK_ERROR', `token endpoint returned unparseable JSON: ${e.message}`);
+      throw new WCLServiceError('NETWORK_ERROR', `token endpoint returned unparseable JSON: ${errMsg(e)}`);
     }
     if (!json.access_token) {
       throw new WCLServiceError('NOT_AUTHENTICATED', 'token endpoint returned no access_token');
@@ -216,11 +314,11 @@ class WCLService {
 
   // -- cache ---------------------------------------------------------------
 
-  _cacheKey(query, variables) {
+  private _cacheKey(query: string, variables: Record<string, unknown>): string {
     return crypto.createHash('sha1').update(JSON.stringify([this.instance, query, variables])).digest('hex');
   }
 
-  _cacheGet(key, ttlSeconds) {
+  private _cacheGet(key: string, ttlSeconds: number): any {
     try {
       const raw = fs.readFileSync(path.join(this.cacheDir, 'keys', `${key}.json`), 'utf8');
       const entry = JSON.parse(raw);
@@ -229,21 +327,21 @@ class WCLService {
     return null;
   }
 
-  _cacheSet(key, data) {
+  private _cacheSet(key: string, data: unknown): void {
     try {
       fs.writeFileSync(path.join(this.cacheDir, 'keys', `${key}.json`),
         JSON.stringify({ savedAt: Date.now(), data }));
     } catch { /* non-fatal */ }
   }
 
-  clearCache() {
+  clearCache(): void {
     fs.rmSync(path.join(this.cacheDir, 'keys'), { recursive: true, force: true });
     fs.mkdirSync(path.join(this.cacheDir, 'keys'), { recursive: true });
   }
 
   // -- core request --------------------------------------------------------
 
-  _trackRateLimit(root) {
+  private _trackRateLimit(root: Record<string, any> | null | undefined): void {
     const d = root && root.rateLimitData;
     if (!d || typeof d.limitPerHour !== 'number') return;
     this.rateLimit = {
@@ -254,7 +352,7 @@ class WCLService {
     };
   }
 
-  _checkQuota(force) {
+  private _checkQuota(force: boolean): void {
     const rl = this.rateLimit;
     if (!rl || force) return;
     if (rl.ratio >= QUOTA_REFUSE_RATIO) {
@@ -268,7 +366,7 @@ class WCLService {
     }
   }
 
-  async _doFetch(url, token, query, variables) {
+  private async _doFetch(url: string, token: string, query: string, variables: Record<string, unknown>): Promise<Response> {
     return fetch(url, {
       method: 'POST',
       headers: {
@@ -279,7 +377,7 @@ class WCLService {
     });
   }
 
-  async _request(query, variables = {}, { useCache = true, cacheTtlSeconds = SEVEN_DAYS, force = false } = {}) {
+  private async _request(query: string, variables: Record<string, unknown> = {}, { useCache = true, cacheTtlSeconds = SEVEN_DAYS, force = false }: RequestOptions = {}): Promise<Record<string, any>> {
     const key = this._cacheKey(query, variables);
     if (useCache) {
       const cached = this._cacheGet(key, cacheTtlSeconds);
@@ -289,7 +387,7 @@ class WCLService {
     const token = await this._ensureToken();
 
     // Network failure and 5xx get one retry after a short backoff.
-    let res;
+    let res: Response;
     try {
       res = await this._doFetch(this.endpoint, token, query, variables);
     } catch (e) {
@@ -297,7 +395,7 @@ class WCLService {
       try {
         res = await this._doFetch(this.endpoint, token, query, variables);
       } catch (e2) {
-        throw new WCLServiceError('NETWORK_ERROR', `network failure: ${e2.message}`, 'transient — retry');
+        throw new WCLServiceError('NETWORK_ERROR', `network failure: ${errMsg(e2)}`, 'transient — retry');
       }
     }
 
@@ -311,7 +409,7 @@ class WCLService {
       try {
         res = await this._doFetch(this.endpoint, token, query, variables);
       } catch (e) {
-        throw new WCLServiceError('NETWORK_ERROR', `network failure on retry: ${e.message}`, 'transient — retry');
+        throw new WCLServiceError('NETWORK_ERROR', `network failure on retry: ${errMsg(e)}`, 'transient — retry');
       }
       if (res.status >= 500) {
         throw new WCLServiceError('NETWORK_ERROR', `WCL returned HTTP ${res.status}`, 'transient — retry');
@@ -322,17 +420,17 @@ class WCLService {
       throw new WCLServiceError('GRAPHQL_ERROR', `HTTP ${res.status}: ${text.slice(0, 200)}`);
     }
 
-    let payload;
+    let payload: Record<string, any>;
     try {
       payload = await res.json();
     } catch (e) {
-      throw new WCLServiceError('NETWORK_ERROR', `WCL returned unparseable JSON: ${e.message}`, 'transient — retry');
+      throw new WCLServiceError('NETWORK_ERROR', `WCL returned unparseable JSON: ${errMsg(e)}`, 'transient — retry');
     }
 
     this._trackRateLimit(payload);
 
     if (payload.errors && payload.errors.length > 0) {
-      const msgs = payload.errors.map(e => e.message);
+      const msgs = payload.errors.map((e: { message?: string }) => e.message);
       if (!payload.data || payload.data === null) {
         throw new WCLServiceError('GRAPHQL_ERROR', msgs.join('; '), undefined, payload.errors);
       }
@@ -356,21 +454,21 @@ class WCLService {
 
   // -- report helpers ------------------------------------------------------
 
-  async _probeReport(code) {
+  private async _probeReport(code: string): Promise<Record<string, any>> {
     const data = await this._request(REPORT_PROBE_QUERY, { code }, { cacheTtlSeconds: SEVEN_DAYS });
     const report = data && data.reportData && data.reportData.report;
     if (!report) throw new WCLServiceError('NOT_FOUND', `report ${code} not found`);
     return report;
   }
 
-  async _fetchEvents(code, fightId, {
+  private async _fetchEvents(code: string, fightId: number, {
     dataType, start, end, sourceID, targetID, abilityID, hostility,
     maxPages = 4, useCache = true,
-  } = {}) {
-    const events = [];
+  }: FetchEventsOptions): Promise<{ events: WCLJson[]; pages: number; truncated: boolean }> {
+    const events: WCLJson[] = [];
     let cursor = start;
     let pages = 0;
-    let nextPageTimestamp = null;
+    let nextPageTimestamp: number | null = null;
     let truncated = false;
 
     while (pages < maxPages) {
@@ -402,12 +500,12 @@ class WCLService {
 
   // -- encounter lookup ----------------------------------------------------
 
-  async _resolveEncounterId(nameOrId) {
-    if (/^\d+$/.test(String(nameOrId))) return parseInt(nameOrId, 10);
+  public async _resolveEncounterId(nameOrId: string | number): Promise<number> {
+    if (/^\d+$/.test(String(nameOrId))) return parseInt(String(nameOrId), 10);
     const want = String(nameOrId).toLowerCase().replace(/^(the|a|an)\s+/i, '').trim();
     const data = await this._request(ENCOUNTER_LOOKUP_QUERY, {}, { cacheTtlSeconds: ONE_DAY });
     const expansions = data && data.worldData && data.worldData.expansions || [];
-    const hits = [];
+    const hits: Array<{ id: number; name: string; zone: string }> = [];
     for (const exp of expansions) {
       for (const zone of exp.zones ?? []) {
         for (const enc of zone.encounters ?? []) {
@@ -433,7 +531,7 @@ class WCLService {
 
   // Public entry for arbitrary GraphQL (used by the WCL Explorer). Returns the
   // response `data` with rateLimitData stripped; throws WCLServiceError on failure.
-  async executeQuery(query, variables = {}, opts = {}) {
+  async executeQuery(query: string, variables: Record<string, unknown> = {}, opts: RequestOptions = {}): Promise<Record<string, any>> {
     return this._request(query, variables, {
       useCache: opts.useCache ?? true,
       cacheTtlSeconds: opts.cacheTtlSeconds ?? SEVEN_DAYS,
@@ -445,7 +543,7 @@ class WCLService {
 
   /**
    * Build a boss-ability timeline for a fight, shaped for the assignment AI:
-   *   { timestamp, type, name, description, damage }
+   *   [{ timestamp, type, name, description, damage }]
    *
    * Real implementation:
    *   1. probe the report, resolve the fight's start/end window
@@ -454,17 +552,17 @@ class WCLService {
    *      within a window (even-split fallback for abilities whose damage
    *      events don't align with the cast)
    */
-  async getEncounterEvents(reportId, fightId) {
+  async getEncounterEvents(reportId: string, fightId: string | number): Promise<TimelineEvent[]> {
     console.log(`Fetching WCL data for report: ${reportId}, fight: ${fightId}...`);
     const report = await this._probeReport(reportId);
-    const fight = report.fights.find(f => f.id === Number(fightId));
+    const fight = report.fights.find((f: { id: number }) => f.id === Number(fightId));
     if (!fight) {
       throw new WCLServiceError('NOT_FOUND', `fight ${fightId} not in report ${reportId}`,
         'list fights with wcl fights or check the fight ID');
     }
 
-    const abilityNames = new Map((report.masterData?.abilities ?? []).map(a => [a.gameID, a.name]));
-    const actorNames = new Map((report.masterData?.actors ?? []).map(a => [a.id, a.name]));
+    const abilityNames = new Map<number, string>((report.masterData?.abilities ?? []).map((a: { gameID: number; name: string }) => [a.gameID, a.name]));
+    const actorNames = new Map<number, string>((report.masterData?.actors ?? []).map((a: { id: number; name: string }) => [a.id, a.name]));
 
     const start = fight.startTime;
     const end = fight.endTime;
@@ -473,41 +571,41 @@ class WCLService {
     const casts = await this._fetchEvents(reportId, fight.id, {
       dataType: 'Casts', start, end, hostility: 'Enemies',
     });
-    const bossCasts = casts.events.filter(e => e.type === 'cast' && typeof e.abilityGameID === 'number');
+    const bossCasts = casts.events.filter((e): e is CastEvent => e.type === 'cast' && typeof e.abilityGameID === 'number');
     console.log(`  [wcl] ${bossCasts.length} boss casts (${casts.pages} page(s))`);
 
     // Raid damage taken: attribute to boss casts.
     const taken = await this._fetchEvents(reportId, fight.id, {
       dataType: 'DamageTaken', start, end, hostility: 'Friendlies',
     });
-    const damageEvents = []; // {abilityGameID, timestamp, amount}
+    const damageEvents: DamageEvent[] = []; // {abilityGameID, timestamp, amount}
     for (const e of taken.events) {
       if (e.type !== 'damage' || typeof e.abilityGameID !== 'number' || typeof e.amount !== 'number') continue;
-      damageEvents.push({ abilityGameID: e.abilityGameID, timestamp: e.timestamp, amount: e.amount });
+      damageEvents.push({ type: 'damage', abilityGameID: e.abilityGameID, timestamp: e.timestamp, amount: e.amount });
     }
 
     // Partition damage onto casts: every damage event is attributed to exactly
     // one cast — the most recent same-ability cast at or before the hit (within
     // a window). This avoids double-counting when an ability is cast repeatedly.
-    const castsByAbility = new Map(); // abilityGameID -> sorted [{timestamp, index}]
+    const castsByAbility = new Map<number, Array<{ timestamp: number; index: number }>>(); // abilityGameID -> sorted [{timestamp, index}]
     bossCasts.forEach((c, i) => {
       if (!castsByAbility.has(c.abilityGameID)) castsByAbility.set(c.abilityGameID, []);
-      castsByAbility.get(c.abilityGameID).push({ timestamp: c.timestamp, index: i });
+      castsByAbility.get(c.abilityGameID)!.push({ timestamp: c.timestamp, index: i });
     });
     for (const arr of castsByAbility.values()) arr.sort((a, b) => a.timestamp - b.timestamp);
 
     const damagePerCast = new Array(bossCasts.length).fill(0);
     for (const d of damageEvents) {
-      const casts = castsByAbility.get(d.abilityGameID);
-      if (!casts || casts.length === 0) continue;
-      let lo = 0, hi = casts.length - 1, pick = -1;
+      const casts2 = castsByAbility.get(d.abilityGameID);
+      if (!casts2 || casts2.length === 0) continue;
+      let lo = 0, hi = casts2.length - 1, pick = -1;
       while (lo <= hi) { // last cast with timestamp <= hit
         const mid = (lo + hi) >> 1;
-        if (casts[mid].timestamp <= d.timestamp) { pick = mid; lo = mid + 1; } else { hi = mid - 1; }
+        if (casts2[mid].timestamp <= d.timestamp) { pick = mid; lo = mid + 1; } else { hi = mid - 1; }
       }
       if (pick === -1) continue;
-      if (d.timestamp - casts[pick].timestamp <= DAMAGE_WINDOW_MS) {
-        damagePerCast[casts[pick].index] += d.amount;
+      if (d.timestamp - casts2[pick].timestamp <= DAMAGE_WINDOW_MS) {
+        damagePerCast[casts2[pick].index] += d.amount;
       }
     }
 
@@ -517,7 +615,7 @@ class WCLService {
     }));
     console.log(`  [wcl] ${bossCasts.length} boss casts (${casts.pages} page(s)); ${damageEvents.length} damage events partitioned`);
 
-    const timeline = [{
+    const timeline: TimelineEvent[] = [{
       timestamp: start,
       type: 'encounter_start',
       name: `Encounter Start (${fight.name})`,
@@ -527,7 +625,7 @@ class WCLService {
 
     for (const { cast: c, damage } of bossCastDamage) {
       const abilityName = abilityNames.get(c.abilityGameID) ?? `Ability ${c.abilityGameID}`;
-      const sourceName = actorNames.get(c.sourceID) ?? 'boss';
+      const sourceName = actorNames.get(c.sourceID as number) ?? 'boss';
       timeline.push({
         timestamp: c.timestamp,
         type: 'cast',
@@ -544,22 +642,14 @@ class WCLService {
   }
 
   /**
-   * Discover what top guilds do on an encounter:
-   *   [{ guild, events: [{ timestamp, type, abilityName, context }] }]
-   *
-   * Real implementation:
-   *   1. resolve encounter (name or ID)
-   *   2. characterRankings -> top parse report codes (best parse per guild)
-   *   3. per report: enemy casts (boss mechanics) + friendly casts filtered
-   *      client-side to known raid-cooldown ability IDs from masterData
-   *   4. align each cooldown cast to its nearest boss cast within a window
-   */
-  /**
    * Walk characterRankings pages (100 entries each) and return normalized kill
    * entries with their global rank. rank = (page-1)*pageSize + idx + 1.
    */
-  async _fetchRankedEntries(encounterIdNum, { rankStart = 1, rankEnd = 100, pageSize = 100 } = {}) {
-    const entries = [];
+  private async _fetchRankedEntries(
+    encounterIdNum: number,
+    { rankStart = 1, rankEnd = 100, pageSize = 100 }: { rankStart?: number; rankEnd?: number; pageSize?: number } = {},
+  ): Promise<Array<{ rank: number; code: string; fightID: number; amount: number; serverName: string }>> {
+    const entries: Array<{ rank: number; code: string; fightID: number; amount: number; serverName: string }> = [];
     const wantEnd = rankEnd == null ? Infinity : rankEnd;
     const lastPage = Math.max(1, Math.ceil(wantEnd / pageSize));
     for (let page = 1; page <= lastPage; page++) {
@@ -570,7 +660,7 @@ class WCLService {
       }, { cacheTtlSeconds: ONE_HOUR });
       const cr = search && search.worldData && search.worldData.encounter && search.worldData.encounter.characterRankings;
       if (!cr || !Array.isArray(cr.rankings)) break;
-      cr.rankings.forEach((r, i) => {
+      cr.rankings.forEach((r: Record<string, any>, i: number) => {
         const rank = (page - 1) * pageSize + i + 1;
         if (rank < rankStart || rank > wantEnd) return;
         const code = r.report?.code ?? r.reportID;
@@ -593,18 +683,21 @@ class WCLService {
    *     the better rank. Default (unset) keeps the old "best parse per guild, top 5".
    *   maxPulls — cap on distinct kills to analyse (default 5).
    */
-  async getCommunityPulls(encounterId, options = {}) {
+  async getCommunityPulls(
+    encounterId: string | number,
+    options: { rankStart?: number | null; rankEnd?: number | null; maxPulls?: number } = {},
+  ): Promise<CommunityPull[]> {
     const { rankStart = null, rankEnd = null, maxPulls = 5 } = options;
     console.log(`Fetching community logs for encounter: ${encounterId}...`);
     const encounterIdNum = await this._resolveEncounterId(encounterId);
 
-    let picks = []; // normalised [{ label, code, fightID, amount }]
+    let picks: Array<{ label: string; code: string; fightID: number; amount: number }> = []; // normalised [{ label, code, fightID, amount }]
     if (rankStart != null || rankEnd != null) {
       // Rank-band mode (mid-tier kills): distinct kills within the window.
       const from = rankStart != null ? rankStart : 1;
       const to = rankEnd != null ? rankEnd : 100;
       const entries = await this._fetchRankedEntries(encounterIdNum, { rankStart: from, rankEnd: to });
-      const seen = new Map();
+      const seen = new Map<string, (typeof entries)[number]>();
       for (const e of entries) {
         const key = `${e.code}:${e.fightID}`;
         if (!seen.has(key)) seen.set(key, e);
@@ -621,16 +714,16 @@ class WCLService {
       }, { cacheTtlSeconds: ONE_HOUR });
       const enc = search && search.worldData && search.worldData.encounter;
       if (!enc) throw new WCLServiceError('NOT_FOUND', `encounter ${encounterIdNum} returned no data`);
-      const rankings = (enc.characterRankings?.rankings ?? []).filter(r => {
+      const rankings = (enc.characterRankings?.rankings ?? []).filter((r: Record<string, any>) => {
         const code = r.report?.code ?? r.reportID;
         const fid = r.report?.fightID ?? r.fightID;
         return Boolean(code && fid);
       });
       console.log(`  [wcl] ${rankings.length} ranking(s) for "${enc.name}" (id ${encounterIdNum})`);
-      const byGuild = new Map();
+      const byGuild = new Map<string, Record<string, any>>();
       for (const r of rankings) {
         const guild = (r.guild && r.guild.name) || r.guildName || 'Unknown';
-        if (!byGuild.has(guild) || (r.amount ?? 0) > (byGuild.get(guild).amount ?? 0)) byGuild.set(guild, r);
+        if (!byGuild.has(guild) || (r.amount ?? 0) > (byGuild.get(guild)!.amount ?? 0)) byGuild.set(guild, r);
       }
       picks = [...byGuild.values()]
         .sort((a, b) => (b.amount ?? 0) - (a.amount ?? 0))
@@ -639,16 +732,16 @@ class WCLService {
       console.log(`  [wcl] analysing ${picks.length} pull(s)`);
     }
 
-    const pulls = [];
+    const pulls: CommunityPull[] = [];
     for (const pick of picks) {
       const guild = pick.label;
       const reportCode = pick.code;
       const reportFightId = pick.fightID;
       try {
         const report = await this._probeReport(reportCode);
-        const abilityNames = new Map((report.masterData?.abilities ?? []).map(a => [a.gameID, a.name]));
+        const abilityNames = new Map<number, string>((report.masterData?.abilities ?? []).map((a: { gameID: number; name: string }) => [a.gameID, a.name]));
 
-        const fight = report.fights.find(f => f.id === reportFightId);
+        const fight = report.fights.find((f: { id: number }) => f.id === reportFightId);
         const start = fight ? fight.startTime : 0;
         const end = fight ? fight.endTime : Number.MAX_SAFE_INTEGER;
 
@@ -656,19 +749,19 @@ class WCLService {
         const casts = await this._fetchEvents(reportCode, reportFightId, {
           dataType: 'Casts', start, end, hostility: 'Enemies',
         });
-        const bossCasts = casts.events.filter(e => e.type === 'cast' && typeof e.abilityGameID === 'number');
+        const bossCasts = casts.events.filter((e): e is CastEvent => e.type === 'cast' && typeof e.abilityGameID === 'number');
 
         // Guild assignable-spell casts, filtered by authoritative spell ID.
         const friendlyCasts = await this._fetchEvents(reportCode, reportFightId, {
           dataType: 'Casts', start, end, hostility: 'Friendlies',
         });
-        const cdCasts = friendlyCasts.events.filter(e =>
+        const cdCasts = friendlyCasts.events.filter((e): e is CastEvent =>
           e.type === 'cast' && COOLDOWN_IDS.has(e.abilityGameID));
 
         // Align each cooldown cast to its nearest boss cast within the window.
-        const events = [];
+        const events: CommunityPullEvent[] = [];
         for (const cc of cdCasts) {
-          let best = null;
+          let best: CastEvent | null = null;
           let bestDelta = Infinity;
           for (const bc of bossCasts) {
             const delta = Math.abs(cc.timestamp - bc.timestamp);
@@ -690,11 +783,15 @@ class WCLService {
         pulls.push({ guild, events });
         console.log(`  [wcl] ${guild}: ${events.length} cooldown casts aligned to boss abilities (fight ${reportFightId})`);
       } catch (e) {
-        console.warn(`  [wcl] skipping guild "${guild}" (report ${reportCode}): ${e.message}`);
+        console.warn(`  [wcl] skipping guild "${guild}" (report ${reportCode}): ${errMsg(e)}`);
       }
     }
     return pulls;
   }
+}
+
+function errMsg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }
 
 export { WCLServiceError };
@@ -706,9 +803,9 @@ export default WCLService;
 // later calls ignore them.
 // ---------------------------------------------------------------------------
 
-let _sharedWCL = null;
+let _sharedWCL: WCLService | null = null;
 
-export function getWCLService(options = {}) {
+export function getWCLService(options: WCLServiceOptions = {}): WCLService {
   if (!_sharedWCL) {
     _sharedWCL = new WCLService(
       process.env.WCL_CLIENT_ID,

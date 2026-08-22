@@ -2,16 +2,17 @@
   "name": "app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/src/index.js",
   "type": "module",
   "engines": {
     "node": ">=22.19.0"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "node --test \"test/unit/*.test.js\"",
-    "test:unit": "node --test \"test/unit/*.test.js\"",
-    "test:integration": "node --test \"test/integration/*.test.js\"",
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').cpSync('src/data','dist/src/data',{recursive:true})\"",
+    "start": "node dist/src/index.js",
+    "test": "npm run build && node --test \"dist/test/unit/*.test.js\"",
+    "test:unit": "npm run build && node --test \"dist/test/unit/*.test.js\"",
+    "test:integration": "npm run build && node --test \"dist/test/integration/*.test.js\"",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

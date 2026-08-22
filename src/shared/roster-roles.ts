@@ -19,6 +19,26 @@
  * All role tags here are the sheet's actual tags (docs/tot-assigns-csv-format.md).
  */
 
+/** A normalized RaidHelper sign-up (as returned by getEventRoster / _normalizeMember). */
+export interface RosterEntry {
+  name: string;
+  className?: string | null;
+  specName?: string | null;
+  roleName?: string | null;
+  status?: string | null;
+  id?: number | string | null;
+}
+
+/** A resolved sheet role tag -> player info (name + the RaidHelper fields used to derive it). */
+export interface RoleMappingEntry {
+  name: string;
+  className?: string | null;
+  specName?: string | null;
+  roleName?: string | null;
+}
+
+export type RoleMappings = Record<string, RoleMappingEntry>;
+
 // Combinational pins: "className|roleName|specName" (normalized, suffix kept)
 // -> sheet role-tag base. Only add entries where RaidHelper's labels / the
 // auto rules can't resolve unambiguously.
@@ -38,12 +58,12 @@ const CLASS_ALIASES = {
   'war': 'warrior',
 };
 
-const normClass = (s) => {
+const normClass = (s: unknown): string => {
   const v = String(s ?? '').toLowerCase().replace(/[^a-z]/g, '');
-  return CLASS_ALIASES[v] ?? v;
+  return CLASS_ALIASES[v as keyof typeof CLASS_ALIASES] ?? v;
 };
 
-const normSpec = (s) => String(s ?? '')
+const normSpec = (s: unknown): string => String(s ?? '')
   .toLowerCase()
   .replace(/_/g, ' ')   // Unholy_DPS -> unholy dps
   .replace(/\d+$/, '')  // Holy1 / Protection1 -> base spec (for real-class rules)
@@ -51,18 +71,18 @@ const normSpec = (s) => String(s ?? '')
 
 // Tuple-key normalization: keep spaces/role, keep the trailing spec digit so
 // "Protection" and "Protection1" stay distinct.
-const tupleClass = (s) => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
-const tupleRole = (s) => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
-const tupleSpec = (s) => String(s ?? '').toLowerCase().replace(/_/g, ' ').split(/\s+/).join(' ').trim();
+const tupleClass = (s: unknown): string => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+const tupleRole = (s: unknown): string => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+const tupleSpec = (s: unknown): string => String(s ?? '').toLowerCase().replace(/_/g, ' ').split(/\s+/).join(' ').trim();
 
 // RaidHelper entries that aren't on the bench of tonight's roster.
-const isNonRoster = (p) =>
+const isNonRoster = (p: RosterEntry): boolean =>
   p.status === 'Absence' ||
   ['bench', 'absence', 'tentative', 'maybe'].includes(String(p.className ?? '').toLowerCase());
 
 // class (normalized) -> { spec: tagBase }. `'*'` = fallback for any spec.
 // `null` = recognized class but no clean sheet tag (left unmapped).
-const SPEC_RULES = {
+const SPEC_RULES: Record<string, Record<string, string | null>> = {
   'priest': { 'discipline': 'DISC', 'holy': 'HOLYPRIEST', 'shadow': 'SPRIEST' },
   'paladin': { 'protection': 'PROTPALA', 'holy': 'HPALA', 'retribution': 'RETPALA' },
   'warrior': { 'protection': 'PROTWARR', 'arms': 'DPSWARR', 'fury': 'DPSWARR' },
@@ -77,22 +97,15 @@ const SPEC_RULES = {
 };
 
 /**
- * @typedef {{ name:string, className?:string, specName?:string, roleName?:string, status?:string, id?:number|string }} RosterEntry
- */
-
-/**
  * Resolve a roster to sheet role tags (name-agnostic).
- *
- * @param {RosterEntry[]} roster normalized roster (getEventRoster / _normalizeMember).
- * @returns {{ mappings: Record<string,{name:string,className?:string,specName?:string,roleName?:string}>, unmapped: RosterEntry[] }}
  */
-export function resolveRoleMappings(roster) {
-  const mappings = {};
-  const unmapped = [];
-  const usedTags = new Set();
-  const counters = {};
+export function resolveRoleMappings(roster: RosterEntry[] | null | undefined): { mappings: RoleMappings; unmapped: RosterEntry[] } {
+  const mappings: RoleMappings = {};
+  const unmapped: RosterEntry[] = [];
+  const usedTags = new Set<string>();
+  const counters: Record<string, number> = {};
 
-  const assign = (p, base) => {
+  const assign = (p: RosterEntry, base: string) => {
     counters[base] = (counters[base] ?? 0) + 1;
     let n = counters[base];
     while (usedTags.has(`${base}${n}`)) n = ++counters[base];
@@ -109,7 +122,7 @@ export function resolveRoleMappings(roster) {
   for (const p of roster ?? []) {
     if (!p || !p.name) continue;
     const tupleKey = [tupleClass(p.className), tupleRole(p.roleName), tupleSpec(p.specName)].join('|');
-    const tupleBase = ROSTER_RULE_TUPLES[tupleKey];
+    const tupleBase = ROSTER_RULE_TUPLES[tupleKey as keyof typeof ROSTER_RULE_TUPLES];
     if (tupleBase) { assign(p, tupleBase); continue; }
 
     const cls = normClass(p.className);

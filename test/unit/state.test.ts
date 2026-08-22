@@ -7,6 +7,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert';
+import type { TestContext } from 'node:test';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -22,10 +23,11 @@ import {
   commitAssignments,
   StateError,
   ARTIFACTS,
-} from '../../src/state.js';
+} from '../../src/state.ts';
+import type { Assignment } from '../../src/shared/assignments-schema.ts';
 
 // One throwaway state dir per test, removed afterwards.
-function withStateDir(t) {
+function withStateDir(t: TestContext) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cli-state-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   return dir;
@@ -72,9 +74,9 @@ test('commitAssignments writes the canonical artifact and a rendered TSV', (t) =
   const dir = withStateDir(t);
   const roleMappings = { TANK1: { name: 'Bob' }, HEAL1: { name: 'Alice' } };
   const assignments = [
-    { roleTag: 'TANK1', event: 'Dance', occurrence: 1, spellName: 'Smash', notes: 'move out', spellId: 12345, timingOffset: 2 },
-    { roleTag: 'HEAL1', event: 'Dance', occurrence: 2, spellName: 'Heal', notes: '', spellId: 67890 },
-  ];
+    { roleTag: 'TANK1', event: 'Dance', occurrence: 1, spellName: 'Smash', notes: 'move out', spellId: '12345', timingOffset: 2 },
+    { roleTag: 'HEAL1', event: 'Dance', occurrence: 2, spellName: 'Heal', notes: '', spellId: '67890', timingOffset: 1 },
+  ] as Assignment[];
 
   commitAssignments(dir, assignments, roleMappings);
 
