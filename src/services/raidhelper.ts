@@ -14,27 +14,40 @@
  * RAID_HELPER_EVENT_ID (integration tests).
  */
 
-import { resolveRoleMappings } from '../shared/roster-roles.js';
+import { resolveRoleMappings } from '../shared/roster-roles.ts';
+import type { RoleMappings, RosterEntry } from '../shared/roster-roles.ts';
 
 const FETCH_TIMEOUT_MS = 20000;
 
+type RHEventBody = Record<string, any>;
+
 class RaidHelperError extends Error {
-  constructor(code, message, hint, details) {
+  readonly code: string;
+  readonly hint: string | undefined;
+  readonly details: unknown;
+
+  constructor(code: string, message: string, hint?: string, details?: unknown) {
     super(message);
     this.name = 'RaidHelperError';
     this.code = code;
     this.hint = hint;
     this.details = details;
+    // `instanceof` must survive transpilation across this package boundary
+    // (works with Node ESM when the class is exported and imported directly).
+    Object.setPrototypeOf(this, RaidHelperError.prototype);
   }
 }
 
 class RaidHelperService {
-  constructor(apiKey) {
+  private readonly apiKey: string | undefined;
+  private readonly endpoint: string;
+
+  constructor(apiKey: string | undefined) {
     this.apiKey = apiKey;
     this.endpoint = 'https://raid-helper.xyz/api/v4';
   }
 
-  _hasKey() {
+  _hasKey(): boolean {
     return Boolean(this.apiKey && !/your_|^\s*$/.test(this.apiKey));
   }
 
@@ -42,18 +55,19 @@ class RaidHelperService {
    * Fetch a live Raid-Helper event and return the parsed JSON body.
    * `eventId` is the Raid-Helper event id (string or number).
    */
-  async getEvent(eventId) {
-    if (!this._hasKey()) {
+  async getEvent(eventId: string | number): Promise<RHEventBody> {
+    const apiKey = this.apiKey;
+    if (!apiKey || /your_|^\s*$/.test(apiKey)) {
       throw new RaidHelperError('NOT_AUTHENTICATED', 'RAID_HELPER_API_KEY not configured',
         'set RAID_HELPER_API_KEY in .env (get the key with /apikey in your server)');
     }
 
     const url = `${this.endpoint}/events/${encodeURIComponent(String(eventId))}`;
-    const headers = { authorization: this.apiKey, accept: 'application/json' };
+    const headers = { authorization: apiKey, accept: 'application/json' };
 
-    const doFetch = () => fetch(url, { headers, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    const doFetch = (): Promise<Response> => fetch(url, { headers, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
 
-    let res;
+    let res: Response;
     try {
       res = await doFetch();
     } catch (e) {
@@ -62,7 +76,7 @@ class RaidHelperService {
       try {
         res = await doFetch();
       } catch (e2) {
-        throw new RaidHelperError('NETWORK_ERROR', `Raid-Helper unreachable: ${e2.message}`, 'transient — retry');
+        throw new RaidHelperError('NETWORK_ERROR', `Raid-Helper unreachable: ${errMsg(e2)}`, 'transient — retry');
       }
     }
 
@@ -87,7 +101,7 @@ class RaidHelperService {
     try {
       return await res.json();
     } catch (e) {
-      throw new RaidHelperError('NETWORK_ERROR', `Raid-Helper returned unparseable JSON: ${e.message}`);
+      throw new RaidHelperError('NETWORK_ERROR', `Raid-Helper returned unparseable JSON: ${errMsg(e)}`);
     }
   }
 
@@ -95,7 +109,7 @@ class RaidHelperService {
    * Pull the sign-up roster out of an event body. The v2 event object carries the
    * signed-up players in `signUps`; we tolerate a few historical shapes as well.
    */
-  _extractRoster(event) {
+  _extractRoster(event: RHEventBody): RHEventBody[] {
     if (!event || typeof event !== 'object') return [];
     const candidates = [event.signUps, event.roster, event.data && event.data.signUps, event.data && event.data.roster];
     for (const c of candidates) {
@@ -109,7 +123,7 @@ class RaidHelperService {
    * Raid-Helper uses the guild's custom labels: member -> name, class ->
    * className/cClassName, spec -> specName/cSpecName, role -> roleName.
    */
-  _normalizeMember(m) {
+  _normalizeMember(m: RHEventBody): RosterEntry | null {
     if (!m || typeof m !== 'object') return null;
     const name = m.name ?? m.nickname ?? null;
     if (!name) return null;
@@ -124,10 +138,10 @@ class RaidHelperService {
   }
 
   /** Fetch and normalize the live roster for an event (no mock). */
-  async getEventRoster(eventId) {
+  async getEventRoster(eventId: string | number): Promise<RosterEntry[]> {
     const event = await this.getEvent(eventId);
     const roster = this._extractRoster(event);
-    return roster.map(m => this._normalizeMember(m)).filter(Boolean);
+    return roster.map(m => this._normalizeMember(m)).filter((m): m is RosterEntry => m !== null);
   }
 
   /**
@@ -135,15 +149,19 @@ class RaidHelperService {
    * (DISC1, PROTPALA1, PROTWARR1, RSHAM1, ...).
    *
    * Delegates to the shared "RaidHelper -> sheet role" layer
-   * (src/shared/roster-roles.js): a curated per-player override map first
+   * (src/shared/roster-roles.ts): a curated per-player override map first
    * (tanks are often labelled with the guild's custom class name "Tank", so
    * protection paladin vs protection warrior must be pinned by player name), then
    * automatic class+spec rules.
    */
-  async getRoleMappings(eventId) {
+  async getRoleMappings(eventId: string | number): Promise<RoleMappings> {
     const roster = await this.getEventRoster(eventId);
     return resolveRoleMappings(roster).mappings;
   }
+}
+
+function errMsg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }
 
 export { RaidHelperError };

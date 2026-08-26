@@ -1,7 +1,7 @@
 'use agent';
 import { useModel, useTool } from '@flue/runtime';
 import * as v from 'valibot';
-import { getWCLService, WCLServiceError } from '../services/wcl.js';
+import { getWCLService, WCLServiceError } from '../services/wcl.ts';
 
 /**
  * Autonomous WCL query agent. The model writes WCL v2 GraphQL queries, the

@@ -12,9 +12,38 @@
  */
 import path from 'node:path';
 
-import { ARTIFACTS } from './state.js';
+import { ARTIFACTS } from './state.ts';
+import type { Assignment } from './shared/assignments-schema.ts';
+import type { RoleMappings } from './shared/roster-roles.ts';
 
-export function renderTable(assignments, roleMappings) {
+export interface MenuIO {
+  print(text?: string): void;
+  prompt(label: string): Promise<string>;
+  isTTY: boolean;
+  close?: () => void;
+}
+
+/** What an operation returns to the menu. `assignments` gates the review/commit flow. */
+export interface OpResult {
+  assignments?: Assignment[];
+  roleMappings?: RoleMappings;
+  [key: string]: unknown;
+}
+
+export interface Ops {
+  mappings(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  timeline(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  community(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  generate(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  run(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  review(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  refine(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult>;
+  explore(opts: Record<string, unknown>, ctx: unknown): Promise<OpResult | undefined>;
+  commit(result: OpResult, ctx: unknown): Promise<void>;
+  writeFiles(result: OpResult, ctx: unknown): Promise<void>;
+}
+
+export function renderTable(assignments: Assignment[], roleMappings: RoleMappings): string {
   const lines = assignments.map((a) => {
     const player = (roleMappings[a.roleTag] && roleMappings[a.roleTag].name) || a.roleTag;
     return `${player}\t${a.event}\t${a.occurrence}\t${a.roleTag}\t${a.timingOffset ?? 1}\t${a.spellName}`;
@@ -22,7 +51,7 @@ export function renderTable(assignments, roleMappings) {
   return lines.join('\n');
 }
 
-async function promptInt(io, label) {
+async function promptInt(io: MenuIO, label: string): Promise<number> {
   for (;;) {
     const raw = await io.prompt(label);
     const n = Number.parseInt(raw, 10);
@@ -31,7 +60,13 @@ async function promptInt(io, label) {
   }
 }
 
-export async function reviewCommit({ io, ops, result, ctx, onBack }) {
+export async function reviewCommit({ io, ops, result, ctx, onBack }: {
+  io: MenuIO;
+  ops: Ops;
+  result: OpResult;
+  ctx: unknown;
+  onBack: () => void;
+}): Promise<void> {
   let current = result;
   for (;;) {
     io.print('\n--- Review / Commit ---');
@@ -42,7 +77,7 @@ export async function reviewCommit({ io, ops, result, ctx, onBack }) {
     io.print('5  Back to main menu');
     const choice = (await io.prompt('Choose (1-5): ')).trim();
     switch (choice) {
-      case '1': io.print(renderTable(current.assignments, current.roleMappings)); break;
+      case '1': io.print(renderTable(current.assignments ?? [], current.roleMappings ?? {})); break;
       case '2': await ops.writeFiles(current, ctx); break;
       case '3': await ops.commit(current, ctx); io.print('Committed.'); break;
       case '4': {
@@ -57,7 +92,12 @@ export async function reviewCommit({ io, ops, result, ctx, onBack }) {
   }
 }
 
-export async function runMenu({ io, ops, ctx, onResult = () => {} }) {
+export async function runMenu({ io, ops, ctx, onResult = (): void => {} }: {
+  io: MenuIO;
+  ops: Ops;
+  ctx: unknown;
+  onResult?: (result: OpResult | undefined) => void;
+}): Promise<void> {
   let running = true;
   while (running) {
     io.print('\n--- Raid Assignment Tool ---');
@@ -72,7 +112,7 @@ export async function runMenu({ io, ops, ctx, onResult = () => {} }) {
     io.print('9  Exit');
     const choice = (await io.prompt('Select an option (1-9): ')).trim();
 
-    let result;
+    let result: OpResult | undefined;
     switch (choice) {
       case '1':
         result = await ops.mappings({ encounter: await io.prompt('Encounter name or id: ') }, ctx);

@@ -5,7 +5,7 @@
  * cooldown plan.
  *
  * Usage:
- *   node scripts/plan-encounter.mjs --report CODE --fight N --encounter NAME|ID
+ *   node dist/scripts/plan-encounter.js --report CODE --fight N --encounter NAME|ID
  *     [--roster-event ID]          (default: $RAID_HELPER_EVENT_ID)
  *     [--ranks "START-END"]        ranking band for community kills (default: top-tier)
  *     [--max-pulls N]              distinct kills to analyse (default: 5)
@@ -17,21 +17,21 @@ import path from 'node:path';
 import { init } from '@flue/runtime';
 import { start, sqlite } from '@flue/runtime/node';
 
-import { getWCLService } from '../src/services/wcl.js';
-import RaidHelperService from '../src/services/raidhelper.js';
-import CSVFormatter from '../src/utils/csv_formatter.js';
+import { getWCLService } from '../src/services/wcl.ts';
+import RaidHelperService from '../src/services/raidhelper.ts';
+import CSVFormatter from '../src/utils/csv_formatter.ts';
 import { CommunityAnalyst } from '../src/agents/community-analyst.ts';
 import { AssignmentGenerator } from '../src/agents/assignment-generator.ts';
 
-const arg = (k) => { const i = process.argv.indexOf('--' + k); return i >= 0 ? process.argv[i + 1] : undefined; };
+const arg = (k: string): string | undefined => { const i = process.argv.indexOf('--' + k); return i >= 0 ? process.argv[i + 1] : undefined; };
 const report = arg('report');
 const fight = arg('fight') ? Number(arg('fight')) : undefined;
 const encounter = arg('encounter');
 const rosterEventId = arg('roster-event') || process.env.RAID_HELPER_EVENT_ID;
-const outPath = arg('out') || path.join(import.meta.dirname, '..', 'assignments_plan.tsv');
+const outPath = arg('out') || path.join(process.cwd(), 'assignments_plan.tsv');
 
 // Parse --ranks "100-500" into { rankStart, rankEnd } (null/null => top tier).
-let rankStart = null, rankEnd = null;
+let rankStart: number | null = null, rankEnd: number | null = null;
 const ranksArg = arg('ranks');
 if (ranksArg) {
   const m = ranksArg.match(/^(\d*)\s*-\s*(\d+)$/);
@@ -42,13 +42,17 @@ if (ranksArg) {
 const maxPulls = arg('max-pulls') ? Number(arg('max-pulls')) : 5;
 
 if (!report || !fight || !encounter) {
-  console.error('usage: node scripts/plan-encounter.mjs --report CODE --fight N --encounter NAME|ID [--roster-event ID] [--ranks "START-END"] [--max-pulls N] [--out path]');
+  console.error('usage: node dist/scripts/plan-encounter.js --report CODE --fight N --encounter NAME|ID [--roster-event ID] [--ranks "START-END"] [--max-pulls N] [--out path]');
+  process.exit(1);
+}
+if (!rosterEventId) {
+  console.error('--roster-event or RAID_HELPER_EVENT_ID is required');
   process.exit(1);
 }
 
 const wcl = getWCLService();
 const skillsData = JSON.parse(
-  fs.readFileSync(path.join(import.meta.dirname, '..', 'src', 'data', 'mop_skills.json'), 'utf8'),
+  fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'),
 );
 
 const flue = await start({ agents: [CommunityAnalyst, AssignmentGenerator], db: sqlite() });

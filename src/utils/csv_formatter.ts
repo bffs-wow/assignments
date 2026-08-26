@@ -1,9 +1,11 @@
 /**
  * Formats AI JSON output into TSV matching the requested spreadsheet schema.
  */
+import type { Assignment } from '../shared/assignments-schema.ts';
+import type { RoleMappings } from '../shared/roster-roles.ts';
 
 class CSVFormatter {
-  static formatToTSV(assignments, roleMappings) {
+  static formatToTSV(assignments: Assignment[], roleMappings: RoleMappings): string {
     // Header for the specific encounter format
     let tsv = "Player\t\tEvent\tOccurrence\tRole\tTiming\tSpell\tNotes\tSpellID\n";
 

@@ -1,11 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
 
-import { runMenu, reviewCommit, renderTable } from '../../src/interactive.js';
+import { runMenu, reviewCommit, renderTable } from '../../src/interactive.ts';
+import type { MenuIO, Ops, OpResult } from '../../src/interactive.ts';
 
 // Scripted IO: answers are consumed one prompt at a time; prints are collected.
-function fakeIo(answers, { isTTY = false } = {}) {
-  const printed = [];
+function fakeIo(answers: string[], { isTTY = false }: { isTTY?: boolean } = {}): MenuIO & { printed: string[] } {
+  const printed: string[] = [];
   const io = {
     isTTY,
     printed,
@@ -16,19 +17,19 @@ function fakeIo(answers, { isTTY = false } = {}) {
 }
 
 // A set of ops that record their invocations; generate/refine return canned results.
-function fakeOps(overrides = {}) {
-  const calls = [];
-  const base = {
+function fakeOps(overrides: Partial<Ops> = {}): { base: Ops; calls: any[] } {
+  const calls: any[] = [];
+  const base: Ops = {
     mappings: async (opts) => { calls.push(['mappings', opts]); return { roleMappings: { TANK1: { name: 'Bob' } } }; },
     timeline: async (opts) => { calls.push(['timeline', opts]); return { timeline: [] }; },
     community: async (opts) => { calls.push(['community', opts]); return { strategy: '# strategy\nspread out' }; },
-    generate: async (opts) => { calls.push(['generate', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2 }], roleMappings: { TANK1: { name: 'Bob' } } }; },
-    run: async (opts) => { calls.push(['run', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2 }], roleMappings: { TANK1: { name: 'Bob' } } }; },
-    review: async (opts) => { calls.push(['review', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2 }], roleMappings: { TANK1: { name: 'Bob' } } }; },
-    refine: async (opts) => { calls.push(['refine', opts]); return { assignments: [{ event: 'Move', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 3 }], roleMappings: { TANK1: { name: 'Bob' } } }; },
+    generate: async (opts) => { calls.push(['generate', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2, notes: '', spellId: '1' }], roleMappings: { TANK1: { name: 'Bob' } } }; },
+    run: async (opts) => { calls.push(['run', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2, notes: '', spellId: '1' }], roleMappings: { TANK1: { name: 'Bob' } } }; },
+    review: async (opts) => { calls.push(['review', opts]); return { assignments: [{ event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2, notes: '', spellId: '1' }], roleMappings: { TANK1: { name: 'Bob' } } }; },
+    refine: async (opts) => { calls.push(['refine', opts]); return { assignments: [{ event: 'Move', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 3, notes: '', spellId: '1' }], roleMappings: { TANK1: { name: 'Bob' } } }; },
     explore: async (opts) => { calls.push(['explore', opts]); return { answer: 'The boss cast Smash 3 times.' }; },
-    commit: async (result) => calls.push(['commit', result.assignments.length]),
-    writeFiles: async (result) => calls.push(['writeFiles', result.assignments.length]),
+    commit: async (result: OpResult) => { calls.push(['commit', result.assignments?.length]); },
+    writeFiles: async (result: OpResult) => { calls.push(['writeFiles', result.assignments?.length]); },
     ...overrides,
   };
   return { base, calls };
@@ -58,11 +59,11 @@ test('generate runs, then enters the review/commit sub-process on a TTY', async 
 
 test('non-TTY invocation writes files and exits without the review loop', async () => {
   const io = fakeIo(['5'], { isTTY: false });
-  const calls = [];
+  const calls: any[] = [];
   const ops = {
     run: async () => { calls.push(['run']); return { assignments: [], roleMappings: {} }; },
     commit: async () => calls.push(['commit']),
-  };
+  } as unknown as Ops;
   await runMenu({ io, ops, ctx: { stateDir: '/tmp/state' }, onResult: () => {} });
 
   assert.ok(calls.some(([name]) => name === 'run'), 'run was invoked explicitly');
@@ -72,12 +73,12 @@ test('non-TTY invocation writes files and exits without the review loop', async 
 
 test('review/commit sub-process: write files, suggest changes, commit, back', async () => {
   const io = fakeIo(['2', '4', 'F', '3', '5'], { isTTY: true });
-  const calls = [];
+  const calls: any[] = [];
   const ops = {
-    writeFiles: async (r) => calls.push(['writeFiles', r.roleMappings ? 1 : 0]),
-    refine: async (opts) => { calls.push(['refine', opts.feedback]); return { assignments: [], roleMappings: {} }; },
-    commit: async (r) => calls.push(['commit', r.roleMappings ? 1 : 0]),
-  };
+    writeFiles: async (r: OpResult) => calls.push(['writeFiles', r.roleMappings ? 1 : 0]),
+    refine: async (opts: Record<string, unknown>) => { calls.push(['refine', opts.feedback]); return { assignments: [], roleMappings: {} }; },
+    commit: async (r: OpResult) => calls.push(['commit', r.roleMappings ? 1 : 0]),
+  } as unknown as Ops;
   await reviewCommit({
     io,
     ops,
@@ -93,7 +94,7 @@ test('review/commit sub-process: write files, suggest changes, commit, back', as
 
 test('renders a readable table row per assignment with player names', () => {
   const table = renderTable([
-    { event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2 },
+    { event: 'Dance', occurrence: 1, roleTag: 'TANK1', spellName: 'Smash', timingOffset: 2, notes: '', spellId: '1' },
   ], { TANK1: { name: 'Bob' } });
   assert.match(table, /Bob/);
   assert.match(table, /Dance/);

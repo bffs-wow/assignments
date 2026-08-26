@@ -11,7 +11,7 @@ import 'dotenv/config';
 import { test } from 'node:test';
 import assert from 'node:assert';
 
-import WCLService from '../../src/services/wcl.js';
+import WCLService from '../../src/services/wcl.ts';
 
 const id = process.env.WCL_CLIENT_ID;
 const secret = process.env.WCL_CLIENT_SECRET;
@@ -77,7 +77,7 @@ test('WCL: getEncounterEvents builds a timeline from a discovered real report', 
 test('WCL: unknown report surfaces a typed WCLServiceError', { skip }, async () => {
   await assert.rejects(
     service.getEncounterEvents('THISREPORTDOESNOTEXIST', 1),
-    (err) => err && err.code === 'NOT_FOUND' && /not found/i.test(err.message),
+    (err: any) => err && err.code === 'NOT_FOUND' && /not found/i.test(err.message),
     'expected a NOT_FOUND WCLServiceError',
   );
 });

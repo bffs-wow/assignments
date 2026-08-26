@@ -12,7 +12,7 @@ import 'dotenv/config';
 import { test } from 'node:test';
 import assert from 'node:assert';
 
-import RaidHelperService from '../../src/services/raidhelper.js';
+import RaidHelperService from '../../src/services/raidhelper.ts';
 
 const key = process.env.RAID_HELPER_API_KEY;
 const eventId = process.env.RAID_HELPER_EVENT_ID;
@@ -25,7 +25,7 @@ const skip = missing.length ? `set ${missing.join(' & ')} in .env to run` : fals
 const service = new RaidHelperService(key);
 
 test('RaidHelper: getEventRoster hits the live API', { skip }, async () => {
-  const roster = await service.getEventRoster(eventId);
+  const roster = await service.getEventRoster(eventId as string);
   assert.ok(Array.isArray(roster), 'expected an array');
   assert.ok(roster.length > 0, 'expected at least one roster member');
   for (const m of roster) {
@@ -34,7 +34,7 @@ test('RaidHelper: getEventRoster hits the live API', { skip }, async () => {
 });
 
 test('RaidHelper: getRoleMappings maps the live roster to role tags', { skip }, async () => {
-  const mappings = await service.getRoleMappings(eventId);
+  const mappings = await service.getRoleMappings(eventId as string);
   const keys = Object.keys(mappings);
   assert.ok(keys.length > 0, 'expected at least one mapped role tag');
   for (const tag of keys) {
@@ -46,7 +46,7 @@ test('RaidHelper: missing key surfaces NOT_AUTHENTICATED', async () => {
   const noKey = new RaidHelperService('');
   await assert.rejects(
     noKey.getEvent(eventId || '1'),
-    (err) => err && err.code === 'NOT_AUTHENTICATED',
+    (err: any) => err && err.code === 'NOT_AUTHENTICATED',
     'expected NOT_AUTHENTICATED without a key',
   );
 });

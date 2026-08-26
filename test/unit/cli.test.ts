@@ -12,22 +12,23 @@ import 'dotenv/config';
 import { test } from 'node:test';
 import assert from 'node:assert';
 
-import { createProgram } from '../../src/cli.js';
+import { createProgram } from '../../src/cli.ts';
+import type { Handlers } from '../../src/cli.ts';
 
 // Spy handlers so each test asserts which operation commander dispatched and
 // with which resolved options.
-function makeHandlers() {
-  const calls = [];
-  const handlers = {
-    menu: () => calls.push(['menu']),
-    timeline: (opts) => calls.push(['timeline', opts]),
-    mappings: (opts) => calls.push(['mappings', opts]),
-    community: (opts) => calls.push(['community', opts]),
-    generate: (opts) => calls.push(['generate', opts]),
-    run: (opts) => calls.push(['run', opts]),
-    review: (opts) => calls.push(['review', opts]),
-    refine: (opts) => calls.push(['refine', opts]),
-    explore: (opts) => calls.push(['explore', opts]),
+function makeHandlers(): { handlers: Handlers; calls: any[] } {
+  const calls: any[] = [];
+  const handlers: Handlers = {
+    menu: () => { calls.push(['menu']); },
+    timeline: (opts) => { calls.push(['timeline', opts]); },
+    mappings: (opts) => { calls.push(['mappings', opts]); },
+    community: (opts) => { calls.push(['community', opts]); },
+    generate: (opts) => { calls.push(['generate', opts]); },
+    run: (opts) => { calls.push(['run', opts]); },
+    review: (opts) => { calls.push(['review', opts]); },
+    refine: (opts) => { calls.push(['refine', opts]); },
+    explore: (opts) => { calls.push(['explore', opts]); },
   };
   return { handlers, calls };
 }
@@ -36,13 +37,13 @@ function makeHandlers() {
 // exitOverride must be applied to every subcommand too — commander only registers
 // the callback on the command it is called on, and subcommand errors surface from
 // the subcommand's own _exit().
-function overrideExits(program) {
+function overrideExits(program: ReturnType<typeof createProgram>) {
   program.exitOverride();
   for (const cmd of program.commands) cmd.exitOverride();
   return program;
 }
 
-function run(argv, env) {
+function run(argv: string[], env?: string): { calls: any[]; error: any } {
   const { handlers, calls } = makeHandlers();
   const program = overrideExits(createProgram(handlers));
   const prev = process.env.WCL_INSTANCE;
@@ -68,7 +69,7 @@ test('bare invocation runs nothing: missing subcommand shows help and exits 1; t
   assert.deepStrictEqual(calls, []); // no operation dispatched
   // The menu handler exists for the entry point to call explicitly (tested in interactive.test.js).
   const { handlers: h } = makeHandlers();
-  h.menu();
+  h.menu?.();
   assert.ok(true);
 });
 
