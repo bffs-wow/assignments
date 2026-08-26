@@ -2,9 +2,18 @@
   "name": "app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').cpSync('src/data','dist/src/data',{recursive:true})\"",
+    "start": "node dist/src/index.js",
+    "test": "npm run build && node --test dist/test/unit/*.test.js",
+    "test:unit": "npm run build && node --test dist/test/unit/*.test.js",
+    "test:integration": "npm run build && node --test dist/test/integration/*.test.js",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -13,13 +22,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/bffs-wow/assignments/issues"
   },
   "homepage": "https://github.com/bffs-wow/assignments#readme",
   "dependencies": {
-    "@google/genai": "^2.17.1",
-    "dotenv": "^17.4.2"
+    "@flue/cli": "^2.0.3",
+    "@flue/runtime": "^2.0.3",
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2",
+    "valibot": "^1.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }
