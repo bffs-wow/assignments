@@ -93,7 +93,7 @@ async function stepMappings(opts: { encounter?: string; state?: string }): Promi
   }
   const unresolved = unmapped.filter((p) => !['Bench', 'Absence', 'Tentative'].includes(p.className ?? '') && p.status !== 'Absence');
   if (unresolved.length) {
-    console.log('\nUnresolved (in roster, not mapped) — add a pin in src/shared/roster-roles.ts ROSTER_ROLE_OVERRIDES:');
+    console.log('\nUnresolved (in roster, not mapped) — add a pin in src/shared/roster-roles.ts ROSTER_RULE_TUPLES:');
     for (const p of unresolved) {
       console.log(`  ${p.name}  (${p.className || '?'}/${p.specName || '?'})  [${p.status || ''}]`);
     }

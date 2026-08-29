@@ -19,6 +19,10 @@ The application is built around a multi-stage pipeline:
 - **State:** The current implementation is a "Release Candidate Skeleton". The core architecture, AI prompting, and data formatting pipelines are fully built and validated using mocked data returns from the API services.
 - **Next Steps:** Implement the actual API requests inside `src/services/wcl.js` (GraphQL Client Credentials flow) and `src/services/raidhelper.js`.
 
+## Usage
+
+Because the project relies on standard Node module resolution without experimental flags, it is recommended to run the tool via `npm start`.
+
 ## Environment Setup
 
 Requires a `.env` file containing:

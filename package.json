@@ -10,9 +10,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node -e \"require('fs').cpSync('src/data','dist/src/data',{recursive:true})\"",
     "start": "node dist/src/index.js",
-    "test": "npm run build && node --test \"dist/test/unit/*.test.js\"",
-    "test:unit": "npm run build && node --test \"dist/test/unit/*.test.js\"",
-    "test:integration": "npm run build && node --test \"dist/test/integration/*.test.js\"",
+    "test": "npm run build && node --test dist/test/unit/*.test.js",
+    "test:unit": "npm run build && node --test dist/test/unit/*.test.js",
+    "test:integration": "npm run build && node --test dist/test/integration/*.test.js",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

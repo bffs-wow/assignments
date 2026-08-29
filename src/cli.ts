@@ -55,7 +55,7 @@ export function createProgram(handlers: Handlers): Command {
   const program = new Command();
   program
     .name('index.js')
-    .description('WoW Classic Raid Assignment Automation (real WCL data — no mock).');
+    .description('WoW Classic Raid Assignment Automation');
   // No root action: bare invocation is the entry point's job (it calls the
   // menu directly). Without an action handler, commander errors on unknown
   // commands instead of letting them fall through to a menu.
