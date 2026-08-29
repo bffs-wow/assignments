@@ -1,0 +1,3395 @@
+{
+  "tier": "soo",
+  "description": "Observed enemy abilities per Siege of Orgrimmar boss: real cast cadence from a full-clear WCL log, short descriptions from archived Wowhead pages.",
+  "source": {
+    "wclReport": "RTF3CwNmBYQA97cz",
+    "wclNote": "fight ids and timings from the report probe; enemy-cast streams via the app's WCL service",
+    "wowheadVia": "web.archive.org snapshots of wowhead.com/spell=<id> (MoP 5.4-era pages)",
+    "fetchedAt": "2026-08-26"
+  },
+  "bosses": [
+    {
+      "boss": "Immerseus",
+      "fightId": 2,
+      "durationSec": 211,
+      "spells": [
+        {
+          "spellId": 143436,
+          "name": "Corrosive Blast",
+          "event": "Corrosive Blast",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143436",
+          "description": "Inflicts 877500 to 922500 Shadow damage and increases Corrosive Blast damage taken by 200% for 45 sec. Stacks. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 13,
+            "lastSec": 128,
+            "gapMinSec": 45,
+            "gapMedSec": 45,
+            "gapMaxSec": 70
+          }
+        },
+        {
+          "spellId": 143309,
+          "name": "Swirl",
+          "event": "Swirl",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143309",
+          "description": "Causes a torrent of Sha corrupted water to explode from the ground and from Immerseus! In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 69,
+            "lastSec": 69,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143498,
+          "name": "Erupting Sha",
+          "event": "Erupting Sha",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143498",
+          "description": "Inflicts 92625 to 97375 Shadow damage to all enemies. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 105,
+            "lastSec": 105,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Fallen Protectors",
+      "fightId": 3,
+      "durationSec": 155,
+      "spells": [
+        {
+          "spellId": 143424,
+          "name": "Sha Sear",
+          "event": "Sha Sear",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143424",
+          "description": "Causes an explosion of Shadow magic around the target, inflicting Shadow damage every second to all enemies within 5 yards around the target.",
+          "cadence": {
+            "casts": 47,
+            "firstSec": 4,
+            "lastSec": 150,
+            "gapMinSec": 1,
+            "gapMedSec": 1,
+            "gapMaxSec": 34
+          }
+        },
+        {
+          "spellId": 143423,
+          "name": "Sha Sear",
+          "event": "Sha Sear",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143423",
+          "description": "Causes an explosion of Shadow magic around the target, inflicting Shadow damage every second to all enemies within 5 yards around the target.",
+          "cadence": {
+            "casts": 14,
+            "firstSec": 4,
+            "lastSec": 148,
+            "gapMinSec": 3,
+            "gapMedSec": 6,
+            "gapMaxSec": 38
+          }
+        },
+        {
+          "spellId": 144396,
+          "name": "Vengeful Strikes",
+          "event": "Vengeful Strikes",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144396",
+          "description": "Rook Stonetoe enters an offensive stance, stunning his target and inflicting 450000 physical damage in a frontal cone twice per second for 3 sec.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 9,
+            "lastSec": 143,
+            "gapMinSec": 21,
+            "gapMedSec": 44,
+            "gapMaxSec": 70
+          }
+        },
+        {
+          "spellId": 143446,
+          "name": "Shadow Word: Bane",
+          "event": "Shadow Word: Bane",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143446",
+          "description": "Expels a word of misery upon multiple targets, inflicting 135000 Shadow damage every 3 sec for 18 sec. Each time this effect deals damage, it will jump to an additional target, up to a total of 3 times.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 14,
+            "lastSec": 146,
+            "gapMinSec": 16,
+            "gapMedSec": 18,
+            "gapMaxSec": 55
+          }
+        },
+        {
+          "spellId": 143812,
+          "name": "Mark of Anguish",
+          "event": "Mark of Anguish",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143812",
+          "description": "He Softfoot manifests an evil form his brother, making Embodied Anglish, a manifestation that fixates upon the raid member who has the Mark of Anguish.This spirit continues to attack players until it is slain.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 21,
+            "lastSec": 80,
+            "gapMinSec": 60,
+            "gapMedSec": 60,
+            "gapMaxSec": 60
+          }
+        },
+        {
+          "spellId": 143546,
+          "name": "Dark Meditation",
+          "event": "Dark Meditation",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143546",
+          "description": "Sun Tenderheart manifests an evil form of her protectors, making Embodied Despair and Embodied Desperation.These spirits continue their attacks against players until both are slain.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 21,
+            "lastSec": 72,
+            "gapMinSec": 52,
+            "gapMedSec": 52,
+            "gapMaxSec": 52
+          }
+        },
+        {
+          "spellId": 143955,
+          "name": "Misery, Sorrow, and Gloom",
+          "event": "Misery, Sorrow, and Gloom",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143955",
+          "description": "Rook Stonetoe manifests evil forms of his closest friends, making Embodied Misery, Embodied Sorrow, and Embodied Gloom.These spirits continue their attacks against players until all three are slain.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 25,
+            "lastSec": 88,
+            "gapMinSec": 63,
+            "gapMedSec": 63,
+            "gapMaxSec": 63
+          }
+        },
+        {
+          "spellId": 143746,
+          "name": "Manifest Despair",
+          "event": "Manifest Despair",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143746",
+          "description": "Embodied Despair and Embodied Desperation focus their negative emotions, creating Sha manifestations which attack players. Any damage taken by these manifested emotions will also be suffered by the creature that spawned them.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 31,
+            "lastSec": 92,
+            "gapMinSec": 9,
+            "gapMedSec": 9,
+            "gapMaxSec": 42
+          }
+        },
+        {
+          "spellId": 144504,
+          "name": "Manifest Desperation",
+          "event": "Manifest Desperation",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144504",
+          "description": "Embodied Despair and Embodied Desperation focus their negative emotions, creating Sha manifestations which attack players. Any damage taken by these manifested emotions will also be suffered by the creature that spawned them.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 31,
+            "lastSec": 92,
+            "gapMinSec": 9,
+            "gapMedSec": 9,
+            "gapMaxSec": 42
+          }
+        },
+        {
+          "spellId": 143961,
+          "name": "Defiled Ground",
+          "event": "Defiled Ground",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143961",
+          "description": "Smashes the ground with fervor, inflicting 691031 to 726468 Physical damage to her current target, knocking them back. This force burns into the ground, inflicting 225000 Shadow damage every second to enemies.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 33,
+            "lastSec": 109,
+            "gapMinSec": 12,
+            "gapMedSec": 12,
+            "gapMaxSec": 65
+          }
+        },
+        {
+          "spellId": 143962,
+          "name": "Inferno Strike",
+          "event": "Inferno Strike",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143962",
+          "description": "Embodied Sorrow casts a massive Fire damage spell at his highest threat target. Inferno Blast divides 3.6e+06 Fire damage among all targets within 8 yards.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 42,
+            "lastSec": 105,
+            "gapMinSec": 63,
+            "gapMedSec": 63,
+            "gapMaxSec": 63
+          }
+        },
+        {
+          "spellId": 143262,
+          "name": "Shadowstep",
+          "event": "Shadowstep",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143262",
+          "description": "Traveling through the shadows, He Softfoot Garrotes the target, inflicting 108000 Physical damage every 2 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 53,
+            "lastSec": 114,
+            "gapMinSec": 61,
+            "gapMedSec": 61,
+            "gapMaxSec": 61
+          }
+        },
+        {
+          "spellId": 143267,
+          "name": "Shadowstep",
+          "event": "Shadowstep",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143267",
+          "description": "Traveling through the shadows, He Softfoot Garrotes the target, inflicting 108000 Physical damage every 2 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 55,
+            "lastSec": 116,
+            "gapMinSec": 61,
+            "gapMedSec": 61,
+            "gapMaxSec": 61
+          }
+        },
+        {
+          "spellId": 143210,
+          "name": "Instant Poison",
+          "event": "Instant Poison",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143210",
+          "description": "Coats his weapon in a Instant Poison, causing successful melee attacks to inflict 195000 to 205000 additional Nature damage. This effect has a 3-second cooldown.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 59,
+            "lastSec": 120,
+            "gapMinSec": 61,
+            "gapMedSec": 61,
+            "gapMaxSec": 61
+          }
+        },
+        {
+          "spellId": 143330,
+          "name": "Gouge",
+          "event": "Gouge (FAL)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143330",
+          "description": "Attempts to gouge the eyes of his target, Incapacitating them for 8 sec. If the target is facing away, it will knock them back instead. A spell.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 67,
+            "lastSec": 134,
+            "gapMinSec": 66,
+            "gapMedSec": 66,
+            "gapMaxSec": 66
+          }
+        },
+        {
+          "spellId": 143027,
+          "name": "Clash",
+          "event": "Clash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143027",
+          "description": "Rook Stonetoe clashes against an enemy, charging each other and meeting halfway. Room Stonetoe immediately begins to Corruption Kick. A spell.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 85,
+            "lastSec": 85,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143007,
+          "name": "Corruption Kick",
+          "event": "Corruption Kick",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143007",
+          "description": "Spins rapidly in a circle, rooting himself and inflicting 236925 to 249075 Physical damage to targets within 10 yards every second for 4 sec. Additionally torments targets struck, inflicting 151875 Shadow damage every two seconds for 6 sec.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 86,
+            "lastSec": 86,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143491,
+          "name": "Calamity",
+          "event": "Calamity",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143491",
+          "description": "Calls forth a great Calamity, striking all players for 30% of their maximum health as Shadow damage. This also removes Shadow Word: Bane from all targets.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 136,
+            "lastSec": 136,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Norushen",
+      "fightId": 8,
+      "durationSec": 182,
+      "spells": [
+        {
+          "spellId": 145216,
+          "name": "Unleashed Anger",
+          "event": "Unleashed Anger",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145216",
+          "description": "The Amalgam slashes at its current target for 800000 Physical damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 12,
+            "lastSec": 180,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 39
+          }
+        },
+        {
+          "spellId": 147082,
+          "name": "Burst of Anger",
+          "event": "Burst of Anger",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147082",
+          "description": "Inflicts 75000 Shadow damage to all players within the Quarantine zone. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 31,
+            "firstSec": 15,
+            "lastSec": 173,
+            "gapMinSec": 0,
+            "gapMedSec": 4,
+            "gapMaxSec": 14
+          }
+        },
+        {
+          "spellId": 146124,
+          "name": "Self Doubt",
+          "event": "Self Doubt",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146124",
+          "description": "The caster reveals the deepest doubts of the victim, causing them to suffer 50% more damage from the Amalgam's next Unleashed Anger. A spell.",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 16,
+            "lastSec": 163,
+            "gapMinSec": 16,
+            "gapMedSec": 18,
+            "gapMaxSec": 21
+          }
+        },
+        {
+          "spellId": 145064,
+          "name": "Expel Corruption",
+          "event": "Expel Corruption",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145064",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 52,
+            "firstSec": 23,
+            "lastSec": 136,
+            "gapMinSec": 0,
+            "gapMedSec": 1,
+            "gapMaxSec": 25
+          }
+        },
+        {
+          "spellId": 145769,
+          "name": "Unleash Corruption",
+          "event": "Unleash Corruption",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145769",
+          "description": "The Amalgam creates a Manifestation of Corruption nearby. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 115,
+            "lastSec": 163,
+            "gapMinSec": 10,
+            "gapMedSec": 11,
+            "gapMaxSec": 15
+          }
+        },
+        {
+          "spellId": 146179,
+          "name": "Frayed",
+          "event": "Frayed",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146179",
+          "description": "The energies of the Amalgam are beginning to tear apart. As the Amalgam is damaged it will unleash further corruption into the quaratine zone.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 115,
+            "lastSec": 115,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Sha of Pride",
+      "fightId": 11,
+      "durationSec": 168,
+      "spells": [
+        {
+          "spellId": 144351,
+          "name": "Mark of Arrogance",
+          "event": "Mark of Arrogance",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144351",
+          "description": "Marks an enemy, causing them to suffer 110000 Shadow damage every second for the remainder of the fight. This effect stacks.This effect is only removed by single target dispels and gives the dispeller 5 Pride when removed.",
+          "cadence": {
+            "casts": 8,
+            "firstSec": 11,
+            "lastSec": 166,
+            "gapMinSec": 16,
+            "gapMedSec": 21,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144358,
+          "name": "Wounded Pride",
+          "event": "Wounded Pride",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144358",
+          "description": "Wounds an enemy, causing them to gain 5 Pride whenever they suffer melee damage from the Sha of Pride. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 13,
+            "lastSec": 154,
+            "gapMinSec": 16,
+            "gapMedSec": 31,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144800,
+          "name": "Self-Reflection",
+          "event": "Self-Reflection",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144800",
+          "description": "The Sha of Pride causes up to 5 players to reflect on their actions, creating a Reflection of Pride at their location. With each tick of Self-Reflection, the Sha focuses on players with higher levels of Pride, only targeting those with 25, 50 and then 75 Pride.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 26,
+            "lastSec": 137,
+            "gapMinSec": 32,
+            "gapMedSec": 32,
+            "gapMaxSec": 79
+          }
+        },
+        {
+          "spellId": 144788,
+          "name": "Self-Reflection",
+          "event": "Self-Reflection",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144788",
+          "description": "Reflections explode out of the ground, inflicting 340000 Shadow damage to all enemies within 2 yards. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 26,
+            "firstSec": 29,
+            "lastSec": 144,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 79
+          }
+        },
+        {
+          "spellId": 146823,
+          "name": "Banishment",
+          "event": "Banishment",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146823",
+          "description": "Enemies filled with pride are banished to a realm of corruption, leaving behind a physical manifestation of their pride. Once banished, they cannot escape until the physical form of their pride has been destroyed and suffer 125000 Shadow damage every 3 sec.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 37,
+            "lastSec": 149,
+            "gapMinSec": 112,
+            "gapMedSec": 112,
+            "gapMaxSec": 112
+          }
+        },
+        {
+          "spellId": 144563,
+          "name": "Imprison",
+          "event": "Imprison",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144563",
+          "description": "Imprisons an enemy in a corrupted Sha prison, stunning them and inflicting 108000 Shadow damage every second.Enemies remain trapped until all titan locks have been activated.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 54,
+            "lastSec": 164,
+            "gapMinSec": 110,
+            "gapMedSec": 110,
+            "gapMaxSec": 110
+          }
+        },
+        {
+          "spellId": 144370,
+          "name": "Last Word",
+          "event": "Last Word",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144370",
+          "description": "Gives 5 Pride to the 2 closest enemies upon death. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 78,
+            "lastSec": 79,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 2
+          }
+        },
+        {
+          "spellId": 144379,
+          "name": "Mocking Blast",
+          "event": "Mocking Blast",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144379",
+          "description": "Blasts an enemy with dark energy, inflicting 300000 Shadow damage and giving them 5 Pride. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 79,
+            "lastSec": 79,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144400,
+          "name": "Swelling Pride",
+          "event": "Swelling Pride",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144400",
+          "description": "The Sha of Pride releases a wave of dark energy, inflicting 522500 Shadow damage to all players and trigger an additional effect on any player with 25 or more Pride.This effect gives all players 5 Pride.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 79,
+            "lastSec": 79,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144832,
+          "name": "Unleashed",
+          "event": "Unleashed",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144832",
+          "description": "The Sha is unleashsed, instantly killing Norushen. In addition, the unleashed power of the Sha inflicts 363000 Shadow damage every 10 seconds for the remainder of the encounter.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 120,
+            "lastSec": 120,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Galakras",
+      "fightId": 14,
+      "durationSec": 416,
+      "spells": [
+        {
+          "spellId": 148243,
+          "name": "Fixate",
+          "event": "Fixate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148243",
+          "description": "The caster fixates on a nearby demolitions expert. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 7,
+            "lastSec": 289,
+            "gapMinSec": 11,
+            "gapMedSec": 13,
+            "gapMaxSec": 107
+          }
+        },
+        {
+          "spellId": 148025,
+          "name": "Dragon's Cleave",
+          "event": "Dragon's Cleave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148025",
+          "description": "Inflicts Physical damage to all targets in front of the caster. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 14,
+            "lastSec": 284,
+            "gapMinSec": 9,
+            "gapMedSec": 50,
+            "gapMaxSec": 117
+          }
+        },
+        {
+          "spellId": 147204,
+          "name": "Shattering Roar",
+          "event": "Shattering Roar",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147204",
+          "description": "Inflicts 170625 to 179375 Physical damage to all enemies. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 11,
+            "firstSec": 21,
+            "lastSec": 376,
+            "gapMinSec": 3,
+            "gapMedSec": 10,
+            "gapMaxSec": 264
+          }
+        },
+        {
+          "spellId": 147669,
+          "name": "Throw Axe",
+          "event": "Throw Axe",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147669",
+          "description": "Hurls a massive axe at a random enemy, dealing damage and stunning them for until cancelled. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 11,
+            "firstSec": 76,
+            "lastSec": 349,
+            "gapMinSec": 6,
+            "gapMedSec": 14,
+            "gapMaxSec": 78
+          }
+        },
+        {
+          "spellId": 146747,
+          "name": "Dragonmaw Strike",
+          "event": "Dragonmaw Strike",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146747",
+          "description": "A strong attack that increases melee damage by 100%. In the NPC Abilities category. Requires Warrior. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 13,
+            "firstSec": 77,
+            "lastSec": 351,
+            "gapMinSec": 0,
+            "gapMedSec": 11,
+            "gapMaxSec": 72
+          }
+        },
+        {
+          "spellId": 146753,
+          "name": "Healing Tide Totem",
+          "event": "Healing Tide Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146753",
+          "description": "Summons a totem that periodically heals injured allies within 50 yards for 20% of their life. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 86,
+            "lastSec": 359,
+            "gapMinSec": 112,
+            "gapMedSec": 112,
+            "gapMaxSec": 161
+          }
+        },
+        {
+          "spellId": 146902,
+          "name": "Poison-Tipped Blades",
+          "event": "Poison-Tipped Blades",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146902",
+          "description": "A poison-tipped dagger inflicts 9750 to 10250 Nature damage every 1 sec.  Lasts 15 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 123,
+            "lastSec": 128,
+            "gapMinSec": 5,
+            "gapMedSec": 5,
+            "gapMaxSec": 5
+          }
+        },
+        {
+          "spellId": 146763,
+          "name": "Flame Arrows",
+          "event": "Flame Arrows",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146763",
+          "description": "Shoots a flaming arrow at an enemy, causing the ground beneath them to set ablaze. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 54,
+            "firstSec": 124,
+            "lastSec": 341,
+            "gapMinSec": 0,
+            "gapMedSec": 2,
+            "gapMaxSec": 113
+          }
+        },
+        {
+          "spellId": 146764,
+          "name": "Flame Arrows",
+          "event": "Flame Arrows",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146764",
+          "description": "Inflicts 112125 to 117875 Fire damage on impact, and then 68249 to 71750 Fire damage every 2 seconds. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 56,
+            "firstSec": 125,
+            "lastSec": 342,
+            "gapMinSec": 0,
+            "gapMedSec": 1,
+            "gapMaxSec": 112
+          }
+        },
+        {
+          "spellId": 147552,
+          "name": "Flame Arrows",
+          "event": "Flame Arrows",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147552",
+          "description": "Shoots a flaming arrow at an enemy, causing the ground beneath them to set ablaze. In the NPC Abilities category. Requires Hunter. A spell. Always up to date.",
+          "cadence": {
+            "casts": 8,
+            "firstSec": 131,
+            "lastSec": 317,
+            "gapMinSec": 0,
+            "gapMedSec": 6,
+            "gapMaxSec": 147
+          }
+        },
+        {
+          "spellId": 147711,
+          "name": "Curse of Venom",
+          "event": "Curse of Venom",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147711",
+          "description": "The Curse of Venom transforms the caster into a snake. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 131,
+            "lastSec": 131,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 146864,
+          "name": "Shadow Stalk",
+          "event": "Shadow Stalk",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146864",
+          "description": "Steps through the shadows and reappears behind the enemy. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 133,
+            "lastSec": 133,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 147713,
+          "name": "Venom Bolt Volley",
+          "event": "Venom Bolt Volley",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147713",
+          "description": "Shoots poison at all enemies, inflicting 214500 to 225500 Nature damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 134,
+            "lastSec": 141,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 3
+          }
+        },
+        {
+          "spellId": 146868,
+          "name": "Shadow Assault",
+          "event": "Shadow Assault",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146868",
+          "description": "Deals 50% weapon damage to all targets in a 9 yard 90-degree cone in front of the caster, every 5 sec for 6 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 134,
+            "lastSec": 134,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 147683,
+          "name": "Thunder Clap",
+          "event": "Thunder Clap",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147683",
+          "description": "Causes 292500 to 307500 Nature damage and slows enemy movement speed by 25%. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 145,
+            "lastSec": 145,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 146776,
+          "name": "Flame Breath",
+          "event": "Flame Breath",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146776",
+          "description": "Channels flame at an enemy, periodically inflicting 136500 to 143500 Fire damage to enemies in a cone in front of the caster. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 183,
+            "lastSec": 183,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 147820,
+          "name": "Tidal Wave",
+          "event": "Tidal Wave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147820",
+          "description": "Summons a violent typhoon that deals 246675 to 259325 Nature to enemies with which it collides. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 230,
+            "lastSec": 369,
+            "gapMinSec": 2,
+            "gapMedSec": 4,
+            "gapMaxSec": 112
+          }
+        },
+        {
+          "spellId": 148522,
+          "name": "Tidal Wave",
+          "event": "Tidal Wave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148522",
+          "description": "Summons a violent typhoon that deals 246675 to 259325 Nature to enemies with which it collides. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 230,
+            "lastSec": 369,
+            "gapMinSec": 2,
+            "gapMedSec": 4,
+            "gapMaxSec": 112
+          }
+        },
+        {
+          "spellId": 146849,
+          "name": "Shattering Cleave",
+          "event": "Shattering Cleave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146849",
+          "description": "A sweeping attack that strikes an enemy and additonal nearby  enemies, inflicting 250% normal damage. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 234,
+            "lastSec": 262,
+            "gapMinSec": 8,
+            "gapMedSec": 8,
+            "gapMaxSec": 12
+          }
+        },
+        {
+          "spellId": 146769,
+          "name": "Crusher's Call",
+          "event": "Crusher's Call",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146769",
+          "description": "Thranok lashes out with chains, hooking random enemies within 45 yards and pulling them to his feet. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 244,
+            "lastSec": 244,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 146848,
+          "name": "Skull Cracker",
+          "event": "Skull Cracker",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146848",
+          "description": "Thranok savagely spins his weapon , inflicting 1072500 to 1127500 Physical damage to all enemies within 10 yards. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 249,
+            "lastSec": 249,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 146773,
+          "name": "Shoot",
+          "event": "Shoot",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146773",
+          "description": "Shoots at an enemy, inflicting Physical damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 290,
+            "lastSec": 303,
+            "gapMinSec": 1,
+            "gapMedSec": 2,
+            "gapMaxSec": 2
+          }
+        },
+        {
+          "spellId": 147824,
+          "name": "Muzzle Spray",
+          "event": "Muzzle Spray",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147824",
+          "description": "Unleashes a muzzle flare, inflicting 195000 to 205000 Physical damage multiple times per second, and knocking players back with each hit. A spell.",
+          "cadence": {
+            "casts": 15,
+            "firstSec": 308,
+            "lastSec": 318,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 4
+          }
+        },
+        {
+          "spellId": 146899,
+          "name": "Fracture",
+          "event": "Fracture",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146899",
+          "description": "The Bonecrusher rushes a faction leader, stunning them, and inflicts 3 Physical damage every 1 sec. In the NPC Abilities category. A spell. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 367,
+            "lastSec": 367,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Iron Juggernaut",
+      "fightId": 16,
+      "durationSec": 140,
+      "spells": [
+        {
+          "spellId": 144464,
+          "name": "Flame Vents",
+          "event": "Flame Vents",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144464",
+          "description": "Inflicts 585000 to 615000 Fire damage in a frontal cone, searing the target's flesh for 46800 to 49200 damage every 1 second. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 10,
+            "firstSec": 11,
+            "lastSec": 112,
+            "gapMinSec": 9,
+            "gapMedSec": 11,
+            "gapMaxSec": 16
+          }
+        },
+        {
+          "spellId": 144718,
+          "name": "Detonation Sequence",
+          "event": "Detonation Sequence",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144718",
+          "description": "Detonating... In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 33,
+            "lastSec": 97,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144483,
+          "name": "Seismic Activity",
+          "event": "Seismic Activity",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144483",
+          "description": "A mighty drill bores into the earth, causing an earthquake that deals 81899 to 86100 Nature damage every 1 second. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 122,
+            "lastSec": 122,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144492,
+          "name": "Explosive Tar",
+          "event": "Explosive Tar",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144492",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 129,
+            "lastSec": 129,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Kor'kron Dark Shaman",
+      "fightId": 19,
+      "durationSec": 120,
+      "spells": [
+        {
+          "spellId": 144304,
+          "name": "Rend",
+          "event": "Rend",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144304",
+          "description": "Inflicts 41250 Physical damage to an enemy every 1 sec. for 15 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 16,
+            "firstSec": 6,
+            "lastSec": 76,
+            "gapMinSec": 0,
+            "gapMedSec": 6,
+            "gapMaxSec": 8
+          }
+        },
+        {
+          "spellId": 144291,
+          "name": "Rusted Iron Totem",
+          "event": "Rusted Iron Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144291",
+          "description": "Grants the Iron Tomb and Iron Prison abilities. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 6,
+            "lastSec": 6,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 144328,
+          "name": "Iron Tomb",
+          "event": "Iron Tomb",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144328",
+          "description": "Inflicts 500000 Physical damage to players within 3 yards and creates an Iron Tomb. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 7,
+            "lastSec": 103,
+            "gapMinSec": 31,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144215,
+          "name": "Froststorm Strike",
+          "event": "Froststorm Strike",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144215",
+          "description": "Deals 425000 Frost damage and causes the target to take 25% additional Froststorm Strike damage for 30 sec. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 17,
+            "firstSec": 8,
+            "lastSec": 118,
+            "gapMinSec": 6,
+            "gapMedSec": 6,
+            "gapMaxSec": 10
+          }
+        },
+        {
+          "spellId": 144214,
+          "name": "Froststorm Bolt",
+          "event": "Froststorm Bolt",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144214",
+          "description": "Fires a bolt of bitter frost, dealing 650000 Frost damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 11,
+            "firstSec": 8,
+            "lastSec": 116,
+            "gapMinSec": 6,
+            "gapMedSec": 8,
+            "gapMaxSec": 19
+          }
+        },
+        {
+          "spellId": 144334,
+          "name": "Iron Tomb",
+          "event": "Iron Tomb",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144334",
+          "description": "Inflicts 500000 Physical damage to players within 3 yards and creates an Iron Tomb. In the Uncategorized Spells category. Added in World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 12,
+            "firstSec": 9,
+            "lastSec": 105,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144330,
+          "name": "Iron Prison",
+          "event": "Iron Prison",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144330",
+          "description": "Encases a player in an Iron Prison, which inflicts 100% of maximum health as Physical damage after 1 min. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 9,
+            "lastSec": 107,
+            "gapMinSec": 32,
+            "gapMedSec": 33,
+            "gapMaxSec": 33
+          }
+        },
+        {
+          "spellId": 144303,
+          "name": "Swipe",
+          "event": "Swipe",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144303",
+          "description": "Inflicts 381562 to 443437 Physical damage to targets in a 8-yard cone in front of the caster. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 15,
+            "firstSec": 11,
+            "lastSec": 81,
+            "gapMinSec": 0,
+            "gapMedSec": 7,
+            "gapMaxSec": 9
+          }
+        },
+        {
+          "spellId": 144288,
+          "name": "Poisonmist Totem",
+          "event": "Poisonmist Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144288",
+          "description": "Grants the Toxic Mist and Toxic Storm abilities. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 13,
+            "lastSec": 13,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 144089,
+          "name": "Toxic Mist",
+          "event": "Toxic Mist",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144089",
+          "description": "Deals 150000 Nature damage every 3 sec. for 30 sec and causes growing toxicity in the target. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 14,
+            "lastSec": 109,
+            "gapMinSec": 31,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144005,
+          "name": "Toxic Storm",
+          "event": "Toxic Storm",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144005",
+          "description": "Summons a powerful toxic storm that deals 450000 Nature damage to enemies within 9 yards every 2 sec. and periodically creates Toxic Tornadoes.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 15,
+            "lastSec": 111,
+            "gapMinSec": 31,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144289,
+          "name": "Foulstream Totem",
+          "event": "Foulstream Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144289",
+          "description": "Grants the Foul Stream and Foul Geyser abilities. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 28,
+            "lastSec": 28,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 144090,
+          "name": "Foul Stream",
+          "event": "Foul Stream",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144090",
+          "description": "Deals 450000 Nature damage to all enemies on a line. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 30,
+            "lastSec": 98,
+            "gapMinSec": 33,
+            "gapMedSec": 33,
+            "gapMaxSec": 34
+          }
+        },
+        {
+          "spellId": 143990,
+          "name": "Foul Geyser",
+          "event": "Foul Geyser",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143990",
+          "description": "Conjure foul water that inflicts 450000 Nature damage to enemies within 3.5 yards every 0.5 sec. for 8 sec. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 31,
+            "lastSec": 98,
+            "gapMinSec": 33,
+            "gapMedSec": 33,
+            "gapMaxSec": 33
+          }
+        },
+        {
+          "spellId": 144290,
+          "name": "Ashflare Totem",
+          "event": "Ashflare Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144290",
+          "description": "Grants the Falling Ash and Ashen Wall abilities. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 44,
+            "lastSec": 44,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 144070,
+          "name": "Ashen Wall",
+          "event": "Ashen Wall",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144070",
+          "description": "Summons a wall of Ash Elementals. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 46,
+            "lastSec": 111,
+            "gapMinSec": 32,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 143973,
+          "name": "Falling Ash",
+          "event": "Falling Ash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143973",
+          "description": "Summons a core of smouldering ash that will fall over 15 sec.  Deals 999999 Fire damage to enemies within 17 yards and 480000 Fire damage to all enemies on impact.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 48,
+            "lastSec": 113,
+            "gapMinSec": 32,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 144331,
+          "name": "Iron Prison",
+          "event": "Iron Prison",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144331",
+          "description": "Encases a player in an Iron Prison, which inflicts 100% of maximum health as Physical damage after 1 min. In the Uncategorized Spells category.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 69,
+            "lastSec": 102,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 33
+          }
+        },
+        {
+          "spellId": 144302,
+          "name": "Bloodlust",
+          "event": "Bloodlust",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144302",
+          "description": "The Dark Shaman go into a blood frenzy, increasing all damage dealt by 25% and haste by 25%. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 81,
+            "lastSec": 81,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "General Nazgrim",
+      "fightId": 24,
+      "durationSec": 120,
+      "spells": [
+        {
+          "spellId": 143589,
+          "name": "Battle Stance",
+          "event": "Battle Stance",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143589",
+          "description": "A balanced stance that generates 1 rage every 1 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 1,
+            "lastSec": 1,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143494,
+          "name": "Sundering Blow",
+          "event": "Sundering Blow",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143494",
+          "description": "Inflicts 1400000 Physical damage and sunders the target's armor, reducing armor by 10% for 30 sec. Generates 5 rage per stack of Sundering Blow on the target.",
+          "cadence": {
+            "casts": 13,
+            "firstSec": 6,
+            "lastSec": 115,
+            "gapMinSec": 7,
+            "gapMedSec": 9,
+            "gapMaxSec": 11
+          }
+        },
+        {
+          "spellId": 143638,
+          "name": "Bonecracker",
+          "event": "Bonecracker",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143638",
+          "description": "Crack the target's bones, reducing maximum health by 10% and causing the target to bleed for 80000 Physical damage every 1 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 17,
+            "lastSec": 114,
+            "gapMinSec": 32,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 143716,
+          "name": "Heroic Shockwave",
+          "event": "Heroic Shockwave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143716",
+          "description": "Inflicts 400000 Physical damage within 10 yards of the impact location. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 18,
+            "lastSec": 18,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143502,
+          "name": "Execute",
+          "event": "Execute",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143502",
+          "description": "Executes the enemy for 3000000 Physical damage. This attack pierces immunities and cannot be dodged, blocked, or parried. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 21,
+            "lastSec": 112,
+            "gapMinSec": 18,
+            "gapMedSec": 18,
+            "gapMaxSec": 19
+          }
+        },
+        {
+          "spellId": 143712,
+          "name": "Aftershock",
+          "event": "Aftershock",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143712",
+          "description": "Deals 700000 Fire damage to enemies within the aftershock and grants General Nazgrim 3 rage for each target struck. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 21,
+            "lastSec": 21,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 118969,
+          "name": "Stealth",
+          "event": "Stealth",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=118969",
+          "description": "Puts the caster in stealth mode, but reduces movement speed by 50%. Lasts until cancelled. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 45,
+            "lastSec": 105,
+            "gapMinSec": 15,
+            "gapMedSec": 15,
+            "gapMaxSec": 45
+          }
+        },
+        {
+          "spellId": 143420,
+          "name": "Ironstorm",
+          "event": "Ironstorm",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143420",
+          "description": "Whirl around in a storm of iron, inflicting 370000 to 430000 Physical damage to enemies within 6.5 yards every 1 sec. for 1 min. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 49,
+            "lastSec": 109,
+            "gapMinSec": 60,
+            "gapMedSec": 60,
+            "gapMaxSec": 60
+          }
+        },
+        {
+          "spellId": 143432,
+          "name": "Arcane Shock",
+          "event": "Arcane Shock",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143432",
+          "description": "Shock a target, inflicting 277500 to 322500 Arcane damage and increasing Arcane damage dealt by the caster by 25% for 10 sec. Stacks up to 99 times.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 53,
+            "lastSec": 114,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 58
+          }
+        },
+        {
+          "spellId": 143431,
+          "name": "Magistrike",
+          "event": "Magistrike",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143431",
+          "description": "Calls down a burst of Arcane energy, inflicting 277500 to 322500 Arcane damage instantly and 50000 Arcane damage every 1 sec. for 20 sec to enemies within 8 yards.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 57,
+            "lastSec": 117,
+            "gapMinSec": 60,
+            "gapMedSec": 60,
+            "gapMaxSec": 60
+          }
+        },
+        {
+          "spellId": 143427,
+          "name": "Last Stand",
+          "event": "Last Stand",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143427",
+          "description": "Increases maximum health by 25%. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 58,
+            "lastSec": 58,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143594,
+          "name": "Berserker Stance",
+          "event": "Berserker Stance",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143594",
+          "description": "A wild stance that increases damage dealt by 25%, damage taken by 25%, and rage generation by 100%. In the NPC Abilities category. A spell. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 60,
+            "lastSec": 60,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143872,
+          "name": "Ravager",
+          "event": "Ravager",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143872",
+          "description": "Throw a whirling blade, inflicting  370000 to 430000 Physical damage to enemies within 6 yards every 1 sec. and granting General Nazgrim 5 rage for each enemy struck.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 68,
+            "lastSec": 104,
+            "gapMinSec": 18,
+            "gapMedSec": 18,
+            "gapMaxSec": 18
+          }
+        },
+        {
+          "spellId": 143884,
+          "name": "Shoot",
+          "event": "Shoot",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143884",
+          "description": "Shoots the target, inflicting 100% of weapon damage as Physical. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 11,
+            "firstSec": 93,
+            "lastSec": 120,
+            "gapMinSec": 0,
+            "gapMedSec": 2,
+            "gapMaxSec": 13
+          }
+        },
+        {
+          "spellId": 143887,
+          "name": "Multi-Shot",
+          "event": "Multi-Shot",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143887",
+          "description": "Fire a volley of arrows, inflicting 400000 Physical damage to enemies within a 40-yard cone. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 108,
+            "lastSec": 112,
+            "gapMinSec": 4,
+            "gapMedSec": 4,
+            "gapMaxSec": 4
+          }
+        },
+        {
+          "spellId": 143475,
+          "name": "Earth Shield",
+          "event": "Earth Shield",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143475",
+          "description": "Protects the target with an earthen shield that heals the shielded target for 5% of maximum health when damage is taken. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 112,
+            "lastSec": 112,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143481,
+          "name": "Backstab",
+          "event": "Backstab",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143481",
+          "description": "Inflicts 624375 to 725625 Physical damage to an enemy, but only if attacking from behind. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 117,
+            "lastSec": 120,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 2
+          }
+        },
+        {
+          "spellId": 143474,
+          "name": "Healing Tide Totem",
+          "event": "Healing Tide Totem",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143474",
+          "description": "Summon a Healing Tide Totem that will heal nearby allies. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 117,
+            "lastSec": 117,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143477,
+          "name": "Healing Tide",
+          "event": "Healing Tide",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143477",
+          "description": "Heals allies within 8 yards for 20% of their maximum health every 3 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 118,
+            "lastSec": 118,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143433,
+          "name": "Unstable Blink",
+          "event": "Unstable Blink",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143433",
+          "description": "Teleport 1-2 times in a random direction. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 118,
+            "lastSec": 118,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Malkorok",
+      "fightId": 28,
+      "durationSec": 154,
+      "spells": [
+        {
+          "spellId": 142851,
+          "name": "Seismic Slam",
+          "event": "Seismic Slam",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142851",
+          "description": "Malkorok slams the ground, inflicting 675000 Physical damage in a 5 yard area around a random enemy. In addition, anyone hit by Seismic Slam is knocked into the air.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 5,
+            "lastSec": 115,
+            "gapMinSec": 20,
+            "gapMedSec": 20,
+            "gapMaxSec": 30
+          }
+        },
+        {
+          "spellId": 142826,
+          "name": "Arcing Smash",
+          "event": "Arcing Smash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142826",
+          "description": "Malkorok smashes the ground, inflicting 810000 Physical damage to all enemies within a 40 yard cone. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 12,
+            "lastSec": 123,
+            "gapMinSec": 19,
+            "gapMedSec": 20,
+            "gapMaxSec": 31
+          }
+        },
+        {
+          "spellId": 143805,
+          "name": "Arcing Smash",
+          "event": "Arcing Smash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143805",
+          "description": "Malkorok smashes the ground, inflicting 810000 Physical damage to all enemies within a 40 yard cone. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 12,
+            "lastSec": 123,
+            "gapMinSec": 19,
+            "gapMedSec": 20,
+            "gapMaxSec": 31
+          }
+        },
+        {
+          "spellId": 142842,
+          "name": "Breath of Y'Shaarj",
+          "event": "Breath of Y'Shaarj",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142842",
+          "description": "Malkorok channels the power of Y'Shaarj, causing the areas recently hit by Arcing Smash and Seismic Slam to explode, inflicting 1620000 Shadow damage.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 69,
+            "lastSec": 139,
+            "gapMinSec": 70,
+            "gapMedSec": 70,
+            "gapMaxSec": 70
+          }
+        },
+        {
+          "spellId": 143047,
+          "name": "Ancient Miasma",
+          "event": "Ancient Miasma",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143047",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 142,
+            "lastSec": 142,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 142879,
+          "name": "Blood Rage",
+          "event": "Blood Rage",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142879",
+          "description": "Rage fills Malkorok, causing each melee attack to inflict 6682500 Physical damage, split among all enemies hit. Blood Rage causes Malkorok to lose 5 rage every second, and ends when he no longer has any rage.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 145,
+            "lastSec": 145,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 142913,
+          "name": "Displaced Energy",
+          "event": "Displaced Energy",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142913",
+          "description": "The power of Y'Shaarj arcs to nearby enemies, inflicting 337500 Shadow damage every 3 seconds for 9 sec. When displaced energy expires, the energy explodes outward, inflicting 607500 Shadow damage to all allies within 8 yards.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 146,
+            "lastSec": 146,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Spoils of Pandaria",
+      "fightId": 32,
+      "durationSec": 317,
+      "spells": [
+        {
+          "spellId": 148196,
+          "name": "Jab",
+          "event": "Jab",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148196",
+          "description": "Jabs at a target, inflicting 100% weapon damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 13,
+            "lastSec": 13,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 145746,
+          "name": "Jab",
+          "event": "Jab",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145746",
+          "description": "Jabs at a target, inflicting 100% weapon damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 13,
+            "lastSec": 13,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 145998,
+          "name": "Strength of the Stone",
+          "event": "Strength of the Stone",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145998",
+          "description": "Increases damage dealt by 20% and an additional 20% for each stone copy of a player in the area. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 17,
+            "lastSec": 229,
+            "gapMinSec": 28,
+            "gapMedSec": 68,
+            "gapMaxSec": 116
+          }
+        },
+        {
+          "spellId": 146253,
+          "name": "Path of Blossoms",
+          "event": "Path of Blossoms",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146253",
+          "description": "Charges a distant target, leaving behind a trail of fiery blossoms which on contact, inflict 253378 to 266371 Fire damage to enemies within 3 yards. These blossoms linger for 30 sec.Casts Mass Paralysis upon reaching the distant target's location, stunning any remaining targets within 3 yards for 6 sec.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 17,
+            "lastSec": 163,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 143
+          }
+        },
+        {
+          "spellId": 146180,
+          "name": "Gusting Crane Kick",
+          "event": "Gusting Crane Kick",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146180",
+          "description": "The Wise Mistweaver Spirit spins rapidly in a circle, drawing in players within 40 yards and inflicting 236925 to 249075 Physical damage to targets within 10 every second for 4 sec.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 19,
+            "lastSec": 19,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 145489,
+          "name": "Return to Stone",
+          "event": "Return to Stone",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145489",
+          "description": "Drains some of the life essence from players, knocking them back and inflicting 148078 to 155671 Shadow damage and forming a stone statue from that essence.These statues frequently strike the ground, inflicting 217181 to 228318 Physical damage and stunning targets in a frontal cone for 4 sec.These statues remain until killed.",
+          "cadence": {
+            "casts": 15,
+            "firstSec": 24,
+            "lastSec": 271,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 82
+          }
+        },
+        {
+          "spellId": 148762,
+          "name": "Pheromone Cloud",
+          "event": "Pheromone Cloud",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148762",
+          "description": "Inflicts 61000 Nature damage every second while alive. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 24,
+            "lastSec": 226,
+            "gapMinSec": 21,
+            "gapMedSec": 47,
+            "gapMaxSec": 134
+          }
+        },
+        {
+          "spellId": 145996,
+          "name": "Set to Blow",
+          "event": "Set to Blow",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145996",
+          "description": "Throws a pack of highly volatile bombs on the back of players. After 15 sec, these bombs will detonate, inflicting 405000 Fire damage per remaning stack to all players within 9 yards. Players may use Throw Bomb to remove one of these bombs, dropping it on the ground instead. Bombs on the ground will detonate, inflicting 405000 Fire damage to anyone within 9 yards when any player enters their close proximity or after 30 sec.The explosion from any of these bombs can chain to nearby ground bombs.",
+          "cadence": {
+            "casts": 17,
+            "firstSec": 26,
+            "lastSec": 269,
+            "gapMinSec": 2,
+            "gapMedSec": 10,
+            "gapMaxSec": 95
+          }
+        },
+        {
+          "spellId": 145937,
+          "name": "Skullsplitter's Rage",
+          "event": "Skullsplitter's Rage",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145937",
+          "description": "Damage and attack speed increased by 15% per stack. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 70,
+            "firstSec": 29,
+            "lastSec": 313,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 44
+          }
+        },
+        {
+          "spellId": 144923,
+          "name": "Earthen Shard",
+          "event": "Earthen Shard",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144923",
+          "description": "Summons a shard of earthen material, striking a target for 131625 Nature damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 29,
+            "lastSec": 275,
+            "gapMinSec": 25,
+            "gapMedSec": 33,
+            "gapMaxSec": 118
+          }
+        },
+        {
+          "spellId": 148515,
+          "name": "Shadow Volley",
+          "event": "Shadow Volley",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148515",
+          "description": "Ushers great power of Shadow origin, inflicting 301000 Shadow damage to all nearby players. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 30,
+            "lastSec": 41,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 11
+          }
+        },
+        {
+          "spellId": 142765,
+          "name": "Pulse",
+          "event": "Pulse",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142765",
+          "description": "Creates a Spark of Life, which periodically pulses an electrically charged cloud, inflicting 361968 to 380531 Nature damage to enemies within 4 yards.Defeating the Spark of Life invokes a Supernova, immediately inflicting 220522 to 224977 Nature damage to enemies within 8 yards.",
+          "cadence": {
+            "casts": 30,
+            "firstSec": 32,
+            "lastSec": 288,
+            "gapMinSec": 0,
+            "gapMedSec": 5,
+            "gapMaxSec": 67
+          }
+        },
+        {
+          "spellId": 142539,
+          "name": "Mantid Swarm",
+          "event": "Mantid Swarm",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142539",
+          "description": "Rallies additional Mantid to his aid. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 7,
+            "firstSec": 33,
+            "lastSec": 298,
+            "gapMinSec": 16,
+            "gapMedSec": 21,
+            "gapMaxSec": 95
+          }
+        },
+        {
+          "spellId": 145286,
+          "name": "Windstorm",
+          "event": "Windstorm",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145286",
+          "description": "Creates a torrent of wind that moves around in a spiral. Colliding with the torrent inflicts 375000 Nature damage. The torrent lasts for 18 sec and increases in speed over time.",
+          "cadence": {
+            "casts": 16,
+            "firstSec": 37,
+            "lastSec": 253,
+            "gapMinSec": 1,
+            "gapMedSec": 1,
+            "gapMaxSec": 101
+          }
+        },
+        {
+          "spellId": 145702,
+          "name": "Throw Explosives",
+          "event": "Throw Explosives",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145702",
+          "description": "Tosses specialized bombs that immediately explode for 163518 to 180731 Physical damage to targets within 2 yards. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 11,
+            "firstSec": 42,
+            "lastSec": 297,
+            "gapMinSec": 0,
+            "gapMedSec": 5,
+            "gapMaxSec": 124
+          }
+        },
+        {
+          "spellId": 145786,
+          "name": "Residue",
+          "event": "Residue",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145786",
+          "description": "Applies a thick layer of restorative amber residue to nearby friendly targets, healing them for 600000 health every 3 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 42,
+            "lastSec": 275,
+            "gapMinSec": 47,
+            "gapMedSec": 91,
+            "gapMaxSec": 95
+          }
+        },
+        {
+          "spellId": 145523,
+          "name": "Animated Strike",
+          "event": "Animated Strike",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145523",
+          "description": "Drains some of the life essence from players, knocking them back and inflicting 148078 to 155671 Shadow damage and forming a stone statue from that essence.These statues frequently strike the ground, inflicting 217181 to 228318 Physical damage and stunning targets in a frontal cone for 4 sec.These statues remain until killed.",
+          "cadence": {
+            "casts": 16,
+            "firstSec": 43,
+            "lastSec": 283,
+            "gapMinSec": 0,
+            "gapMedSec": 11,
+            "gapMaxSec": 103
+          }
+        },
+        {
+          "spellId": 145712,
+          "name": "Gusting Bomb",
+          "event": "Gusting Bomb",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145712",
+          "description": "Slides a bomb towards a distant target, inflicting 289575 to 304425 Nature damage to enemies within 5 yards of that target. This fast-moving bomb leaves behind a trail of wind, inflicting 222750 Nature damage every second for 5 sec.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 45,
+            "lastSec": 299,
+            "gapMinSec": 5,
+            "gapMedSec": 19,
+            "gapMaxSec": 124
+          }
+        },
+        {
+          "spellId": 145812,
+          "name": "Rage of the Empress",
+          "event": "Rage of the Empress",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145812",
+          "description": "Rallies nearby friendly targets, increasing all damage dealt by 50% for 30 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 47,
+            "lastSec": 244,
+            "gapMinSec": 38,
+            "gapMedSec": 42,
+            "gapMaxSec": 117
+          }
+        },
+        {
+          "spellId": 144922,
+          "name": "Harden Flesh",
+          "event": "Harden Flesh",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144922",
+          "description": "Hardens the flesh of targets over 10 sec, inflicting 40500 Physical damage every second and slowing by 30%. This effect stacks. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 48,
+            "lastSec": 280,
+            "gapMinSec": 26,
+            "gapMedSec": 26,
+            "gapMaxSec": 206
+          }
+        },
+        {
+          "spellId": 146815,
+          "name": "Supernova",
+          "event": "Supernova",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146815",
+          "description": "In a last ditch effort, any being animated by the Unstable Titan Energy transforms into a raw Unstable Spark, leaps to a distant quadrant and attempts to go Supernova. Successfully casting Supernova inflicts 544500 to 555500 Nature damage to all nearby enemies.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 49,
+            "lastSec": 49,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 149277,
+          "name": "Nova",
+          "event": "Nova",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=149277",
+          "description": "Creates a Spark of Life, which periodically pulses an electrically charged cloud, inflicting 361968 to 380531 Nature damage to enemies within 4 yards.Defeating the Spark of Life invokes a Supernova, immediately inflicting 220522 to 224977 Nature damage to enemies within 8 yards.",
+          "cadence": {
+            "casts": 30,
+            "firstSec": 50,
+            "lastSec": 297,
+            "gapMinSec": 0,
+            "gapMedSec": 4,
+            "gapMaxSec": 64
+          }
+        },
+        {
+          "spellId": 142775,
+          "name": "Nova",
+          "event": "Nova",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142775",
+          "description": "Creates a Spark of Life, which periodically pulses an electrically charged cloud, inflicting 361968 to 380531 Nature damage to enemies within 4 yards.Defeating the Spark of Life invokes a Supernova, immediately inflicting 220522 to 224977 Nature damage to enemies within 8 yards.",
+          "cadence": {
+            "casts": 30,
+            "firstSec": 54,
+            "lastSec": 301,
+            "gapMinSec": 0,
+            "gapMedSec": 4,
+            "gapMaxSec": 64
+          }
+        },
+        {
+          "spellId": 148513,
+          "name": "Fracture",
+          "event": "Fracture",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148513",
+          "description": "Smashes the ground with his mighty blade, inflicting 301000 Nature damage to all nearby players. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 58,
+            "lastSec": 92,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 11
+          }
+        },
+        {
+          "spellId": 145692,
+          "name": "Enrage",
+          "event": "Enrage",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145692",
+          "description": "Periodically enrages, increasing damage dealt by 350% but decreasing movement speed. While enraged, attacks have a chance to shatter the armor of his target, decreasing their armor by 25% for 1 min. This effect stacks.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 67,
+            "lastSec": 291,
+            "gapMinSec": 225,
+            "gapMedSec": 225,
+            "gapMaxSec": 225
+          }
+        },
+        {
+          "spellId": 145288,
+          "name": "Matter Scramble",
+          "event": "Matter Scramble",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145288",
+          "description": "Highlights several locations on the ground which will scramble the locations of players standing inside them. If the Golem attempts to scramble a location with no players, the fabric of space tears, inflicting 511875 to 538125 Fire damage to players within 90 yards.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 104,
+            "lastSec": 214,
+            "gapMinSec": 15,
+            "gapMedSec": 21,
+            "gapMaxSec": 33
+          }
+        },
+        {
+          "spellId": 142947,
+          "name": "Crimson Reconstitution",
+          "event": "Crimson Reconstitution",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142947",
+          "description": "Sprays pools of anima around nearby units for 45 sec. Any targets which remain in the void are healed for 15% of their maximum health every second.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 112,
+            "lastSec": 206,
+            "gapMinSec": 20,
+            "gapMedSec": 20,
+            "gapMaxSec": 74
+          }
+        },
+        {
+          "spellId": 142934,
+          "name": "Torment",
+          "event": "Torment",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142934",
+          "description": "Torments a target with the pain wrought from a thousand years of isolation, inflicting 154225 to 155775 Shadow damage immediately and additional Shadow damage every second until dispelled. This damage increases over time.Each time Torment is dispelled, it jumps to a nearby target, inflicts the initial damage, and resets the damage increase. Torment is removed when once the Mogu Shadow Ritualist is defeated.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 119,
+            "lastSec": 280,
+            "gapMinSec": 48,
+            "gapMedSec": 50,
+            "gapMaxSec": 63
+          }
+        },
+        {
+          "spellId": 145230,
+          "name": "Forbidden Magic",
+          "event": "Forbidden Magic",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145230",
+          "description": "Inflicts 182250 Arcane damage every second while channeling. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 9,
+            "firstSec": 120,
+            "lastSec": 282,
+            "gapMinSec": 3,
+            "gapMedSec": 6,
+            "gapMaxSec": 53
+          }
+        },
+        {
+          "spellId": 145461,
+          "name": "Mogu Rune of Power",
+          "event": "Mogu Rune of Power",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145461",
+          "description": "Etches a rune of power on the ground under nearby units for 45 sec. Any targets which remain on the rune gain increased melee, ranged, and spell haste by 150%.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 127,
+            "lastSec": 240,
+            "gapMinSec": 50,
+            "gapMedSec": 50,
+            "gapMaxSec": 63
+          }
+        },
+        {
+          "spellId": 146222,
+          "name": "Breath of Fire",
+          "event": "Breath of Fire",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146222",
+          "description": "Bellows out a channel of fire for 6 sec, inflicting 352687 to 389812 Fire damage. If the target is afflicted with Keg Toss, they are additionally disoriented and take 73878 to 74621 Fire damage every second for 6 sec.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 170,
+            "lastSec": 171,
+            "gapMinSec": 1,
+            "gapMedSec": 1,
+            "gapMaxSec": 1
+          }
+        },
+        {
+          "spellId": 148518,
+          "name": "Molten Fist",
+          "event": "Molten Fist",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148518",
+          "description": "Unleashes his burning fists, slinging orbs of flame at nearby opponents, inflicting 301000 Fire damage. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 174,
+            "lastSec": 219,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 11
+          }
+        },
+        {
+          "spellId": 148582,
+          "name": "Jade Tempest",
+          "event": "Jade Tempest",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148582",
+          "description": "Combines the immense power of Jade Flame with the destructive force of Thunder, inflicting 301000 Firestorm damage to all nearby players. A spell.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 242,
+            "lastSec": 266,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 12
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Siegecrafter Blackfuse",
+      "fightId": 37,
+      "durationSec": 221,
+      "spells": [
+        {
+          "spellId": 143385,
+          "name": "Electrostatic Charge",
+          "event": "Electrostatic Charge",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143385",
+          "description": "Inflicts 375000 Nature damage to the current target. Increases damage taken from Electrostatic Charge by 100% and damage inflicted on targets with Reactive Armor by 400% for 1 min.This ability stacks up to 10 times.",
+          "cadence": {
+            "casts": 14,
+            "firstSec": 3,
+            "lastSec": 213,
+            "gapMinSec": 16,
+            "gapMedSec": 16,
+            "gapMaxSec": 16
+          }
+        },
+        {
+          "spellId": 145365,
+          "name": "Protective Frenzy",
+          "event": "Protective Frenzy",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145365",
+          "description": "Increases the caster's attack speed by 100%. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 8,
+            "firstSec": 20,
+            "lastSec": 188,
+            "gapMinSec": 1,
+            "gapMedSec": 22,
+            "gapMaxSec": 45
+          }
+        },
+        {
+          "spellId": 145154,
+          "name": "Electromagnetic Barrier",
+          "event": "Electromagnetic Barrier",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145154",
+          "description": "An electromagnetic barrier protects the incomplete weaponry, rendering it immune to all damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 20,
+            "lastSec": 188,
+            "gapMinSec": 32,
+            "gapMedSec": 40,
+            "gapMaxSec": 50
+          }
+        },
+        {
+          "spellId": 145937,
+          "name": "Skullsplitter's Rage",
+          "event": "Skullsplitter's Rage",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145937",
+          "description": "Damage and attack speed increased by 15% per stack. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 10,
+            "firstSec": 25,
+            "lastSec": 214,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 45
+          }
+        },
+        {
+          "spellId": 145444,
+          "name": "Overload",
+          "event": "Overload 1..10",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145444",
+          "description": "Inflicts 220000 Nature damage to all enemies, and increases damage dealt by 30%. Stacks up to 20 times. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 43,
+            "lastSec": 161,
+            "gapMinSec": 11,
+            "gapMedSec": 21,
+            "gapMaxSec": 48
+          }
+        },
+        {
+          "spellId": 143265,
+          "name": "Launch Sawblade",
+          "event": "Launch Sawblade",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143265",
+          "description": "Fires a sawblade at a target, inflciting 601250 to 698750 Physical damage to any enemies in the path of the blade and knocking them back. A spell.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 43,
+            "lastSec": 205,
+            "gapMinSec": 16,
+            "gapMedSec": 65,
+            "gapMaxSec": 81
+          }
+        },
+        {
+          "spellId": 145774,
+          "name": "Overcharge",
+          "event": "Overcharge (Mine/Missile/Turret/Electro/Laser)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145774",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 46,
+            "lastSec": 206,
+            "gapMinSec": 40,
+            "gapMedSec": 40,
+            "gapMaxSec": 40
+          }
+        },
+        {
+          "spellId": 145775,
+          "name": "Overcharge",
+          "event": "Overcharge (Mine/Missile/Turret/Electro/Laser)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145775",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 46,
+            "lastSec": 166,
+            "gapMinSec": 120,
+            "gapMedSec": 120,
+            "gapMaxSec": 120
+          }
+        },
+        {
+          "spellId": 145269,
+          "name": "Break-in Period",
+          "event": "Break-in Period",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145269",
+          "description": "Vulnerable to roots, stuns, and snares. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 59,
+            "firstSec": 52,
+            "lastSec": 218,
+            "gapMinSec": 0,
+            "gapMedSec": 1,
+            "gapMaxSec": 58
+          }
+        },
+        {
+          "spellId": 144208,
+          "name": "Death From Above",
+          "event": "Death From Above (BLA)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144208",
+          "description": "Slams into the ground, inflicting 693750 to 806250 Physical damage to nearby enemies and knocking them back. Stuns the caster and increases their damage taken by 200% for 5 sec.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 59,
+            "lastSec": 59,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143002,
+          "name": "Detonate!",
+          "event": "Detonate!",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143002",
+          "description": "Inflicts 305250 to 354750 Fire damage to nearby units, knocking them back and killing the caster. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 73,
+            "lastSec": 119,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 44
+          }
+        },
+        {
+          "spellId": 145721,
+          "name": "Overcharged Laser Fire",
+          "event": "Overcharged Laser Fire",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145721",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 88,
+            "lastSec": 88,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Thok",
+      "fightId": 39,
+      "durationSec": 214,
+      "spells": [
+        {
+          "spellId": 143428,
+          "name": "Tail Lash",
+          "event": "Tail Lash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143428",
+          "description": "A sweeping tail strike hits all enemies behind the caster, inflicting 292500 to 307500 damage and stunning them for 2 sec. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 12,
+            "firstSec": 11,
+            "lastSec": 210,
+            "gapMinSec": 10,
+            "gapMedSec": 11,
+            "gapMaxSec": 87
+          }
+        },
+        {
+          "spellId": 143343,
+          "name": "Deafening Screech",
+          "event": "Deafening Screech 1..4",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143343",
+          "description": "Inflicts 511875 to 538125 Physical damage to all enemies and interrupts spellcasting for 2 sec. In the NPC Abilities category. Added in World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 26,
+            "firstSec": 13,
+            "lastSec": 209,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 86
+          }
+        },
+        {
+          "spellId": 143426,
+          "name": "Fearsome Roar",
+          "event": "Fearsome Roar",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143426",
+          "description": "Inflicts 292500 to 307500 Physical damage in a frontal cone. The roar incites terror in the heart of enemies, causing them to take 25% more damage per stack.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 14,
+            "lastSec": 40,
+            "gapMinSec": 11,
+            "gapMedSec": 11,
+            "gapMaxSec": 15
+          }
+        },
+        {
+          "spellId": 143445,
+          "name": "Fixate",
+          "event": "Fixate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143445",
+          "description": "Gul'rok smells your blood and pursues you! In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 55,
+            "lastSec": 113,
+            "gapMinSec": 15,
+            "gapMedSec": 15,
+            "gapMaxSec": 15
+          }
+        },
+        {
+          "spellId": 143440,
+          "name": "Blood Frenzy",
+          "event": "Blood Frenzy",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143440",
+          "description": "This unit is in a frenzy for blood! Movement speed periodically increasing. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 58,
+            "lastSec": 58,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 145974,
+          "name": "Enrage",
+          "event": "Enrage",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145974",
+          "description": "Increases the caster's damage and attack speed by 50% for 15 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 70,
+            "lastSec": 70,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144016,
+          "name": "Akolik's Incantation",
+          "event": "Akolik's Incantation",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144016",
+          "description": "Invokes the holy order of Kros to subdue a nearby dinosaur. has unpredictable results. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 120,
+            "lastSec": 120,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 146581,
+          "name": "Fixate",
+          "event": "Fixate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=146581",
+          "description": "Fixated. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 123,
+            "lastSec": 123,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 149569,
+          "name": "Mending",
+          "event": "Mending",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=149569",
+          "description": "Heals the caster for 8% of their maximum life. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 127,
+            "lastSec": 127,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Paragons",
+      "fightId": 43,
+      "durationSec": 400,
+      "spells": [
+        {
+          "spellId": 143278,
+          "name": "Genetic Alteration",
+          "event": "Genetic Alteration",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143278",
+          "description": "Rik'kal's attacks weaken the victim's flesh, making it more likely that Skeer will hew them in two. In the NPC Abilities category. A spell. Always up to date.",
+          "cadence": {
+            "casts": 6,
+            "firstSec": 11,
+            "lastSec": 23,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 4
+          }
+        },
+        {
+          "spellId": 143274,
+          "name": "Hew",
+          "event": "Hew",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143274",
+          "description": "Skeer's massive blades hacks his opponents nearly in two.  This exposes their innards, making them more likely to fall prey to the meddling of Rik'kal's experiments.",
+          "cadence": {
+            "casts": 19,
+            "firstSec": 12,
+            "lastSec": 52,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 4
+          }
+        },
+        {
+          "spellId": 144839,
+          "name": "Multi-Shot",
+          "event": "Multi-Shot",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144839",
+          "description": "Shoots at three enemies, inflicting Physical damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 21,
+            "firstSec": 13,
+            "lastSec": 163,
+            "gapMinSec": 5,
+            "gapMedSec": 5,
+            "gapMaxSec": 23
+          }
+        },
+        {
+          "spellId": 143280,
+          "name": "Bloodletting",
+          "event": "Bloodletting",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143280",
+          "description": "The caster readies one might swing of their weapon, causing the victim's blood to spew about the room and form into small blood globules. These blood globules will move to a nearby paragon and heal them.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 14,
+            "lastSec": 48,
+            "gapMinSec": 34,
+            "gapMedSec": 34,
+            "gapMaxSec": 34
+          }
+        },
+        {
+          "spellId": 143339,
+          "name": "Injection",
+          "event": "Injection",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143339",
+          "description": "Inflicts 78000 Nature damage every second for 12 sec.  When this effect fades it causes a reaction.Injection200 yd rangeInstantThe injection reacts upon leaving the victim's bloodstream, spawning several Amber Parasites.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 15,
+            "lastSec": 15,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 142948,
+          "name": "Aim",
+          "event": "Aim",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142948",
+          "description": "The caster takes aim at their target. After 6 sec the caster will Fire. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 31,
+            "lastSec": 138,
+            "gapMinSec": 36,
+            "gapMedSec": 36,
+            "gapMaxSec": 36
+          }
+        },
+        {
+          "spellId": 143709,
+          "name": "Store Kinetic Energy",
+          "event": "Store Kinetic Energy",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143709",
+          "description": "Ka'roz readies himself to charge around the battlefield at random enemies very quickly. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 48,
+            "lastSec": 337,
+            "gapMinSec": 63,
+            "gapMedSec": 63,
+            "gapMaxSec": 86
+          }
+        },
+        {
+          "spellId": 143702,
+          "name": "Whirling",
+          "event": "Whirling",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143702",
+          "description": "Inflicts 300000 Physical damage each second. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 13,
+            "firstSec": 50,
+            "lastSec": 280,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 224
+          }
+        },
+        {
+          "spellId": 143243,
+          "name": "Rapid Fire",
+          "event": "Rapid Fire",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143243",
+          "description": "The caster fires several volleys of Sonic Pulses outward in random directions. No direction will be chosen more than once. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 60,
+            "lastSec": 117,
+            "gapMinSec": 57,
+            "gapMedSec": 57,
+            "gapMaxSec": 57
+          }
+        },
+        {
+          "spellId": 143974,
+          "name": "Shield Bash",
+          "event": "Shield Bash",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143974",
+          "description": "Korven the Prime bashes his target, stunning them for 6 sec.  Korven follows this attack with a Vicious Assault.Vicious Assault0.5 sec castKorven the Prime strikes out several times in front of him, inflicting damage to any target in the area.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 82,
+            "lastSec": 116,
+            "gapMinSec": 17,
+            "gapMedSec": 17,
+            "gapMaxSec": 17
+          }
+        },
+        {
+          "spellId": 143977,
+          "name": "Vicious Assault",
+          "event": "Vicious Assault",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143977",
+          "description": "Korven the Prime strikes out several times in front of him, inflicting damage to any target in the area. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 83,
+            "lastSec": 116,
+            "gapMinSec": 17,
+            "gapMedSec": 17,
+            "gapMaxSec": 17
+          }
+        },
+        {
+          "spellId": 143759,
+          "name": "Hurl Amber",
+          "event": "Hurl Amber",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143759",
+          "description": "The caster readies himself to Hurl several pieces of Amber down at his enemies. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 85,
+            "lastSec": 362,
+            "gapMinSec": 67,
+            "gapMedSec": 67,
+            "gapMaxSec": 72
+          }
+        },
+        {
+          "spellId": 142564,
+          "name": "Encase in Amber",
+          "event": "Encase in Amber",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142564",
+          "description": "Encases the target in amber. If the amber shell is not destroyed within 10 sec the target will be healed to full. During this time the target is immune to all damage.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 104,
+            "lastSec": 104,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 142576,
+          "name": "Amber Regeneration",
+          "event": "Amber Regeneration",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142576",
+          "description": "The caster regenerates within the confines of their protective amber shell.  When the spell ends the caster will re-emerge at full health. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 114,
+            "lastSec": 114,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143666,
+          "name": "Diminish",
+          "event": "Diminish",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143666",
+          "description": "Iyyokuk invokes Arcane magic to cut the target's health by 34% If the target has too little health to begin with they will perish. A spell. Always up to date.",
+          "cadence": {
+            "casts": 20,
+            "firstSec": 145,
+            "lastSec": 258,
+            "gapMinSec": 4,
+            "gapMedSec": 5,
+            "gapMaxSec": 16
+          }
+        },
+        {
+          "spellId": 142528,
+          "name": "Toxic Injection",
+          "event": "Toxic Injection",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142528",
+          "description": "Xaril injects all players with a random toxin. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 174,
+            "lastSec": 174,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 142929,
+          "name": "Tenderizing Strikes",
+          "event": "Tenderizing Strikes",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142929",
+          "description": "Xaril's strikes leave the victim's flesh tenderized, making them more susceptible to the strikes of Kil'ruk the Wind-Reaver. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 14,
+            "firstSec": 176,
+            "lastSec": 215,
+            "gapMinSec": 2,
+            "gapMedSec": 2,
+            "gapMaxSec": 10
+          }
+        },
+        {
+          "spellId": 142416,
+          "name": "Insane Calculation: Fiery Edge",
+          "event": "Insane Calculation: Fiery Edge",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142416",
+          "description": "Iyyokuk creates beams of fire between multiple enemies.  These beams of fire inflict greater damage to the two victims the closer together they are and will also damage players caught in their path.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 176,
+            "lastSec": 216,
+            "gapMinSec": 40,
+            "gapMedSec": 40,
+            "gapMaxSec": 40
+          }
+        },
+        {
+          "spellId": 142315,
+          "name": "Caustic Blood",
+          "event": "Caustic Blood",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142315",
+          "description": "Injects the victim with poison, inflicting 101250 Nature damage every second. This effect stacks up to 10 times.This effect fails to apply to tanks using their Active Mitigation abilities.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 179,
+            "lastSec": 207,
+            "gapMinSec": 9,
+            "gapMedSec": 10,
+            "gapMaxSec": 10
+          }
+        },
+        {
+          "spellId": 142729,
+          "name": "Catalyst: Purple",
+          "event": "Catalyst: Purple",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142729",
+          "description": "The caster hurls vials of purple catalysts at their enemies. Any victim with a blue or red toxin in their blood will suffer a Reaction: Purple.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 195,
+            "lastSec": 195,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 143765,
+          "name": "Sonic Projection",
+          "event": "Sonic Projection",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143765",
+          "description": "The caster uses their voice to project an area of sonic forces. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 21,
+            "firstSec": 229,
+            "lastSec": 300,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 6
+          }
+        },
+        {
+          "spellId": 142667,
+          "name": "Thick Shell",
+          "event": "Thick Shell",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142667",
+          "description": "The caster puts up a barrier, making them immune to all damage. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 4,
+            "firstSec": 229,
+            "lastSec": 244,
+            "gapMinSec": 5,
+            "gapMedSec": 5,
+            "gapMaxSec": 5
+          }
+        },
+        {
+          "spellId": 142668,
+          "name": "Mesmerize",
+          "event": "Mesmerize",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142668",
+          "description": "The caster dominates the mind of one of their enemies, forcing them to walk toward a nearby Hungry Kunchong. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 245,
+            "lastSec": 277,
+            "gapMinSec": 32,
+            "gapMedSec": 32,
+            "gapMaxSec": 32
+          }
+        },
+        {
+          "spellId": 142922,
+          "name": "Razor Sharp Blades",
+          "event": "Razor Sharp Blades",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142922",
+          "description": "Kil'ruk's blades expose the victim's blood vessels, making them more likely to be affected by poisons. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 38,
+            "firstSec": 270,
+            "lastSec": 366,
+            "gapMinSec": 1,
+            "gapMedSec": 2,
+            "gapMaxSec": 16
+          }
+        },
+        {
+          "spellId": 142930,
+          "name": "Razor Sharp Blades",
+          "event": "Razor Sharp Blades",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142930",
+          "description": "Kil'ruk's blades expose the victim's blood vessels, making them more likely to be affected by poisons. In the NPC Abilities category. A spell.",
+          "cadence": {
+            "casts": 36,
+            "firstSec": 270,
+            "lastSec": 366,
+            "gapMinSec": 1,
+            "gapMedSec": 2,
+            "gapMaxSec": 17
+          }
+        },
+        {
+          "spellId": 143939,
+          "name": "Gouge",
+          "event": "Gouge (PAR)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143939",
+          "description": "Stuns the target and then immediately follows up with a vicious strike with both blades. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 293,
+            "lastSec": 362,
+            "gapMinSec": 68,
+            "gapMedSec": 68,
+            "gapMaxSec": 68
+          }
+        },
+        {
+          "spellId": 142651,
+          "name": "Molt",
+          "event": "Molt",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142651",
+          "description": "The caster molts from a larvae to an adult. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 294,
+            "lastSec": 310,
+            "gapMinSec": 16,
+            "gapMedSec": 16,
+            "gapMaxSec": 16
+          }
+        },
+        {
+          "spellId": 143941,
+          "name": "Mutilate",
+          "event": "Mutilate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=143941",
+          "description": "Inflicts severe damage to the target. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 295,
+            "lastSec": 363,
+            "gapMinSec": 68,
+            "gapMedSec": 68,
+            "gapMaxSec": 68
+          }
+        },
+        {
+          "spellId": 142655,
+          "name": "Swipe",
+          "event": "Swipe",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142655",
+          "description": "The caster inflicts 810000 Physical damage to all enemies in front of them. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 8,
+            "firstSec": 305,
+            "lastSec": 342,
+            "gapMinSec": 3,
+            "gapMedSec": 4,
+            "gapMaxSec": 11
+          }
+        },
+        {
+          "spellId": 148677,
+          "name": "Reave",
+          "event": "Reave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148677",
+          "description": "The caster leaps to a nearby target. After landing the caster will whirl in place, drawing in all enemies and inflicting physical damage to them periodically.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 310,
+            "lastSec": 344,
+            "gapMinSec": 34,
+            "gapMedSec": 34,
+            "gapMaxSec": 34
+          }
+        },
+        {
+          "spellId": 148676,
+          "name": "Reave",
+          "event": "Reave",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148676",
+          "description": "The caster inflicts Physical damage to at all enemies. The damage received lessens the further away the target is. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 314,
+            "lastSec": 349,
+            "gapMinSec": 34,
+            "gapMedSec": 34,
+            "gapMaxSec": 34
+          }
+        },
+        {
+          "spellId": 142232,
+          "name": "Death from Above",
+          "event": "Death from Above (PAR)",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=142232",
+          "description": "Inflicts Physical damage to all enemies within 8 yards. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 328,
+            "lastSec": 328,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    },
+    {
+      "boss": "Garrosh",
+      "fightId": 45,
+      "durationSec": 457,
+      "spells": [
+        {
+          "spellId": 144748,
+          "name": "Desecrate",
+          "event": "Desecrate P1..P3",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144748",
+          "description": "Garrosh throws the Desecrated Weapon at a random target. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 11,
+            "lastSec": 249,
+            "gapMinSec": 36,
+            "gapMedSec": 36,
+            "gapMaxSec": 131
+          }
+        },
+        {
+          "spellId": 144762,
+          "name": "Desecrated",
+          "event": "Desecrated",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144762",
+          "description": "Inflicts 195000 to 205000 Shadow damage every 1 sec. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 46,
+            "firstSec": 14,
+            "lastSec": 262,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 127
+          }
+        },
+        {
+          "spellId": 144616,
+          "name": "Power Iron Star",
+          "event": "Power Iron Star",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144616",
+          "description": "Powering the Kor'kron Iron Star! The Iron Star will become active after 10 sec. Iron Stars inflict massive damage to any players or Kor'kron that are caught in its path.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 22,
+            "lastSec": 22,
+            "gapMinSec": 0,
+            "gapMedSec": 0,
+            "gapMaxSec": 0
+          }
+        },
+        {
+          "spellId": 144821,
+          "name": "Hellscream's Warsong",
+          "event": "Hellscream's Warsong",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144821",
+          "description": "Hellscream's Warsong inspires his allies, increasing Physical damage dealt by 150% and increasing health by 150%. In the NPC Abilities category.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 22,
+            "lastSec": 22,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144585,
+          "name": "Ancestral Fury",
+          "event": "Ancestral Fury",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144585",
+          "description": "Being interrupted causes Fury, increasing cast speed by 25%. Stacks. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 31,
+            "lastSec": 31,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144798,
+          "name": "Exploding Iron Star",
+          "event": "Exploding Iron Star",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144798",
+          "description": "The impact of the Iron Star causes it to explode, inflicting 3412500 to 3587500 Fire damage to nearby enemies. The damage inflicted decreases the farther away an enemy is from the explosion.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 40,
+            "lastSec": 40,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144584,
+          "name": "Chain Lightning",
+          "event": "Chain Lightning",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144584",
+          "description": "Inflicts 438750 to 461250 Nature damage, chaining to nearby enemies. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 51,
+            "lastSec": 51,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 145331,
+          "name": "Weak Minded",
+          "event": "Weak Minded",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145331",
+          "description": "Weak minded beings cannot enter the Realm of Y'shaarj. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 68,
+            "lastSec": 68,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 144969,
+          "name": "Annihilate",
+          "event": "Annihilate 1..3",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144969",
+          "description": "Inflicts 975000 to 1025000 Shadow damage to enemies within 50 yards in front of the caster and 682500 to 717500 Shadow damage to all enemies in the Realm of Y'Shaarj.",
+          "cadence": {
+            "casts": 10,
+            "firstSec": 100,
+            "lastSec": 129,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 3
+          }
+        },
+        {
+          "spellId": 145183,
+          "name": "Gripping Despair",
+          "event": "Gripping Despair",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145183",
+          "description": "Inflicts 45000 Shadow damage every 1 sec for 10 sec. Stacks. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 29,
+            "firstSec": 138,
+            "lastSec": 251,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 13
+          }
+        },
+        {
+          "spellId": 145065,
+          "name": "Touch of Y'Shaarj",
+          "event": "Touch of Y'Shaarj P2/P3",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145065",
+          "description": "The Touch of Y'shaarj mind controls the target, causing them to seek out nearby allies and attempt to convert them as well. Dealing sufficient damage to the mind-controlled player will break the effect.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 147,
+            "lastSec": 240,
+            "gapMinSec": 45,
+            "gapMedSec": 45,
+            "gapMaxSec": 47
+          }
+        },
+        {
+          "spellId": 144985,
+          "name": "Whirling Corruption",
+          "event": "Whirling Corruption P2/P3",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144985",
+          "description": "Garrosh begins whirling, inflicting 155999 to 164000 Shadow damage to nearby enemies every 0.5 sec. The damage inflicted decreases the farther away the enemy is from Garrosh.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 164,
+            "lastSec": 218,
+            "gapMinSec": 53,
+            "gapMedSec": 53,
+            "gapMaxSec": 53
+          }
+        },
+        {
+          "spellId": 145195,
+          "name": "Empowered Gripping Despair",
+          "event": "Empowered Gripping Despair",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145195",
+          "description": "Inflicts 45000 Shadow damage every 1 sec for 10 sec. When Empowered Gripping Despair expires or is removed it causes Explosive Despair. A spell.",
+          "cadence": {
+            "casts": 15,
+            "firstSec": 272,
+            "lastSec": 330,
+            "gapMinSec": 3,
+            "gapMedSec": 3,
+            "gapMaxSec": 15
+          }
+        },
+        {
+          "spellId": 144749,
+          "name": "Empowered Desecrate",
+          "event": "Empowered Desecrate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144749",
+          "description": "Garrosh throws the Empowered Desecrated Weapon at a random target. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 272,
+            "lastSec": 308,
+            "gapMinSec": 36,
+            "gapMedSec": 36,
+            "gapMaxSec": 36
+          }
+        },
+        {
+          "spellId": 144819,
+          "name": "Power of the Old God",
+          "event": "Power of the Old God",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=144819",
+          "description": "Empowered by Y'Shaarj the Desecrated Weapon has become indestructible and heals over time. In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 275,
+            "lastSec": 310,
+            "gapMinSec": 36,
+            "gapMedSec": 36,
+            "gapMaxSec": 36
+          }
+        },
+        {
+          "spellId": 145171,
+          "name": "Empowered Touch of Y'Shaarj",
+          "event": "Empowered Touch of Y'Shaarj",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145171",
+          "description": "The Touch of Y'shaarj mind controls the target, causing them to seek out nearby allies and attempt to convert them as well. Dealing sufficient damage to the mind-controlled player will break the effect.",
+          "cadence": {
+            "casts": 2,
+            "firstSec": 283,
+            "lastSec": 319,
+            "gapMinSec": 36,
+            "gapMedSec": 36,
+            "gapMaxSec": 36
+          }
+        },
+        {
+          "spellId": 145037,
+          "name": "Empowered Whirling Corruption",
+          "event": "Empowered Whirling Corruption",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=145037",
+          "description": "Garrosh begins whirling, inflicting 155999 to 164000 Shadow damage to nearby enemies every 0.5 sec. The damage inflicted decreases the farther away an enemy is from Garrosh.",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 300,
+            "lastSec": 300,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 148714,
+          "name": "Empowered",
+          "event": "Empowered",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=148714",
+          "description": "On Melee Swing causes the Minion of Y'Shaarj to gain 10 energy. At 100 energy or when the Minion of Y'Shaarj dies causes Empowering Corruption.",
+          "cadence": {
+            "casts": 10,
+            "firstSec": 303,
+            "lastSec": 309,
+            "gapMinSec": 0,
+            "gapMedSec": 1,
+            "gapMaxSec": 1
+          }
+        },
+        {
+          "spellId": 147209,
+          "name": "Malice",
+          "event": "Malice",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147209",
+          "description": "Fires Malicious Blast at the closest 5 allies every 2 sec. Any Malicious Blast that is not absorbed will be fired at Garrosh instead, granting him 5 Energy.",
+          "cadence": {
+            "casts": 3,
+            "firstSec": 382,
+            "lastSec": 444,
+            "gapMinSec": 31,
+            "gapMedSec": 31,
+            "gapMaxSec": 31
+          }
+        },
+        {
+          "spellId": 147120,
+          "name": "Call Bombardment",
+          "event": "Call Bombardment",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147120",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 423,
+            "lastSec": 423,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        },
+        {
+          "spellId": 147665,
+          "name": "Fixate",
+          "event": "Fixate",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147665",
+          "description": "The Iron Star is fixated on you! In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch.",
+          "cadence": {
+            "casts": 5,
+            "firstSec": 431,
+            "lastSec": 455,
+            "gapMinSec": 4,
+            "gapMedSec": 4,
+            "gapMaxSec": 8
+          }
+        },
+        {
+          "spellId": 147296,
+          "name": "Summon Fading Breath",
+          "event": "Summon Fading Breath",
+          "wowheadUrl": "https://www.wowhead.com/mop-classic/spell=147296",
+          "description": "In the NPC Abilities category. A spell from World of Warcraft: Mists of Pandaria. Always up to date with the latest patch (5.5.4).",
+          "cadence": {
+            "casts": 1,
+            "firstSec": 457,
+            "lastSec": 457,
+            "gapMinSec": null,
+            "gapMedSec": null,
+            "gapMaxSec": null
+          }
+        }
+      ]
+    }
+  ]
+}

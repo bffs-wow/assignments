@@ -7,13 +7,15 @@
           "name": "Devotion Aura",
           "description": "Reduces magic damage taken by 20% for 6 sec.",
           "cooldown": 180,
-          "spellId": 31821
+          "spellId": 31821,
+          "duration": 6
         },
         {
           "name": "Hand of Sacrifice",
           "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
           "cooldown": 120,
-          "spellId": 6940
+          "spellId": 6940,
+          "duration": 12
         }
       ]
     },
@@ -24,13 +26,15 @@
           "name": "Devotion Aura",
           "description": "Reduces magic damage taken by 20% for 6 sec.",
           "cooldown": 180,
-          "spellId": 31821
+          "spellId": 31821,
+          "duration": 6
         },
         {
           "name": "Hand of Sacrifice",
           "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
           "cooldown": 120,
-          "spellId": 6940
+          "spellId": 6940,
+          "duration": 12
         }
       ]
     },
@@ -41,13 +45,15 @@
           "name": "Healing Tide Totem",
           "description": "Summons a Water Totem that pulses powerful AoE healing.",
           "cooldown": 180,
-          "spellId": 108280
+          "spellId": 108280,
+          "duration": 11
         },
         {
           "name": "Ancestral Guidance",
           "description": "Converts damage/healing into group healing for 10 sec.",
           "cooldown": 120,
-          "spellId": 108281
+          "spellId": 108281,
+          "duration": 10
         }
       ]
     },
@@ -58,13 +64,15 @@
           "name": "Healing Tide Totem",
           "description": "Summons a Water Totem that pulses powerful AoE healing.",
           "cooldown": 180,
-          "spellId": 108280
+          "spellId": 108280,
+          "duration": 11
         },
         {
           "name": "Spirit Link Totem",
           "description": "Reduces damage taken by 10% and redistributes health.",
           "cooldown": 180,
-          "spellId": 98008
+          "spellId": 98008,
+          "duration": 6
         }
       ]
     },
@@ -81,19 +89,22 @@
           "name": "Demoralizing Banner",
           "description": "Reduces damage dealt by all enemies within 30 yards by 10%.",
           "cooldown": 180,
-          "spellId": 114203
+          "spellId": 114203,
+          "duration": 15
         },
         {
           "name": "Vigilance",
           "description": "Reduces damage taken by the target by 30% for 12 sec.",
           "cooldown": 120,
-          "spellId": 114030
+          "spellId": 114030,
+          "duration": 12
         },
         {
           "name": "Shield Wall",
           "description": "Reduces all damage taken by 40% for 12 sec.",
           "cooldown": 180,
-          "spellId": 871
+          "spellId": 871,
+          "duration": 12
         }
       ]
     },
@@ -104,7 +115,8 @@
           "name": "Anti-Magic Zone",
           "description": "Places a large anti-magic zone that reduces spell damage taken by raid members by 40%.",
           "cooldown": 120,
-          "spellId": 51052
+          "spellId": 51052,
+          "duration": 3
         }
       ]
     },
@@ -115,19 +127,22 @@
           "name": "Power Word: Barrier",
           "description": "Summons a holy barrier that reduces all damage taken by 25% for 10 sec.",
           "cooldown": 180,
-          "spellId": 62618
+          "spellId": 62618,
+          "duration": 10
         },
         {
           "name": "Spirit Shell",
           "description": "Converts healing into absorption shields for the next 15 sec.",
           "cooldown": 60,
-          "spellId": 109964
+          "spellId": 109964,
+          "duration": 10
         },
         {
           "name": "Pain Suppression",
           "description": "Reduces all damage taken by a friendly target by 40% for 8 sec.",
           "cooldown": 180,
-          "spellId": 33206
+          "spellId": 33206,
+          "duration": 8
         },
         {
           "name": "Mass Dispel",
@@ -144,7 +159,8 @@
           "name": "Smoke Bomb",
           "description": "Creates a cloud of thick smoke, preventing enemies outside from targeting those inside and reducing damage taken by 20%.",
           "cooldown": 180,
-          "spellId": 76577
+          "spellId": 76577,
+          "duration": 5
         }
       ]
     },
@@ -155,7 +171,8 @@
           "name": "Vampiric Embrace",
           "description": "Fills you with the embrace of Shadow energy, causing you and your allies to be healed for 15% of any single-target Shadow damage you deal.",
           "cooldown": 180,
-          "spellId": 15286
+          "spellId": 15286,
+          "duration": 15
         }
       ]
     },
@@ -176,8 +193,9 @@
         {
           "name": "Bloodlust",
           "description": "Increases Haste by 30% for all party and raid members for 40 sec.",
-          "cooldown": 600,
-          "spellId": 2825
+          "cooldown": 300,
+          "spellId": 2825,
+          "duration": 40
         },
         {
           "name": "Custom Spell Assignment",
@@ -194,19 +212,22 @@
           "name": "Shield Wall",
           "description": "Reduces all damage taken by 40% for 12 sec.",
           "cooldown": 180,
-          "spellId": 871
+          "spellId": 871,
+          "duration": 12
         },
         {
           "name": "Last Stand",
           "description": "Increases max health by 20% for 20 sec.",
           "cooldown": 180,
-          "spellId": 12975
+          "spellId": 12975,
+          "duration": 20
         },
         {
           "name": "Vigilance",
           "description": "Reduces damage taken by the target by 30% for 12 sec.",
           "cooldown": 120,
-          "spellId": 114030
+          "spellId": 114030,
+          "duration": 12
         }
       ]
     },
@@ -217,19 +238,22 @@
           "name": "Guardian Spirit",
           "description": "Reduces damage taken by 40% for 12 sec; prevents death.",
           "cooldown": 180,
-          "spellId": 47788
+          "spellId": 47788,
+          "duration": 10
         },
         {
           "name": "Divine Hymn",
           "description": "Channels a powerful heal over 8 sec to the whole raid.",
           "cooldown": 180,
-          "spellId": 64843
+          "spellId": 64843,
+          "duration": 8
         },
         {
           "name": "Hymn of Hope",
           "description": "Channels mana + healing over 8 sec to the whole raid.",
-          "cooldown": 180,
-          "spellId": 64901
+          "cooldown": 360,
+          "spellId": 64901,
+          "duration": 8
         }
       ]
     },
@@ -246,7 +270,8 @@
           "name": "Life Cocoon",
           "description": "Shields the friendly target, absorbing damage for 12 sec.",
           "cooldown": 120,
-          "spellId": 116849
+          "spellId": 116849,
+          "duration": 12
         }
       ]
     },
@@ -256,14 +281,16 @@
         {
           "name": "Tranquility",
           "description": "Channels a large raid-wide heal over 8 sec.",
-          "cooldown": 180,
-          "spellId": 740
+          "cooldown": 480,
+          "spellId": 740,
+          "duration": 8
         },
         {
           "name": "Ironbark",
           "description": "Reduces damage taken by the friendly target by 20% for 12 sec.",
-          "cooldown": 90,
-          "spellId": 102342
+          "cooldown": 60,
+          "spellId": 102342,
+          "duration": 12
         }
       ]
     },
@@ -273,14 +300,16 @@
         {
           "name": "Tranquility",
           "description": "Channels a large raid-wide heal over 8 sec.",
-          "cooldown": 180,
-          "spellId": 740
+          "cooldown": 480,
+          "spellId": 740,
+          "duration": 8
         },
         {
           "name": "Stampeding Roar",
           "description": "Increases party/raid movement speed by 60% for 8 sec.",
           "cooldown": 120,
-          "spellId": 106898
+          "spellId": 106898,
+          "duration": 8
         }
       ]
     },
@@ -291,7 +320,8 @@
           "name": "Anti-Magic Zone",
           "description": "Places a large anti-magic zone reducing spell damage taken by raid members by 40%.",
           "cooldown": 120,
-          "spellId": 51052
+          "spellId": 51052,
+          "duration": 3
         }
       ]
     },
@@ -302,19 +332,22 @@
           "name": "Devotion Aura",
           "description": "Reduces magic damage taken by 20% for 6 sec.",
           "cooldown": 180,
-          "spellId": 31821
+          "spellId": 31821,
+          "duration": 6
         },
         {
           "name": "Hand of Sacrifice",
           "description": "Places a Hand on the friendly target, reducing damage taken by 30%.",
           "cooldown": 120,
-          "spellId": 6940
+          "spellId": 6940,
+          "duration": 12
         },
         {
           "name": "Hand of Protection",
           "description": "Blesses a friendly target, making them immune to physical damage.",
           "cooldown": 300,
-          "spellId": 1022
+          "spellId": 1022,
+          "duration": 10
         }
       ]
     },
@@ -325,7 +358,8 @@
           "name": "Stampeding Roar",
           "description": "Increases party/raid movement speed by 60% for 8 sec.",
           "cooldown": 120,
-          "spellId": 106898
+          "spellId": 106898,
+          "duration": 8
         }
       ]
     },
@@ -336,7 +370,8 @@
           "name": "Dark Bargain",
           "description": "Reduces damage taken by 25% for 8 sec, then damages you afterwards.",
           "cooldown": 180,
-          "spellId": 110913
+          "spellId": 110913,
+          "duration": 8
         },
         {
           "name": "Healthstone (custom)",
