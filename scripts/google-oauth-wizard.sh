@@ -186,49 +186,56 @@ finish() {
 
 TOTAL_STAGES=5
 
-banner "Google OAuth for the SOO sheets push"
-
+PROJECT="${PROJECT:-bffs-assignments}"
+echo "  Target project: $PROJECT   (override with PROJECT=<id> if wrong)"
 SHELL_DEFAULT="1SqMdIVBKMYRfOaGw4TucVVPpjqm4kvXqEZJo6W1HWms"
+BASE="https://console.cloud.google.com/auth"
+
+banner "Google OAuth for the SOO sheets push"
 
 # ── Stage 1: Google Cloud project ─────────────────────────────────────────
 stage "Google Cloud — project"
-say "Pick the project that will own this OAuth client. Which project only affects"
-say "ownership/billing; the app reads .env, not the project."
+say "You already created the project (bffs-assignments) — this stage confirms it."
 open_url "https://console.cloud.google.com/projectcreate"
-step "Give it a name (e.g. 'bffs-sheets-push') and click CREATE."
-step "Prefer reusing a project? Select it via the project picker (top-left) instead."
-pause "Confirm the project exists and you're on its dashboard."
+step "If the project picker (top-left) isn't on 'bffs-assignments', pick it."
+step "Only create a new project if you want a different one."
+pause "Confirm the console says bffs-assignments."
 
 # ── Stage 2: Enable the Google Sheets API ─────────────────────────────────
 stage "Google Sheets API — enable"
 say "The OAuth client can only call APIs that are enabled on the project."
-open_url "https://console.cloud.google.com/apis/library/sheets.googleapis.com"
+open_url "https://console.cloud.google.com/apis/library/sheets.googleapis.com?project=${PROJECT}"
+step "Confirm the project picker shows ${PROJECT}."
 step "Click ENABLE on the Google Sheets API page."
 pause "Confirm you saw the 'API enabled' confirmation."
 
-# ── Stage 3: OAuth consent screen ─────────────────────────────────────────
-stage "OAuth consent screen"
-say "Google needs a consent screen before clients can authorize. Spreadsheets"
-say "read/write is a non-sensitive scope — no app verification required."
-open_url "https://console.cloud.google.com/apis/credentials/consent"
-step "Create it as EXTERNAL (or INTERNAL if your Google account is in a Workspace org)."
-step "App name: 'BFFS Assignment Push'. User support email: yours."
-step "Audience: leave defaults. Contact email: yours. → SAVE AND CONTINUE."
-step "Scopes: ADD OR REMOVE SCOPES → search 'Google Sheets API' → tick the"
-step "spreadsheets scope (ends in /auth/spreadsheets) → ADD → SAVE AND CONTINUE."
-step "Summary: SAVE AND CONTINUE. If it lands in TESTING, add your Google account"
-step "as a TEST USER when prompted — that's fine."
-pause "Confirm the consent screen exists (Testing or Published)."
+# ── Stage 3: Consent (Google Auth platform → Audience + Data access) ──────
+stage "Consent screen — Audience + Data access"
+say "The new Google Auth platform keeps the consent screen in three tabs:"
+note "  Branding · Audience · Data access   (left sidebar under 'Google Auth platform')"
+open_url "${BASE}/audience?project=${PROJECT}"
+step "Says 'not configured yet'? Click Get Started, then:"
+step "  1) Branding → App name 'BFFS Assignment Push' + User support email → Next"
+step "  2) Audience → user type EXTERNAL → Next"
+step "  3) Contact info → your email → Next; agree to User Data Policy → Create"
+step "Already configured? In Audience, click TEST USERS → Add users → add your own"
+step "Google email (required in Testing mode) → Save."
+open_url "${BASE}/data-access?project=${PROJECT}"
+step "Under Data access → ADD OR REMOVE SCOPES → search 'Google Sheets API' → tick"
+step "the spreadsheet scope (…/auth/spreadsheets) → SAVE. Keep any default scopes too."
+pause "Confirm: a test user (your email) is set, and the spreadsheets scope is saved."
 
-# ── Stage 4: OAuth client (Desktop) ───────────────────────────────────────
-stage "OAuth client — create + capture credentials"
-say "The app authenticates as you (personal account) via a Desktop-type client."
-open_url "https://console.cloud.google.com/apis/credentials"
-step "Click + CREATE CREDENTIALS → OAuth CLIENT ID."
-step "Application type: DESKTOP APP. Name: 'assignments-push'. → CREATE."
-step "Copy the Client ID (ends .apps.googleusercontent.com) into the prompt below."
+# ── Stage 4: OAuth client (Desktop) from the Clients page ─────────────────
+stage "OAuth client — Desktop (Clients page)"
+say "Clients are created under 'Clients' in the new platform — not the old"
+say "'Create credentials → OAuth client ID' menu."
+open_url "${BASE}/clients?project=${PROJECT}"
+step "Click CREATE CLIENT (button above the clients list)."
+step "Application type: DESKTOP APP  ← what makes the local redirect work."
+step "Name: 'assignments-push'. → CREATE."
+step "The created-client dialog shows the CLIENT ID and CLIENT SECRET — copy both."
 ask GOOGLE_CLIENT_ID "Paste the Client ID:"
-step "Copy the Client Secret and paste it (hidden) below."
+step "Secret is in the same dialog (or ⋯ → Download JSON → client_secret)."
 ask_secret GOOGLE_CLIENT_SECRET "Paste the Client Secret:"
 write_env GOOGLE_CLIENT_ID     "$GOOGLE_CLIENT_ID"
 write_env GOOGLE_CLIENT_SECRET "$GOOGLE_CLIENT_SECRET"
@@ -241,20 +248,25 @@ step "Make sure you're signed into your Google account in the browser first."
 ask GOOGLE_SHEET_ID "Google Sheet ID to authorize against:"
 [[ -z "$GOOGLE_SHEET_ID" ]] && GOOGLE_SHEET_ID="$SHELL_DEFAULT" && note "(using the test raid sheet id)"
 write_env GOOGLE_SHEET_ID "$GOOGLE_SHEET_ID"
-note "If you get redirect_uri_mismatch: Credentials → this client → Authorized"
-note "redirect URIs → add http://127.0.0.1:8787/ → SAVE → re-run this stage."
+note "If you see redirect_uri_mismatch: open the client in Clients → edit → add"
+note "'http://127.0.0.1:8787' as an authorized redirect URI (Desktop type usually"
+note "covers the loopback already) → save → re-run the wizard / stage."
 cat > .cache/oauth-helper.mjs <<'HELPEREOF'
 import http from 'node:http';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 const [clientId, clientSecret, sheetId] = process.argv.slice(2);
 const port = 8787;
 const redirectURI = `http://127.0.0.1:${port}/`;
 const state = Math.random().toString(36).slice(2);
+const verifier = crypto.randomBytes(48).toString('base64url');
+const challenge = crypto.createHash('sha256').update(verifier).digest('base64url');
 const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
   + `?client_id=${encodeURIComponent(clientId)}`
   + `&redirect_uri=${encodeURIComponent(redirectURI)}`
   + `&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/spreadsheets')}`
   + '&access_type=offline&prompt=consent'
+  + '&code_challenge=' + challenge + '&code_challenge_method=S256'
   + `&state=${state}`;
 fs.writeFileSync('.cache/oauth-url.txt', authUrl);
 const server = http.createServer(async (req, res) => {
@@ -269,7 +281,7 @@ const server = http.createServer(async (req, res) => {
     const tok = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectURI, grant_type: 'authorization_code' }),
+      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectURI, grant_type: 'authorization_code', code_verifier: verifier }),
     });
     const tj = await tok.json();
     if (!tj.refresh_token) throw new Error('no refresh_token: ' + JSON.stringify(tj).slice(0, 200));
