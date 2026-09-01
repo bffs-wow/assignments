@@ -10,7 +10,7 @@ import assert from 'node:assert';
 
 import type { Assignment } from '../../src/shared/assignments-schema.ts';
 import { allSooBosses, resolveBoss } from '../../src/serializer/bosses.ts';
-import { renderSooAssigns, HEALTH_PERCENT_ROWS, CUSTOM_SPELL_LITERAL } from '../../src/serializer/render.ts';
+import { renderSooAssigns, renderCountRows, HEALTH_PERCENT_ROWS, CUSTOM_SPELL_LITERAL } from '../../src/serializer/render.ts';
 
 const paragons = resolveBoss('Paragons of the Klaxxi');
 assert.ok(paragons, 'Paragons must resolve for the fixture');
@@ -113,4 +113,28 @@ test('T2: timing formats preserve negatives and fractions; occurrence keeps comm
   assert.ok(block.some((l) => l.includes('"0.5"')));
   assert.ok(block.some((l) => l.includes('"1,4"')));
   assert.ok(block.some((l) => l.includes('"0"')));
+});
+
+test('T3: renderCountRows returns pure 13-col assignment rows (no scaffold), validated + sorted', () => {
+  const { rows, errors } = renderCountRows({ assignments: goldenPlan, roleMappings: ROLE_MAPPINGS, boss: paragons! });
+  assert.equal(errors.length, 0);
+  assert.equal(rows.length, goldenPlan.length);
+  // each row is exactly the 13-column sheet grid
+  for (const row of rows) {
+    assert.equal(row.length, 13);
+  }
+  // sorted by master event order then TIME — matches the golden block's content
+  assert.equal(rows[0][2], 'Encounter Start (PAR)');
+  assert.equal(rows[1][2], 'Reave');
+  assert.equal(rows[2][2], 'Death from Above (PAR)');
+  // custom idiom rides the same columns the CSV renderer uses
+  assert.equal(rows[3][6], CUSTOM_SPELL_LITERAL);
+  assert.equal(rows[3][10], 'Lay on Hands');
+  assert.equal(rows[3][12], '633');
+});
+
+test('T3: renderCountRows is gated by the same validation — off-vocabulary returns errors', () => {
+  const { rows, errors } = renderCountRows({ assignments: [{ ...goldenPlan[0], event: 'Calamity' }], roleMappings: ROLE_MAPPINGS, boss: paragons! });
+  assert.equal(rows.length, 0);
+  assert.ok(errors.some((e) => e.field === 'event' && /Calamity/.test(e.message)));
 });

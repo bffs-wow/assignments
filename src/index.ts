@@ -19,6 +19,10 @@ import { CommunityAnalyst } from './agents/community-analyst.ts';
 import { AssignmentGenerator } from './agents/assignment-generator.ts';
 import { AssignmentRefiner } from './agents/assignment-refiner.ts';
 import { WCLExplorer } from './agents/wcl-explorer.ts';
+import { resolveBoss } from './serializer/bosses.ts';
+import { renderCountRows } from './serializer/render.ts';
+import { GoogleSheetsService, resolveSheetsEnv } from './services/google-sheets.ts';
+import { SheetsWriter } from './services/sheets-writer.ts';
 
 // ---------------------------------------------------------------------------
 // State dir + small JSON helpers (artifacts land in .cache/cli by default)
@@ -127,11 +131,12 @@ async function stepCommunity(opts: { encounter?: string; instance?: string; stat
   return reply.text;
 }
 
-async function stepGenerate(opts: { state?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
+async function stepGenerate(opts: { state?: string; encounter?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
   const roleMappings = readJSON(dir, 'rolemappings.json')?.mappings ?? {};
   const timeline = readJSON(dir, 'timeline.json')?.timeline ?? null;
   const community = readJSON(dir, 'community.json');
+  const resolvedEncounter = opts.encounter ?? process.env.RAID_HELPER_ENCOUNTER ?? '';
   if (!Object.keys(roleMappings).length) throw new Error('no rolemappings — run `mappings` first');
   if (!timeline) throw new Error('no timeline — run `timeline` first');
 
@@ -143,12 +148,31 @@ async function stepGenerate(opts: { state?: string }, { initial = null }: { init
   const assignments = reply.data?.assignments?.[0];
   if (!Array.isArray(assignments)) throw new Error('AssignmentGenerator did not submit assignments');
 
-  writeJSON(dir, 'committed.json', { assignments, roleMappings, generatedAt: new Date().toISOString() });
+  const boss = resolveBoss(resolvedEncounter);
+  if (boss) {
+    const { rows, errors } = renderCountRows({ assignments, roleMappings, boss });
+    writeJSON(dir, 'sheets-rows.json', { encounter: boss.id, rows, errors, renderedAt: new Date().toISOString() });
+    if (errors.length) console.error(`\n[generate] validation rejected ${errors.length} assignment(s) — push would be a no-op:\n` + errors.map((e) => `  - ${e.field}: ${e.message}`).join('\n'));
+  }
+  writeJSON(dir, 'committed.json', { assignments, roleMappings, encounter: resolvedEncounter || undefined, generatedAt: new Date().toISOString() });
   const tsv = `${CSVFormatter.formatToTSV(assignments, roleMappings)}\n`;
   fs.writeFileSync(path.join(dir, 'assignments.tsv'), tsv);
   console.log(`Generated ${assignments.length} assignments.\n-> ${path.join(dir, 'assignments.tsv')}`);
   console.log(tsv);
+  await autoPush(dir, { encounter: resolvedEncounter, assignments, roleMappings });
   return assignments;
+}
+
+/** Best-effort push after generate/refine when creds are present (never hard-fails). */
+async function autoPush(dir: string, opts: { encounter?: string; assignments: Assignment[]; roleMappings: RoleMappings }): Promise<void> {
+  if (!sheetsCredsPresent()) return;
+  const boss = resolveBoss(opts.encounter);
+  if (!boss) return;
+  try {
+    await stepPush({ state: dir, encounter: boss.id, yes: true });
+  } catch (e) {
+    console.error(`\n[push] auto-push to the sheet failed (${errMsg(e)}) — your CSV/TSV artifact is unaffected.`);
+  }
 }
 
 async function stepRefine(opts: { state?: string }, feedback: string): Promise<Assignment[]> {
@@ -161,11 +185,74 @@ async function stepRefine(opts: { state?: string }, feedback: string): Promise<A
   });
   const assignments = reply.data?.assignments?.[0];
   if (!Array.isArray(assignments)) throw new Error('Refiner did not submit assignments');
-  writeJSON(dir, 'committed.json', { assignments, roleMappings: committed.roleMappings, generatedAt: new Date().toISOString() });
+  writeJSON(dir, 'committed.json', { assignments, roleMappings: committed.roleMappings, encounter: committed.encounter, generatedAt: new Date().toISOString() });
   fs.writeFileSync(path.join(dir, 'assignments.tsv'), `${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
   console.log(`Refined to ${assignments.length} assignments.\n-> ${path.join(dir, 'assignments.tsv')}`);
   console.log(`${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
+  if (committed.encounter) {
+    const boss = resolveBoss(committed.encounter);
+    if (boss) {
+      const { rows, errors } = renderCountRows({ assignments, roleMappings: committed.roleMappings, boss });
+      writeJSON(dir, 'sheets-rows.json', { encounter: boss.id, rows, errors, renderedAt: new Date().toISOString() });
+    }
+  }
+  await autoPush(dir, { encounter: committed.encounter, assignments, roleMappings: committed.roleMappings });
   return assignments;
+}
+
+/** Whether the .env carries real Google OAuth creds (a push is possible). */
+function sheetsCredsPresent(): boolean {
+  const env = resolveSheetsEnv(process.env);
+  return Boolean(env.clientId && env.clientSecret && env.refreshToken && env.sheetId) &&
+    !/your_/.test(env.clientId ?? '') && !/your_/.test(env.clientSecret ?? '');
+}
+
+/**
+ * B4: push the committed assignments to the test raid sheet's COUNT block.
+ *
+ * Consumes the persisted, already-rendered 13-col rows (`sheets-rows.json`,
+ * written by generate/refine) — the push is lossless, exactly the convention
+ * the sheet uses. Falls back to re-rendering committed.json when the rows
+ * artifact is missing. The CSV/TSV artifact is unaffected on any failure —
+ * sheets problems are loud warnings, never a hard pipeline failure.
+ */
+async function stepPush(opts: { encounter?: string; state?: string; yes?: boolean }): Promise<void> {
+  const dir = resolveState(opts.state);
+  const committed = readJSON(dir, 'committed.json');
+  const encounter = (opts.encounter ?? process.env.RAID_HELPER_ENCOUNTER) || committed?.encounter || '';
+  const boss = resolveBoss(encounter);
+  if (!committed || !Array.isArray(committed.assignments)) throw new Error('no committed assignments — run `generate` first');
+  if (!boss) throw new Error(`unknown encounter "${encounter}" — use a SOO boss name or id`);
+  if (!sheetsCredsPresent()) {
+    console.error('\n[push] missing/unset Google OAuth creds (GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN/SHEET_ID) — push skipped.');
+    console.error('[push] your CSV/TSV artifact is unaffected (see generate output).');
+    process.exitCode = 1;
+    return;
+  }
+  const persistedRows = readJSON(dir, 'sheets-rows.json');
+  let rows: string[][] = Array.isArray(persistedRows?.rows) ? persistedRows.rows : [];
+  if (!rows.length) {
+    const { rows: rerendered, errors } = renderCountRows({ assignments: committed.assignments, roleMappings: committed.roleMappings, boss });
+    if (errors.length) {
+      console.error('\n[push] validation rejected the assignments — nothing written to the sheet:');
+      for (const e of errors) console.error(`  - ${e.field}: ${e.message}`);
+      process.exitCode = 1;
+      return;
+    }
+    rows = rerendered;
+  }
+  if (!opts.yes) {
+    console.log(`\nPush ${rows.length} assignment(s) to the live test sheet COUNT block for ${boss.sheetName}?`);
+    console.log('(existing rows are backed up to backups/ first)');
+    const ans = (await promptUser('Type "push" to continue, anything else to abort: '))?.trim();
+    if (ans !== 'push') { console.log('push aborted.'); return; }
+  }
+  const service = new GoogleSheetsService();
+  const writer = new SheetsWriter({ service });
+  const report = await writer.writeAssignments(boss, rows);
+  console.log(`\n[push] done. ${report.writtenRows.length} row(s) in the ${boss.sheetName} COUNT block` +
+    (report.dropped.length ? `; ${report.dropped.length} dropped (over capacity)` : '') +
+    `. Backups in backups/.`);
 }
 
 function errMsg(e: unknown): string {
@@ -180,6 +267,7 @@ const handlers: Handlers = {
   timeline: async (opts: CliOptions) => { try { await stepTimeline(opts); } catch (e) { console.error('timeline failed:', errMsg(e)); process.exitCode = 1; } },
   community: async (opts: CliOptions) => { try { await stepCommunity(opts); } catch (e) { console.error('community failed:', errMsg(e)); process.exitCode = 1; } },
   generate: async (opts: CliOptions) => { try { await stepGenerate(opts); } catch (e) { console.error('generate failed:', errMsg(e)); process.exitCode = 1; } },
+  push: async (opts: CliOptions) => { try { await stepPush(opts); } catch (e) { console.error('push failed:', errMsg(e)); process.exitCode = 1; } },
   run: async (opts: CliOptions) => {
     try {
       const { report, fight, encounter, instance, state } = opts;

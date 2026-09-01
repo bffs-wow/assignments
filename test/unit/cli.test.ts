@@ -29,6 +29,7 @@ function makeHandlers(): { handlers: Handlers; calls: any[] } {
     review: (opts) => { calls.push(['review', opts]); },
     refine: (opts) => { calls.push(['refine', opts]); },
     explore: (opts) => { calls.push(['explore', opts]); },
+    push: (opts) => { calls.push(['push', opts]); },
   };
   return { handlers, calls };
 }
@@ -174,6 +175,18 @@ test('explore dispatches with a query; missing -q errors', () => {
   assert.match(missing.error.message, /required option '-q, --query <text>' not specified/);
 });
 
+test('push dispatches with optional --encounter; bare push works; --yes flag', () => {
+  const ok = run(['push', '--encounter', 'Immerseus', '--yes']);
+  assert.ifError(ok.error);
+  assert.equal(ok.calls.length, 1); const [n, o] = ok.calls[0]; assert.equal(n, 'push'); assert.equal(o.encounter, 'Immerseus'); assert.equal(o.yes, true); assert.equal(o.state, undefined);
+
+  const bare = run(['push']);
+  assert.ifError(bare.error);
+  assert.equal(bare.calls[0][0], 'push');
+  assert.equal(bare.calls[0][1].encounter, undefined);
+  assert.equal(bare.calls[0][1].yes, undefined);
+});
+
 test('unknown command errors with exit 1', () => {
   const { error } = run(['frobnicate']);
   assert.equal(error.exitCode, 1);
@@ -183,7 +196,7 @@ test('unknown command errors with exit 1', () => {
 test('root help lists every operation subcommand', () => {
   const { handlers } = makeHandlers();
   const help = createProgram(handlers).helpInformation();
-  for (const cmd of ['timeline', 'mappings', 'community', 'generate', 'run', 'review', 'refine', 'explore']) {
+  for (const cmd of ['timeline', 'mappings', 'community', 'generate', 'run', 'review', 'refine', 'explore', 'push']) {
     assert.match(help, new RegExp(`\\b${cmd}\\b`));
   }
 });

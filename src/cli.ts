@@ -26,6 +26,8 @@ export interface Handlers {
   review: (opts: CliOptions) => void | Promise<void>;
   refine: (opts: CliOptions) => void | Promise<void>;
   explore: (opts: CliOptions) => void | Promise<void>;
+  /** Push the committed assignments to the test raid sheet's COUNT block (B4). */
+  push: (opts: CliOptions) => void | Promise<void>;
 }
 
 // Strict integer coercion: rejects "1.5" and "abc" outright instead of letting
@@ -120,6 +122,14 @@ export function createProgram(handlers: Handlers): Command {
     .addOption(instanceOption())
     .addOption(stateOption())
     .action((opts) => handlers.explore(opts));
+
+  program
+    .command('push')
+    .description('Push the committed assignments to the test raid sheet COUNT block (no regeneration)')
+    .option('-e, --encounter <name|id>', 'Encounter name or id (defaults to the committed boss)')
+    .option('--yes', 'Skip the confirmation prompt')
+    .addOption(stateOption())
+    .action((opts) => handlers.push(opts));
 
   return program;
 }

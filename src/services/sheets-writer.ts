@@ -226,7 +226,7 @@ export class SheetsWriter {
     if (target.length) {
       const range = `${quoteTab(grid.tab)}!A${block.firstRow}:M${block.firstRow + target.length - 1}`;
       await this.service.updateValues(
-        `/v4/spreadsheets/${encodeURIComponent(this.service.sheetId ?? '')}/values/${encodeURIComponent(range)}`,
+        `/v4/spreadsheets/${encodeURIComponent(this.service.sheetId ?? '')}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
         { range, majorDimension: 'ROWS', values: target },
       );
       writtenRows = target;

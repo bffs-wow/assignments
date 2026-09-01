@@ -168,3 +168,26 @@ export function renderSooAssigns(input: RenderInput): RenderResult {
 
   return { csv: `${rows.map(csvLine).join('\n')}\n`, errors: [] };
 }
+
+/**
+ * The target boss's COUNT-block data rows (validated, event-sorted, 13
+ * columns) ready to write under the live sheet's existing COUNT header.
+ * Pure rows — no CSV scaffold — so B3's writer can clear+replace the data
+ * region without touching the static HEALTH/COUNT headers.
+ */
+export function renderCountRows(input: RenderInput): { rows: string[][]; errors: ValidationIssue[] } {
+  const { assignments, roleMappings, boss } = input;
+
+  const validation = validateAssignments(assignments, { boss, roleMappings });
+  if (!validation.ok) return { rows: [], errors: validation.errors };
+
+  const parsed = v.safeParse(v.array(assignmentSchema), assignments);
+  const plan = parsed.success ? parsed.output : [];
+
+  const eventOrder = boss.events.reduce<Map<string, number>>((m, e, i) => m.set(e, i), new Map());
+  const sorted = [...plan].sort(
+    (a, b) => (eventOrder.get(a.event) ?? 0) - (eventOrder.get(b.event) ?? 0) || a.timingOffset - b.timingOffset,
+  );
+
+  return { rows: sorted.map(assignmentRow), errors: [] };
+}
