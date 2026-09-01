@@ -7,12 +7,20 @@ import * as v from 'valibot';
  */
 export const assignmentSchema = v.object({
   event: v.string(),
-  occurrence: v.number(),
+  // A single count or a comma-separated list of counts ("1", "1,4") per the
+  // sheet's COUNT / HEALTH % convention. Widened from number-only (backward
+  // compatible: existing plans carry numbers).
+  occurrence: v.union([v.number(), v.string()]),
   roleTag: v.string(),
   timingOffset: v.number(),
   spellName: v.string(),
   notes: v.string(),
   spellId: v.string(),
+  // Sheet-compliant extras (optional — legacy plans omit them):
+  // OVERRIDE TTS  -> tts
+  // CD #          -> cd
+  tts: v.optional(v.string()),
+  cd: v.optional(v.number()),
 });
 
 export type Assignment = v.InferOutput<typeof assignmentSchema>;
