@@ -58,6 +58,16 @@ export interface SheetsAdapter {
   tokenRequest(body: URLSearchParams): Promise<{ access_token: string; expires_in: number; token_type?: string }>;
   /** Authenticated request against the Sheets API root (bare path, no base URL). */
   request(path: string, token: string): Promise<Record<string, unknown>>;
+  /**
+   * Authenticated values write (PUT v4/spreadsheets/{id}/values/{range}).
+   * B3's clear+replace writer uses this to write the fresh rows.
+   */
+  updateValues?(path: string, token: string, body: Record<string, unknown>): Promise<Record<string, unknown>>;
+  /**
+   * Authenticated values clear (POST v4/spreadsheets/{id}/values/{range}:clear).
+   * B3 clears the COUNT region before writing.
+   */
+  clearValues?(path: string, token: string): Promise<Record<string, unknown>>;
 }
 
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
@@ -121,6 +131,55 @@ async function fetchRequest(path: string, token: string): Promise<Record<string,
   } catch (e) {
     throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API returned unparseable JSON: ${errMsg(e)}`);
   }
+  return json;
+}
+
+/** Authenticated values write (PUT) against the Sheets API. */
+async function fetchUpdateValues(path: string, token: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
+  let res: Response;
+  try {
+    res = await fetch(`${SHEETS_ROOT}${path}`, {
+      method: 'PUT',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API write unreachable: ${errMsg(e)}`, 'transient — retry');
+  }
+  const text = await res.text().catch(() => '');
+  if (res.status === 401 || res.status === 403) {
+    throw new GoogleSheetsError('NOT_AUTHENTICATED',
+      `Sheets API write returned ${res.status} (bad/expired token or no access)`,
+      'check GOOGLE_SHEET_ID scope (spreadsheets) and that the account can write the sheet');
+  }
+  if (res.status >= 500) throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API write returned HTTP ${res.status}`, 'transient — retry');
+  if (!res.ok) throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API write returned ${res.status}: ${text.slice(0, 200)}`);
+  let json: Record<string, unknown>;
+  try { json = JSON.parse(text); } catch (e) { throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API write returned unparseable JSON: ${errMsg(e)}`); }
+  return json;
+}
+
+/** Authenticated values clear (POST …:clear) against the Sheets API. */
+async function fetchClearValues(path: string, token: string): Promise<Record<string, unknown>> {
+  let res: Response;
+  try {
+    res = await fetch(`${SHEETS_ROOT}${path}`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    });
+  } catch (e) {
+    throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API clear unreachable: ${errMsg(e)}`, 'transient — retry');
+  }
+  const text = await res.text().catch(() => '');
+  if (res.status === 401 || res.status === 403) {
+    throw new GoogleSheetsError('NOT_AUTHENTICATED',
+      `Sheets API clear returned ${res.status} (bad/expired token or no access)`,
+      'check GOOGLE_SHEET_ID scope (spreadsheets) and that the account can clear the sheet');
+  }
+  if (res.status >= 500) throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API clear returned HTTP ${res.status}`, 'transient — retry');
+  if (!res.ok) throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API clear returned ${res.status}: ${text.slice(0, 200)}`);
+  let json: Record<string, unknown>;
+  try { json = JSON.parse(text); } catch (e) { throw new GoogleSheetsError('NETWORK_ERROR', `Sheets API clear returned unparseable JSON: ${errMsg(e)}`); }
   return json;
 }
 
@@ -202,7 +261,12 @@ export class GoogleSheetsService {
     this.refreshToken = refreshToken;
     this.sheetId = sheetId;
     this.tabTitle = DEFAULT_TAB;
-    this.adapter = options.adapter ?? { tokenRequest: fetchToken, request: fetchRequest };
+    this.adapter = options.adapter ?? {
+      tokenRequest: fetchToken,
+      request: fetchRequest,
+      updateValues: fetchUpdateValues,
+      clearValues: fetchClearValues,
+    };
 
     if (!clientId || !clientSecret || /your_/.test(clientId) || /your_/.test(clientSecret)) {
       console.warn('Google OAuth credentials missing or placeholder — real Sheets calls will fail (set GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET in .env).');
@@ -250,6 +314,33 @@ export class GoogleSheetsService {
     const token = await this._accessToken();
     this.requestCalls++;
     return this.adapter.request(path, token);
+  }
+
+  /**
+   * Authenticated values write (PUT …/values/{range}) — B3's clear+replace
+   * writer. Runs through the same adapter seam (unit stubs provide the
+   * method; the real fetch adapter supplies it).
+   */
+  async updateValues(path: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const token = await this._accessToken();
+    this.requestCalls++;
+    if (!this.adapter.updateValues) {
+      throw new GoogleSheetsError('NETWORK_ERROR', 'updateValues not supported by the adapter stub', 'provide updateValues on the SheetsAdapter');
+    }
+    return this.adapter.updateValues(path, token, body);
+  }
+
+  /**
+   * Authenticated values clear (POST …/values/{range}:clear) — B3 clears the
+   * COUNT region before writing.
+   */
+  async clearValues(path: string): Promise<Record<string, unknown>> {
+    const token = await this._accessToken();
+    this.requestCalls++;
+    if (!this.adapter.clearValues) {
+      throw new GoogleSheetsError('NETWORK_ERROR', 'clearValues not supported by the adapter stub', 'provide clearValues on the SheetsAdapter');
+    }
+    return this.adapter.clearValues(path, token);
   }
 
   /**
