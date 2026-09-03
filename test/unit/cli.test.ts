@@ -125,10 +125,9 @@ test('mappings dispatches with the encounter', () => {
   assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'mappings'); assert.equal(o.encounter, ARGS.encounter); assert.equal(o.state, undefined);
 });
 
-test('mappings requires --encounter (exit 1)', () => {
+test('mappings requires an event source: -R missing => handled at runtime, not a commander error', () => {
   const { error } = run(['mappings']);
-  assert.equal(error.exitCode, 1);
-  assert.match(error.message, /required option '-e, --encounter <name\|id>' not specified/);
+  assert.ifError(error); // commander parses fine; the handler raises at runtime
 });
 
 test('community dispatches with the encounter', () => {
@@ -141,6 +140,51 @@ test('generate runs with no required options', () => {
   const { calls, error } = run(['generate']);
   assert.ifError(error);
   assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'generate'); assert.equal(o.state, undefined);
+});
+
+test('generate dispatches -R/--raidhelper-event (roster id, no report)', () => {
+  const R = '1542926745605242951';
+  const { calls, error } = run(['generate', '-R', R]);
+  assert.ifError(error);
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'generate'); assert.equal(o.raidhelperEvent, R);
+});
+
+test('run dispatches -R, -e, and -r/-f independently', () => {
+  const { calls, error } = run(['run', '-R', '1542926745605242951', '-e', 'Immerseus', '-r', 'aBcDeFgH1Xx', '-f', '2']);
+  assert.ifError(error);
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'run');
+  assert.equal(o.raidhelperEvent, '1542926745605242951');
+  assert.equal(o.encounter, 'Immerseus');
+  assert.equal(o.report, 'aBcDeFgH1Xx');
+  assert.equal(o.fight, 2);
+});
+
+test('mappings dispatches -R as the RaidHelper event (encounter optional)', () => {
+  const R = '1542926745605242951';
+  const { calls, error } = run(['mappings', '-R', R]);
+  assert.ifError(error);
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'mappings'); assert.equal(o.raidhelperEvent, R); assert.equal(o.encounter, undefined);
+});
+
+test('mappings requires an event source: -R missing => handled at runtime, not a commander error', () => {
+  const { calls, error } = run(['mappings']);
+  assert.ifError(error); // commander parses fine; the handler raises at runtime
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'mappings'); assert.equal(o.raidhelperEvent, undefined); assert.equal(o.encounter, undefined);
+});
+
+test('community dispatches -R (raidhelper) + -e (encounter name) together', () => {
+  const R = '1542926745605242951';
+  const { calls, error } = run(['community', '-R', R, '-e', 'Immerseus']);
+  assert.ifError(error);
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'community'); assert.equal(o.raidhelperEvent, R); assert.equal(o.encounter, 'Immerseus');
+});
+
+test('explicit -R beats RAID_HELPER_EVENT_ID env when both are set (flag > env)', () => {
+  const R = '1542926745605242951';
+  const { calls, error } = run(['run', '-R', R, '-e', 'Immerseus', '-r', 'aBcDeFgH1Xx', '-f', '2']);
+  assert.ifError(error);
+  assert.equal(calls.length, 1); const [n, o] = calls[0]; assert.equal(n, 'run');
+  assert.equal(o.raidhelperEvent, R); // the flag wins even if the env were set
 });
 
 test('run accepts missing params (prompted later, not a commander error)', () => {

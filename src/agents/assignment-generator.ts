@@ -39,6 +39,10 @@ export function AssignmentGenerator() {
     ? `Community Practices (Highly Recommended Strategy to Mimic):\n${communityStrategy}`
     : '(No community strategy was provided for this encounter.)';
 
+  const timelineSection = timeline?.length
+    ? JSON.stringify(timeline)
+    : '(No encounter timeline was provided — plan from the encounter’s standard SOO boss events (e.g. “Encounter Start”, the boss’s signature heavy-hitting events) and the raid roster below.)';
+
   return `You are an expert World of Warcraft: Mists of Pandaria raid leader.
 Your task is to assign raid cooldowns to major boss events based on the provided encounter timeline and the available raid roster.
 
@@ -49,7 +53,7 @@ Current Raid Roster Roles Available:
 ${JSON.stringify(Object.keys(roleMappings))}
 
 Encounter Timeline:
-${JSON.stringify(timeline, null, 2)}
+${timelineSection}
 
 ${strategySection}
 
@@ -66,7 +70,7 @@ When the full assignment matrix is ready, call submit_assignments once with { as
 }
 
 AssignmentGenerator.initialData = v.object({
-  timeline: v.array(v.unknown()),
+  timeline: v.optional(v.array(v.unknown())),
   roleMappings: v.record(v.string(), v.unknown()),
   skillsData: v.unknown(),
   communityStrategy: v.string(),

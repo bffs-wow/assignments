@@ -53,6 +53,10 @@ function stateOption(): Option {
   return new Option('--state <dir>', 'state directory for artifacts (default: .cache/cli)');
 }
 
+function raidhelperEventOption(): Option {
+  return new Option('-R, --raidhelper-event <id>', 'RaidHelper event id for the roster (no WCL report needed)');
+}
+
 export function createProgram(handlers: Handlers): Command {
   const program = new Command();
   program
@@ -74,7 +78,8 @@ export function createProgram(handlers: Handlers): Command {
   program
     .command('mappings')
     .description('Fetch the RaidHelper role mappings for an encounter into state')
-    .requiredOption('-e, --encounter <name|id>', 'Encounter name or id for community pulls')
+    .option('-e, --encounter <name|id>', 'Encounter name or id for community pulls')
+    .addOption(raidhelperEventOption())
     .addOption(stateOption())
     .action((opts) => handlers.mappings(opts));
 
@@ -82,21 +87,25 @@ export function createProgram(handlers: Handlers): Command {
     .command('community')
     .description('Fetch community pulls and analyse the strategy into state')
     .requiredOption('-e, --encounter <name|id>', 'Encounter name or id for community pulls')
+    .addOption(raidhelperEventOption())
     .addOption(instanceOption())
     .addOption(stateOption())
     .action((opts) => handlers.community(opts));
 
   program
     .command('generate')
-    .description('Generate assignments from the artifacts in state')
+    .description('Generate assignments from the artifacts in state (no WCL report needed)')
+    .option('-e, --encounter <name|id>', 'Encounter name or id (for boss resolution / the sheet push)')
+    .addOption(raidhelperEventOption())
     .addOption(stateOption())
     .action((opts) => handlers.generate(opts));
 
   program
     .command('run')
-    .description('Full pipeline: mappings + timeline + community + generate')
-    .option('-r, --report <code>', 'Warcraft Logs report code (prompted if missing)')
-    .option('-f, --fight <id>', 'Fight ID within the report (prompted if missing)', parseFightId)
+    .description('Full pipeline: mappings + (timeline) + community + generate')
+    .option('-r, --report <code>', 'Warcraft Logs report code (optional — generation can run from the roster alone)')
+    .option('-f, --fight <id>', 'Fight ID within the report (only with -r)', parseFightId)
+    .option('-R, --raidhelper-event <id>', 'RaidHelper event id for the roster (no WCL report needed)')
     .option('-e, --encounter <name|id>', 'Encounter name or id (prompted if missing)')
     .addOption(instanceOption())
     .addOption(stateOption())
