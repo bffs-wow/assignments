@@ -17,7 +17,10 @@ export interface SooBoss {
 }
 
 /** Group tags the export grid accepts in the PLAYER/CLASS/ALL column. */
-export const GROUP_TAGS = ['ALL', 'MELEEDPS', 'RANGEDDPS'] as const;
+export const GROUP_TAGS = [
+  'ALL', 'MELEEDPS', 'RANGEDDPS', 'TANKS', 'HEALERS',
+  'DEATHKNIGHT', 'DRUID', 'HUNTER', 'MAGE', 'MONK', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR',
+] as const;
 
 let cache: SooBoss[] | undefined;
 
