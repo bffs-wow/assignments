@@ -1,0 +1,376 @@
+{
+  "assignments": [
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "RSHAM1",
+      "timingOffset": 1,
+      "spellName": "Bloodlust",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "DPSWARR1",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Your Rally is Free",
+      "spellId": "",
+      "tts": "Your Rally is Free"
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "SPRIEST1",
+      "timingOffset": 1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 60,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 240,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 420,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Encounter Start (BLA)",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 600,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Electrostatic Charge",
+      "occurrence": "1,5,10,15,20,25",
+      "roleTag": "PRIEST",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Fear Ward",
+      "spellId": "135902",
+      "tts": "Fear Ward tank"
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 3,
+      "roleTag": "HPALA1",
+      "timingOffset": 1,
+      "spellName": "Hand of Sacrifice",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 4,
+      "roleTag": "HPALA1",
+      "timingOffset": 1,
+      "spellName": "Hand of Sacrifice",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 6,
+      "roleTag": "HPALA2",
+      "timingOffset": 1,
+      "spellName": "Hand of Sacrifice",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 7,
+      "roleTag": "DPSWARR1",
+      "timingOffset": 1,
+      "spellName": "Vigilance",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 8,
+      "roleTag": "DPSWARR1",
+      "timingOffset": 1,
+      "spellName": "Demoralizing Banner",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 9,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 1,
+      "spellName": "Pain Suppression",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 11,
+      "roleTag": "HPALA2",
+      "timingOffset": 1,
+      "spellName": "Hand of Sacrifice",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 12,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 1,
+      "spellName": "Pain Suppression",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Protective Frenzy",
+      "occurrence": 14,
+      "roleTag": "HPALA1",
+      "timingOffset": 1,
+      "spellName": "Hand of Sacrifice",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 1",
+      "occurrence": 1,
+      "roleTag": "UHDK1",
+      "timingOffset": 2,
+      "spellName": "Anti-Magic Zone",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 2",
+      "occurrence": 1,
+      "roleTag": "CDSHA1",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 3",
+      "occurrence": 1,
+      "roleTag": "RSHAM1",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 4",
+      "occurrence": 1,
+      "roleTag": "SPRIEST1",
+      "timingOffset": 2,
+      "spellName": "Vampiric Embrace",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 5",
+      "occurrence": 1,
+      "roleTag": "MISTWEAVE1",
+      "timingOffset": 2,
+      "spellName": "Revival",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 6",
+      "occurrence": 1,
+      "roleTag": "CDSHA2",
+      "timingOffset": 2,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 7",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Divine Hymn",
+      "spellId": "64843",
+      "tts": "Divine Hymn"
+    },
+    {
+      "event": "Overload 8",
+      "occurrence": 1,
+      "roleTag": "DPSWARR1",
+      "timingOffset": 2,
+      "spellName": "Rallying Cry",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 9",
+      "occurrence": 1,
+      "roleTag": "BOOMIE1",
+      "timingOffset": 2,
+      "spellName": "Tranquility",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overload 10",
+      "occurrence": 1,
+      "roleTag": "ALL",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Immunities up",
+      "spellId": "",
+      "tts": "Immunities up"
+    },
+    {
+      "event": "Shredder",
+      "occurrence": 1,
+      "roleTag": "ROGUE1",
+      "timingOffset": 4,
+      "spellName": "Smoke Bomb",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Shredder",
+      "occurrence": 1,
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 4,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Cocoon tank",
+      "spellId": "62618",
+      "tts": "Cocoon tank"
+    },
+    {
+      "event": "Shredder",
+      "occurrence": 2,
+      "roleTag": "PROTPALA1",
+      "timingOffset": 4,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overcharge Mine",
+      "occurrence": "1,3,5",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 5,
+      "spellName": "Power Word: Barrier",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overcharge Mine",
+      "occurrence": "2,4,6",
+      "roleTag": "HPALA1",
+      "timingOffset": 16,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Overcharge Mine",
+      "occurrence": "1,5",
+      "roleTag": "HPALA2",
+      "timingOffset": 16,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Shockwave Missile",
+      "occurrence": 1,
+      "roleTag": "CDSHA1",
+      "timingOffset": 2,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    },
+    {
+      "event": "Shockwave Missile",
+      "occurrence": 3,
+      "roleTag": "CDSHA2",
+      "timingOffset": 2,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "",
+      "tts": ""
+    }
+  ],
+  "roleMappings": {
+    "CDSHA1": {},
+    "CDSHA2": {},
+    "RSHAM1": {},
+    "DPSWARR1": {},
+    "PROTWARR1": {},
+    "PROTPALA1": {},
+    "HPALA1": {},
+    "HPALA2": {},
+    "SPRIEST1": {},
+    "UHDK1": {},
+    "ROGUE1": {},
+    "BOOMIE1": {},
+    "FROSTDK1": {},
+    "MISTWEAVE1": {},
+    "HOLYPRIEST1": {},
+    "LOCK1": {},
+    "LOCK2": {}
+  },
+  "encounter": "siegecrafter-blackfuse",
+  "source": "pull-25-corrected",
+  "generatedAt": "2026-09-03T17:54:46.138Z"
+}

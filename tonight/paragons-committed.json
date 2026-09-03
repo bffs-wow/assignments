@@ -1,0 +1,636 @@
+{
+  "assignments": [
+    {
+      "event": "Health % (PAR)",
+      "occurrence": "100",
+      "roleTag": "PROTWARR1",
+      "timingOffset": 1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "taunt korven",
+      "spellId": "",
+      "tts": "taunt korven"
+    },
+    {
+      "event": "Health % (PAR)",
+      "occurrence": "100",
+      "roleTag": "PROTPALA1",
+      "timingOffset": 1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "taunt karoz",
+      "spellId": "",
+      "tts": "taunt karoz"
+    },
+    {
+      "event": "Xaril",
+      "occurrence": "1",
+      "roleTag": "RSHAM1",
+      "timingOffset": 2,
+      "spellName": "Bloodlust",
+      "notes": "",
+      "spellId": "2825",
+      "tts": ""
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "4",
+      "roleTag": "ALL",
+      "timingOffset": -10,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Wait for Mutate",
+      "spellId": "",
+      "tts": "Wait for Mutate"
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "1",
+      "roleTag": "CDSHA1",
+      "timingOffset": -3,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "2",
+      "roleTag": "CDSHA2",
+      "timingOffset": -3,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "1",
+      "roleTag": "CDSHA1",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "2",
+      "roleTag": "CDSHA2",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Mutate",
+      "occurrence": "3",
+      "roleTag": "ROGUE1",
+      "timingOffset": -2,
+      "spellName": "Smoke Bomb",
+      "notes": "",
+      "spellId": "76577",
+      "tts": ""
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "1",
+      "roleTag": "RANGEDDPS",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Healthstone",
+      "spellId": "538745",
+      "tts": "Healthstone"
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "1",
+      "roleTag": "RSHAM1",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "1",
+      "roleTag": "PROTPALA1",
+      "timingOffset": 1,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "31821",
+      "tts": ""
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "2",
+      "roleTag": "ALL",
+      "timingOffset": -2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Personal",
+      "spellId": "",
+      "tts": "Personal"
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "7",
+      "roleTag": "PROTPALA1",
+      "timingOffset": 1,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "31821",
+      "tts": ""
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "7",
+      "roleTag": "RSHAM1",
+      "timingOffset": 1,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Hurl Amber",
+      "occurrence": "8",
+      "roleTag": "RSHAM1",
+      "timingOffset": 1,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "3,6,9",
+      "roleTag": "PROTWARR1",
+      "timingOffset": 0.1,
+      "spellName": "Demoralizing Banner",
+      "notes": "",
+      "spellId": "114203",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "4,7",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 0.1,
+      "spellName": "Demoralizing Banner",
+      "notes": "",
+      "spellId": "114203",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "2,5,8",
+      "roleTag": "HPALA1",
+      "timingOffset": 0.1,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "31821",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "4,7",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 3,
+      "spellName": "Rallying Cry",
+      "notes": "",
+      "spellId": "97462",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "3,6,9",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 3,
+      "spellName": "Rallying Cry",
+      "notes": "",
+      "spellId": "97462",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "8",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 3,
+      "spellName": "Rallying Cry",
+      "notes": "",
+      "spellId": "97462",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "1",
+      "roleTag": "RSHAM1",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "4",
+      "roleTag": "CDSHA2",
+      "timingOffset": 2,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "6",
+      "roleTag": "CDSHA1",
+      "timingOffset": 2,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "7",
+      "roleTag": "CDSHA2",
+      "timingOffset": 2,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Encounter Start (PAR)",
+      "occurrence": "1",
+      "roleTag": "ALL",
+      "timingOffset": 175,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Save 3 mins",
+      "spellId": "",
+      "tts": "Save 3 mins"
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "-1",
+      "roleTag": "SHAMAN",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Healing Stream",
+      "spellId": "",
+      "tts": "Healing Stream"
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "1",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": -10,
+      "spellName": "Spirit Shell",
+      "notes": "",
+      "spellId": "109964",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "4",
+      "roleTag": "PROTPALA1",
+      "timingOffset": 1,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "31821",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "1",
+      "roleTag": "CDSHA1",
+      "timingOffset": 1,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "2",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": -10,
+      "spellName": "Spirit Shell",
+      "notes": "",
+      "spellId": "109964",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "2",
+      "roleTag": "RSHAM1",
+      "timingOffset": 3,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "2",
+      "roleTag": "CDSHA2",
+      "timingOffset": 1,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "3",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": -10,
+      "spellName": "Spirit Shell",
+      "notes": "",
+      "spellId": "109964",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "3",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 3,
+      "spellName": "Rallying Cry",
+      "notes": "",
+      "spellId": "97462",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "4",
+      "roleTag": "SPRIEST1",
+      "timingOffset": -10,
+      "spellName": "Spirit Shell",
+      "notes": "",
+      "spellId": "109964",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "4",
+      "roleTag": "CDSHA1",
+      "timingOffset": 3,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "5",
+      "roleTag": "BOOMIE1",
+      "timingOffset": 3,
+      "spellName": "Tranquility",
+      "notes": "",
+      "spellId": "740",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "4",
+      "roleTag": "BOOMIE1",
+      "timingOffset": 3,
+      "spellName": "Tranquility",
+      "notes": "",
+      "spellId": "740",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "5",
+      "roleTag": "HPALA1",
+      "timingOffset": 2,
+      "spellName": "Devotion Aura",
+      "notes": "",
+      "spellId": "31821",
+      "tts": ""
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "1,3,5",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Halo",
+      "spellId": "632352",
+      "tts": "Halo"
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "2,4,6",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Halo",
+      "spellId": "632352",
+      "tts": "Halo"
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "1,3,5",
+      "roleTag": "SPRIEST1",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Halo",
+      "spellId": "632352",
+      "tts": "Halo"
+    },
+    {
+      "event": "Insane Calculation: Fiery Edge",
+      "occurrence": "2,4,6",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 5,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Halo",
+      "spellId": "632352",
+      "tts": "Halo"
+    },
+    {
+      "event": "Toxic Catalyst CD",
+      "occurrence": "1",
+      "roleTag": "ALL",
+      "timingOffset": 8,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Personal",
+      "spellId": "",
+      "tts": "Personal"
+    },
+    {
+      "event": "Toxic Catalyst CD",
+      "occurrence": "1",
+      "roleTag": "ALL",
+      "timingOffset": 8,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Healthstone",
+      "spellId": "538745",
+      "tts": "Healthstone"
+    },
+    {
+      "event": "Shield Bash",
+      "occurrence": "1",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 0.1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Shield Bash",
+      "occurrence": "2",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 0.1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Shield Bash",
+      "occurrence": "3",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 0.1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Shield Bash",
+      "occurrence": "4",
+      "roleTag": "SPRIEST1",
+      "timingOffset": 0.1,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "5",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "6",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 2,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "6",
+      "roleTag": "HOLYPRIEST1",
+      "timingOffset": 12,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Whirling",
+      "occurrence": "6",
+      "roleTag": "SPRIEST1",
+      "timingOffset": 22,
+      "spellName": "Custom Spell Assignment",
+      "notes": "Barrier Tank",
+      "spellId": "",
+      "tts": "Barrier Tank"
+    },
+    {
+      "event": "Reave",
+      "occurrence": "4",
+      "roleTag": "DPSWARR1",
+      "timingOffset": 2,
+      "spellName": "Demoralizing Banner",
+      "notes": "",
+      "spellId": "114203",
+      "tts": ""
+    },
+    {
+      "event": "Reave",
+      "occurrence": "3",
+      "roleTag": "CDSHA1",
+      "timingOffset": 1,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Reave",
+      "occurrence": "2",
+      "roleTag": "CDSHA1",
+      "timingOffset": 3,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Reave",
+      "occurrence": "3",
+      "roleTag": "CDSHA2",
+      "timingOffset": 1,
+      "spellName": "Ancestral Guidance",
+      "notes": "",
+      "spellId": "108281",
+      "tts": ""
+    },
+    {
+      "event": "Reave",
+      "occurrence": "3",
+      "roleTag": "CDSHA2",
+      "timingOffset": 3,
+      "spellName": "Healing Tide Totem",
+      "notes": "",
+      "spellId": "108280",
+      "tts": ""
+    },
+    {
+      "event": "Toxic Injection",
+      "occurrence": "1,6",
+      "roleTag": "PROTWARR1",
+      "timingOffset": -4,
+      "spellName": "Custom Spell Assignment",
+      "notes": "eat injection",
+      "spellId": "",
+      "tts": "eat injection"
+    }
+  ],
+  "roleMappings": {
+    "CDSHA1": {},
+    "CDSHA2": {},
+    "RSHAM1": {},
+    "DPSWARR1": {},
+    "PROTWARR1": {},
+    "PROTPALA1": {},
+    "HPALA1": {},
+    "HPALA2": {},
+    "SPRIEST1": {},
+    "UHDK1": {},
+    "ROGUE1": {},
+    "BOOMIE1": {},
+    "FROSTDK1": {},
+    "MISTWEAVE1": {},
+    "HOLYPRIEST1": {},
+    "LOCK1": {},
+    "LOCK2": {}
+  },
+  "encounter": "Paragons of the Klaxxi",
+  "source": "reference-aligned-kill-set",
+  "generatedAt": "2026-09-03T17:51:44.409Z"
+}
