@@ -150,14 +150,15 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
   if (!timeline) console.warn('[generate] no timeline in state — refining from the roster/community only (report lane is optional)');
 
   const skillsData = JSON.parse(fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'));
+  const boss = resolveBoss(resolvedEncounter);
   const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
   const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
     timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
+    canonicalEvents: boss?.events ?? [],
   });
   const assignments = reply.data?.assignments?.[0];
   if (!Array.isArray(assignments)) throw new Error('AssignmentGenerator did not submit assignments');
 
-  const boss = resolveBoss(resolvedEncounter);
   if (boss) {
     const { rows, errors } = renderCountRows({ assignments, roleMappings, boss });
     writeJSON(dir, 'sheets-rows.json', { encounter: boss.id, rows, errors, renderedAt: new Date().toISOString() });
