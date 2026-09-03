@@ -139,5 +139,8 @@ test('T1: validation requires a resolved boss and an assignments array', () => {
 });
 
 test('T1: GROUP_TAGS is the canonical group-tag set', () => {
-  assert.deepEqual([...GROUP_TAGS], ['ALL', 'MELEEDPS', 'RANGEDDPS']);
+  assert.deepEqual([...GROUP_TAGS], [
+    'ALL', 'MELEEDPS', 'RANGEDDPS', 'TANKS', 'HEALERS',
+    'DEATHKNIGHT', 'DRUID', 'HUNTER', 'MAGE', 'MONK', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR',
+  ]);
 });
