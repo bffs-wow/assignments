@@ -84,10 +84,12 @@ function communityRanks(): { rankStart: number | null; rankEnd: number | null } 
 // ---------------------------------------------------------------------------
 // Artifact-producing steps (shared by subcommands, `run` and the bare menu)
 // ---------------------------------------------------------------------------
-async function stepMappings(opts: { encounter?: string; state?: string }): Promise<RoleMappings> {
+async function stepMappings(opts: { encounter?: string; raidhelperEvent?: string; state?: string }): Promise<RoleMappings> {
   const { encounter, state } = opts;
-  const rosterEventId = encounter || process.env.RAID_HELPER_EVENT_ID;
-  if (!rosterEventId) throw new Error('no RaidHelper event id — pass -e or set RAID_HELPER_EVENT_ID');
+  // Precedence: explicit -R > RAID_HELPER_EVENT_ID env > prompt (the menu).
+  // An encounter NAME (-e) is never interpreted as a RaidHelper event id.
+  const rosterEventId = opts.raidhelperEvent ?? process.env.RAID_HELPER_EVENT_ID ?? null;
+  if (!rosterEventId) throw new Error('no RaidHelper event id — pass -R/--raidhelper-event or set RAID_HELPER_EVENT_ID');
   const roster = await rhService().getEventRoster(rosterEventId);
   const { mappings, unmapped } = resolveRoleMappings(roster);
   writeJSON(resolveState(state), 'rolemappings.json', { eventId: rosterEventId, mappings, roster });
@@ -131,14 +133,21 @@ async function stepCommunity(opts: { encounter?: string; instance?: string; stat
   return reply.text;
 }
 
-async function stepGenerate(opts: { state?: string; encounter?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
+async function stepGenerate(opts: { state?: string; encounter?: string; raidhelperEvent?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
-  const roleMappings = readJSON(dir, 'rolemappings.json')?.mappings ?? {};
+  // RaidHelper roster is the only hard requirement for generation. If no
+  // rolemappings are in state yet, build them from -R/--raidhelper-event
+  // (or RAID_HELPER_EVENT_ID env) on the spot — report/fight are optional.
+  let roleMappings = readJSON(dir, 'rolemappings.json')?.mappings ?? {};
+  if (!Object.keys(roleMappings).length) {
+    const rosterEventId = opts.raidhelperEvent ?? process.env.RAID_HELPER_EVENT_ID;
+    if (!rosterEventId) throw new Error('no rolemappings — run `mappings -R <raidhelper event>` first, or pass -R here');
+    roleMappings = await stepMappings({ raidhelperEvent: rosterEventId, state: opts.state });
+  }
   const timeline = readJSON(dir, 'timeline.json')?.timeline ?? null;
   const community = readJSON(dir, 'community.json');
   const resolvedEncounter = opts.encounter ?? process.env.RAID_HELPER_ENCOUNTER ?? '';
-  if (!Object.keys(roleMappings).length) throw new Error('no rolemappings — run `mappings` first');
-  if (!timeline) throw new Error('no timeline — run `timeline` first');
+  if (!timeline) console.warn('[generate] no timeline in state — refining from the roster/community only (report lane is optional)');
 
   const skillsData = JSON.parse(fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'));
   const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
@@ -263,22 +272,23 @@ function errMsg(e: unknown): string {
 // CLI handlers (createProgram contracts)
 // ---------------------------------------------------------------------------
 const handlers: Handlers = {
-  mappings: async (opts: CliOptions) => { try { await stepMappings({ encounter: opts.encounter, state: opts.state }); } catch (e) { console.error('mappings failed:', errMsg(e)); process.exitCode = 1; } },
+  mappings: async (opts: CliOptions) => { try { await stepMappings({ encounter: opts.encounter, raidhelperEvent: opts.raidhelperEvent, state: opts.state }); } catch (e) { console.error('mappings failed:', errMsg(e)); process.exitCode = 1; } },
   timeline: async (opts: CliOptions) => { try { await stepTimeline(opts); } catch (e) { console.error('timeline failed:', errMsg(e)); process.exitCode = 1; } },
   community: async (opts: CliOptions) => { try { await stepCommunity(opts); } catch (e) { console.error('community failed:', errMsg(e)); process.exitCode = 1; } },
-  generate: async (opts: CliOptions) => { try { await stepGenerate(opts); } catch (e) { console.error('generate failed:', errMsg(e)); process.exitCode = 1; } },
+  generate: async (opts: CliOptions) => { try { await stepGenerate({ state: opts.state, encounter: opts.encounter, raidhelperEvent: opts.raidhelperEvent }); } catch (e) { console.error('generate failed:', errMsg(e)); process.exitCode = 1; } },
   push: async (opts: CliOptions) => { try { await stepPush(opts); } catch (e) { console.error('push failed:', errMsg(e)); process.exitCode = 1; } },
   run: async (opts: CliOptions) => {
     try {
-      const { report, fight, encounter, instance, state } = opts;
-      const r = report ?? (await promptUser('Report code: '));
-      const f = fight ?? Number(await promptUser('Fight id: '));
-      const e = encounter ?? (await promptUser('Encounter name/id: '));
-      if (!r || !f || !e) throw new Error('report, fight and encounter are required (or set RAID_HELPER_EVENT_ID for the roster)');
-      await stepMappings({ encounter: process.env.RAID_HELPER_EVENT_ID || e, state });
-      await stepTimeline({ report: r, fight: f, instance, state });
-      await stepCommunity({ encounter: e, instance, state });
-      await stepGenerate({ state });
+      const { report, fight, encounter, instance, state, raidhelperEvent } = opts;
+      const rosterEventId = raidhelperEvent ?? process.env.RAID_HELPER_EVENT_ID;
+      if (!rosterEventId) throw new Error('run needs the raid roster — pass -R/--raidhelper-event or set RAID_HELPER_EVENT_ID');
+      await stepMappings({ raidhelperEvent: rosterEventId, state });
+      if (report) {
+        if (!fight) throw new Error('run --report requires --fight');
+        await stepTimeline({ report, fight, instance, state });
+      }
+      if (encounter) await stepCommunity({ encounter, instance, state });
+      await stepGenerate({ state, encounter, raidhelperEvent: rosterEventId });
     } catch (err) { console.error('run failed:', err); process.exitCode = 1; }
   },
   review: async (opts: CliOptions) => {
@@ -302,14 +312,21 @@ const handlers: Handlers = {
 async function interactiveMenu() {
   const base = { state: DEFAULT_STATE };
   try {
-    const report = process.env.RAID_HELPER_REPORT || (await promptUser('Report code: '));
-    const fight = process.env.RAID_HELPER_FIGHT ? Number(process.env.RAID_HELPER_FIGHT) : Number(await promptUser('Fight id: '));
-    const encounter = process.env.RAID_HELPER_ENCOUNTER || (await promptUser('Encounter name/id: '));
-    if (!report || !fight || !encounter) { console.log('Missing required inputs — aborting.'); return; }
-    await stepMappings({ encounter: process.env.RAID_HELPER_EVENT_ID || encounter, state: DEFAULT_STATE });
-    await stepTimeline({ report, fight, instance: 'classic', state: DEFAULT_STATE });
-    await stepCommunity({ encounter, instance: 'classic', state: DEFAULT_STATE });
-    await stepGenerate({ state: DEFAULT_STATE });
+    // Generation needs a RaidHelper roster (report/fight are the analysis lane).
+    const rosterEventId = (process.env.RAID_HELPER_EVENT_ID || (await promptUser('RaidHelper event id (roster; blank = use existing state): '))) ?? null;
+    if (!rosterEventId && !readJSON(resolveState(DEFAULT_STATE), 'rolemappings.json')) {
+      console.log('No RaidHelper roster and no saved mappings — run `generate -R <event id> -e <encounter>` instead.');
+      return;
+    }
+    if (rosterEventId) await stepMappings({ raidhelperEvent: rosterEventId, state: DEFAULT_STATE });
+    const encounter = (process.env.RAID_HELPER_ENCOUNTER || (await promptUser('Encounter name/id (blank = use existing state): '))) ?? '';
+    const report = (process.env.RAID_HELPER_REPORT || (await promptUser('Report code (blank = skip the report/analysis lane): '))) ?? '';
+    if (report) {
+      const fight = process.env.RAID_HELPER_FIGHT ? Number(process.env.RAID_HELPER_FIGHT) : Number(await promptUser('Fight id: '));
+      await stepTimeline({ report, fight, instance: 'classic', state: DEFAULT_STATE });
+      await stepCommunity({ encounter, instance: 'classic', state: DEFAULT_STATE });
+    }
+    await stepGenerate({ state: DEFAULT_STATE, encounter, raidhelperEvent: rosterEventId ?? undefined });
 
     while (true) {
       console.log('\n--- Interactive Mode ---');
