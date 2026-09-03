@@ -41,8 +41,15 @@ export interface ValidateOptions {
   roleMappings?: Record<string, unknown> | null;
 }
 
-/** A single count or a comma-separated list of counts, e.g. "1", "1,4", "1, 4". */
-const occurrenceListRe = /^\s*\d+(?:\s*,\s*\d+)*\s*$/;
+/**
+ * A single count or a comma-separated list of counts, e.g. "1", "1,4", "1, 4".
+ * A lone negative count (e.g. "-1") is a legal pre-event/countdown call — the
+ * reference kill set uses `-1` on encounter start / pre-cast events to mean
+ * "call before the event". A negative *inside a list* is not meaningful.
+ */
+const occurrenceRe =
+  /^\s*(-?\d+)\s*$/;
+const occurrenceListRe = /^\s*(-?\d+)(?:\s*,\s*\d+)*\s*$/;
 
 export function validateAssignments(input: unknown, opts: ValidateOptions = {}): PlanValidation {
   const errors: ValidationIssue[] = [];
@@ -90,8 +97,8 @@ export function validateAssignments(input: unknown, opts: ValidateOptions = {}):
     }
     const occBad =
       typeof a.occurrence === 'number'
-        ? !Number.isInteger(a.occurrence) || a.occurrence < 0
-        : !occurrenceListRe.test(a.occurrence);
+        ? !Number.isInteger(a.occurrence) || (a.occurrence < 0 && a.occurrence !== -1)
+        : !(occurrenceRe.test(a.occurrence) || (occurrenceListRe.test(a.occurrence) && !a.occurrence.includes('-')));
     if (occBad) {
       errors.push({
         index,
