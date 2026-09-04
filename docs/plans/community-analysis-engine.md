@@ -51,6 +51,13 @@ Tonight's generated Immerseus assignments were **well-formed but unevidenced**: 
 - Research ticket: `#41` (R3). Map #17 updated: R3 added to Research (now), Frontier = T3/T4/R2/R3.
 - This doc is the durable record of the agreed design (replace `docs/plans/community-analysis-engine.md` as it evolves).
 
+## Next steps
+
+1. **R3 (#41)** — research the statistician-agent patterns (prompt/persona, tools, correlation/clustering/small-sample methods, agent-loop design) → lands findings in `docs/research/statistician-agent-research.md` + resolution comment with build recommendations.
+2. **R2 (#21)** — close out (log + comment), per the frontier.
+3. **Build tickets** (new, to be created): SQLite schema + collection run; `--deaths-max`/`--recent` filters; deterministic aggregation + `communityModes` → `generate`; `pull_results` outcome tracking; Agent Canvas prompt-cron (collector script + agent pass).
+4. **Prune the hard-coded report anchor** — already none in code; keep it that way (R2's `vhLNKJTwtq2ydgVm` stays a doc/issue reference only).
+
 ## Open (next frontier, post-R3)
 
 - Exact cron schedule / timezone for the collector + agent pass.
