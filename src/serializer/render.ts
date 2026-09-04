@@ -126,11 +126,16 @@ function bossScaffold(boss: SooBoss): string[][] {
   return rows;
 }
 
-function assignmentRow(a: Assignment): string[] {
+function assignmentRow(a: Assignment, roleMappings: Record<string, unknown> | null | undefined): string[] {
   const custom = !CANONICAL_SPELLS.includes(a.spellName);
   const row = Array<string>(13).fill('');
-  // Player (col A) is left blank — the sheet auto-resolves it from the
-  // role-name bindings (the plan's roleTag already resolves to a player).
+  // Player (col A): bind the plan's role tag to the rostered player name;
+  // group tags (ALL / MELEEDPS / …) and unmapped tags stay blank, matching
+  // the live sheet's convention (names on individual rows only).
+  const entry = a.roleTag ? roleMappings?.[a.roleTag] : undefined;
+  const mapped = typeof entry === 'object' && entry !== null && typeof (entry as { name?: unknown }).name === 'string'
+    ? (entry as { name: string }).name : '';
+  if (mapped) row[COL_PLAYER] = mapped;
   if (a.cd != null) row[COL_CD] = String(a.cd);
   row[COL_EVENT] = a.event;
   row[COL_COUNT] = String(a.occurrence);
@@ -163,7 +168,7 @@ export function renderSooAssigns(input: RenderInput): RenderResult {
 
   for (const b of allSooBosses()) {
     rows.push(...bossScaffold(b));
-    if (b.id === boss.id) rows.push(...sorted.map(assignmentRow));
+    if (b.id === boss.id) rows.push(...sorted.map((a) => assignmentRow(a, roleMappings)));
   }
 
   return { csv: `${rows.map(csvLine).join('\n')}\n`, errors: [] };
@@ -189,5 +194,5 @@ export function renderCountRows(input: RenderInput): { rows: string[][]; errors:
     (a, b) => (eventOrder.get(a.event) ?? 0) - (eventOrder.get(b.event) ?? 0) || a.timingOffset - b.timingOffset,
   );
 
-  return { rows: sorted.map(assignmentRow), errors: [] };
+  return { rows: sorted.map((a) => assignmentRow(a, roleMappings)), errors: [] };
 }
