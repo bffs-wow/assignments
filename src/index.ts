@@ -150,18 +150,19 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
   if (!timeline) console.warn('[generate] no timeline in state — refining from the roster/community only (report lane is optional)');
 
   const skillsData = JSON.parse(fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'));
+  const boss = resolveBoss(resolvedEncounter);
   const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
   const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
     timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
+    canonicalEvents: boss?.events ?? [],
   });
   const assignments = reply.data?.assignments?.[0];
   if (!Array.isArray(assignments)) throw new Error('AssignmentGenerator did not submit assignments');
 
-  const boss = resolveBoss(resolvedEncounter);
   if (boss) {
     const { rows, errors } = renderCountRows({ assignments, roleMappings, boss });
-    writeJSON(dir, 'sheets-rows.json', { encounter: boss.id, rows, errors, renderedAt: new Date().toISOString() });
     if (errors.length) console.error(`\n[generate] validation rejected ${errors.length} assignment(s) — push would be a no-op:\n` + errors.map((e) => `  - ${e.field}: ${e.message}`).join('\n'));
+    console.log(`\n[generate] ${rows.length} COUNT-block row(s) ready for ${boss.sheetName} (push re-renders from committed.json).`);
   }
   writeJSON(dir, 'committed.json', { assignments, roleMappings, encounter: resolvedEncounter || undefined, generatedAt: new Date().toISOString() });
   const tsv = `${CSVFormatter.formatToTSV(assignments, roleMappings)}\n`;
@@ -198,13 +199,6 @@ async function stepRefine(opts: { state?: string }, feedback: string): Promise<A
   fs.writeFileSync(path.join(dir, 'assignments.tsv'), `${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
   console.log(`Refined to ${assignments.length} assignments.\n-> ${path.join(dir, 'assignments.tsv')}`);
   console.log(`${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
-  if (committed.encounter) {
-    const boss = resolveBoss(committed.encounter);
-    if (boss) {
-      const { rows, errors } = renderCountRows({ assignments, roleMappings: committed.roleMappings, boss });
-      writeJSON(dir, 'sheets-rows.json', { encounter: boss.id, rows, errors, renderedAt: new Date().toISOString() });
-    }
-  }
   await autoPush(dir, { encounter: committed.encounter, assignments, roleMappings: committed.roleMappings });
   return assignments;
 }
@@ -219,11 +213,11 @@ function sheetsCredsPresent(): boolean {
 /**
  * B4: push the committed assignments to the test raid sheet's COUNT block.
  *
- * Consumes the persisted, already-rendered 13-col rows (`sheets-rows.json`,
- * written by generate/refine) — the push is lossless, exactly the convention
- * the sheet uses. Falls back to re-rendering committed.json when the rows
- * artifact is missing. The CSV/TSV artifact is unaffected on any failure —
- * sheets problems are loud warnings, never a hard pipeline failure.
+ * Always re-renders the committed plan with the current renderer (player
+ * bindings, canonical events) — the sheet is the source of truth for what
+ * went out, never a persisted snapshot. The CSV/TSV artifact is unaffected
+ * on any failure — sheets problems are loud warnings, never a hard pipeline
+ * failure.
  */
 async function stepPush(opts: { encounter?: string; state?: string; yes?: boolean }): Promise<void> {
   const dir = resolveState(opts.state);
@@ -238,17 +232,15 @@ async function stepPush(opts: { encounter?: string; state?: string; yes?: boolea
     process.exitCode = 1;
     return;
   }
-  const persistedRows = readJSON(dir, 'sheets-rows.json');
-  let rows: string[][] = Array.isArray(persistedRows?.rows) ? persistedRows.rows : [];
-  if (!rows.length) {
-    const { rows: rerendered, errors } = renderCountRows({ assignments: committed.assignments, roleMappings: committed.roleMappings, boss });
-    if (errors.length) {
-      console.error('\n[push] validation rejected the assignments — nothing written to the sheet:');
-      for (const e of errors) console.error(`  - ${e.field}: ${e.message}`);
-      process.exitCode = 1;
-      return;
-    }
-    rows = rerendered;
+  // Always re-render from the committed plan so the sheet gets the current
+  // renderer's columns (player binding, canonical events) — never a stale
+  // persisted sheets-rows.json snapshot.
+  const { rows, errors } = renderCountRows({ assignments: committed.assignments, roleMappings: committed.roleMappings, boss });
+  if (errors.length) {
+    console.error('\n[push] validation rejected the assignments — nothing written to the sheet:');
+    for (const e of errors) console.error(`  - ${e.field}: ${e.message}`);
+    process.exitCode = 1;
+    return;
   }
   if (!opts.yes) {
     console.log(`\nPush ${rows.length} assignment(s) to the live test sheet COUNT block for ${boss.sheetName}?`);
@@ -354,9 +346,17 @@ if (!isPlaceholder(process.env.OPENCODE_API_KEY) || !isPlaceholder(process.env.G
 }
 
 const argv = process.argv;
-if (argv.length <= 2) {
-  await interactiveMenu();
-} else {
-  createProgram(handlers).parse(argv);
+try {
+  if (argv.length <= 2) {
+    await interactiveMenu();
+  } else {
+    await createProgram(handlers).parseAsync(argv);
+  }
+} finally {
+  // Non-interactive shell: try to release the readline handle so the process
+  // can exit after a subcommand. In a TTY the interface stays open (menu loop);
+  // if stdin never closes, give the process a final nudge to exit.
+  rl.close();
+  process.exitCode = process.exitCode ?? 0;
+  if (!process.stdin.isTTY) setTimeout(() => process.exit(process.exitCode), 250);
 }
-process.exitCode = process.exitCode || 0;

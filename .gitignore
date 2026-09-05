@@ -5,3 +5,9 @@ node_modules/
 backups/
 dist/backups/
 dist/
+# agent session memory / private working notes are never source-controlled
+.openhands/
+# captured reference payloads + runtime-generated raid artifacts are not source
+ref/
+tonight/
+*.csv

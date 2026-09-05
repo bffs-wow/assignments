@@ -34,10 +34,10 @@ const goldenPlan: Assignment[] = [
 /** Expected assignment rows, sorted by master event order then TIME. */
 const goldenBlock = [
   `"","","Encounter Start (PAR)","1","ALL","0","Bloodlust","","","","","",""`,
-  `"","","Reave","1","PROTPALA1","-20","Shield Wall","","","tank external","","",""`,
-  `"","","Death from Above (PAR)","1,4","RSHAM1","0.5","Spirit Link Totem","","","","Pop SLT","",""`,
+  `"Paladino","","Reave","1","PROTPALA1","-20","Shield Wall","","","tank external","","",""`,
+  `"Totem","","Death from Above (PAR)","1,4","RSHAM1","0.5","Spirit Link Totem","","","","Pop SLT","",""`,
   `"","","Whirling","2","MELEEDPS","5","Custom Spell Assignment","","","bop priest","Lay on Hands","","633"`,
-  `"","","Hurl Amber","3","PROTPALA1","10","Custom Spell Assignment","","","","Void Shift","",""`,
+  `"Paladino","","Hurl Amber","3","PROTPALA1","10","Custom Spell Assignment","","","","Void Shift","",""`,
 ];
 
 const HEADER = '"Player","CD #","BOSS HEALTH / SPELL","COUNT / HEALTH %","PLAYER/CLASS/ALL","TIME","COOLDOWN SPELL","","NPC NAME","ADDITIONAL TEXT","OVERRIDE TTS","CUSTOM NAME","CUSTOM ICON"';

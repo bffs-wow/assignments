@@ -110,12 +110,16 @@ test('T1: backward compatibility — legacy plan without tts/cd and single-numbe
   assert.equal(r.ok, true);
 });
 
-test('T1: occurrence accepts a single count or a comma-list; rejects malformed lists and negatives', () => {
+test('T1: occurrence accepts a single count, a comma-list, and the pre-event sentinel -1; rejects malformed lists, fractions, and negative lists (-3)', () => {
   const ok1 = validateAssignments([base({ occurrence: '1,4' })], { boss: paragons, roleMappings: ROLE_MAPPINGS });
   assert.equal(ok1.ok, true, JSON.stringify(ok1.errors));
   const ok2 = validateAssignments([base({ occurrence: '1, 4' })], { boss: paragons, roleMappings: ROLE_MAPPINGS });
   assert.equal(ok2.ok, true);
+  // -1 is a legit pre-event/countdown call in the reference kill set
+  assert.equal(validateAssignments([base({ occurrence: -1 })], { boss: paragons, roleMappings: ROLE_MAPPINGS }).ok, true);
   assert.equal(validateAssignments([base({ occurrence: '1.5' })], { boss: paragons, roleMappings: ROLE_MAPPINGS }).ok, false);
+  // a negative is only legal as the lone sentinel -1, not inside a list or other negatives
+  assert.equal(validateAssignments([base({ occurrence: '-1,3' })], { boss: paragons, roleMappings: ROLE_MAPPINGS }).ok, false);
   assert.equal(validateAssignments([base({ occurrence: -3 })], { boss: paragons, roleMappings: ROLE_MAPPINGS }).ok, false);
 });
 
@@ -139,5 +143,8 @@ test('T1: validation requires a resolved boss and an assignments array', () => {
 });
 
 test('T1: GROUP_TAGS is the canonical group-tag set', () => {
-  assert.deepEqual([...GROUP_TAGS], ['ALL', 'MELEEDPS', 'RANGEDDPS']);
+  assert.deepEqual([...GROUP_TAGS], [
+    'ALL', 'MELEEDPS', 'RANGEDDPS', 'TANKS', 'HEALERS',
+    'DEATHKNIGHT', 'DRUID', 'HUNTER', 'MAGE', 'MONK', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR',
+  ]);
 });
