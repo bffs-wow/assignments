@@ -10,10 +10,16 @@
  */
 import 'dotenv/config';
 import { test } from 'node:test';
+import type { TestContext } from 'node:test';
 import assert from 'node:assert';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 import { createProgram } from '../../src/cli.ts';
 import type { Handlers } from '../../src/cli.ts';
+import { handlers as liveHandlers, setAgentRunner } from '../../src/index.ts';
+import type { Assignment } from '../../src/shared/assignments-schema.ts';
 
 // Spy handlers so each test asserts which operation commander dispatched and
 // with which resolved options.
@@ -243,4 +249,147 @@ test('root help lists every operation subcommand', () => {
   for (const cmd of ['timeline', 'mappings', 'community', 'generate', 'run', 'review', 'refine', 'explore', 'push']) {
     assert.match(help, new RegExp(`\\b${cmd}\\b`));
   }
+});
+
+// ---------------------------------------------------------------------------
+// Issue #15: Sheet-compliant CSV artifact wiring and validation failures
+// ---------------------------------------------------------------------------
+
+function withStateDir(t: TestContext) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cli-test-'));
+  const origExitCode = process.exitCode;
+  t.after(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+    setAgentRunner(null);
+    process.exitCode = origExitCode;
+  });
+  return dir;
+}
+
+test('generate: writes assignments.csv artifact along with assignments.tsv', async (t) => {
+  const dir = withStateDir(t);
+  fs.writeFileSync(path.join(dir, 'rolemappings.json'), JSON.stringify({
+    mappings: { PROTPALA1: { name: 'Paladino' }, ALL: {} },
+  }));
+  const validPlan: Assignment[] = [
+    { event: 'Encounter Start (PAR)', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+    { event: 'Reave', occurrence: 1, roleTag: 'PROTPALA1', timingOffset: -20, spellName: 'Shield Wall', notes: 'tank external', spellId: '871' },
+  ];
+  setAgentRunner(async () => ({ data: { assignments: [validPlan] } }));
+
+  await liveHandlers.generate({ state: dir, encounter: 'Paragons of the Klaxxi' });
+
+  assert.ok(fs.existsSync(path.join(dir, 'assignments.tsv')), 'assignments.tsv must exist');
+  assert.ok(fs.existsSync(path.join(dir, 'assignments.csv')), 'assignments.csv must exist');
+  const csv = fs.readFileSync(path.join(dir, 'assignments.csv'), 'utf8');
+  assert.match(csv, /"Player","CD #","BOSS HEALTH \/ SPELL"/);
+  assert.match(csv, /"Encounter Start \(PAR\)"/);
+  assert.match(csv, /"Paladino","","Reave"/);
+});
+
+test('generate: invalid plan surfaces grouped errors + non-zero exit, does not write CSV', async (t) => {
+  const dir = withStateDir(t);
+  fs.writeFileSync(path.join(dir, 'rolemappings.json'), JSON.stringify({
+    mappings: { PROTPALA1: { name: 'Paladino' } },
+  }));
+  const invalidPlan = [
+    { event: 'Bogus Event', occurrence: 1, roleTag: 'UNKNOWN_TAG', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  setAgentRunner(async () => ({ data: { assignments: [invalidPlan] } }));
+
+  const errs: string[] = [];
+  const origError = console.error;
+  console.error = (...args: unknown[]) => errs.push(args.map(String).join(' '));
+  t.after(() => { console.error = origError; });
+
+  await liveHandlers.generate({ state: dir, encounter: 'Paragons of the Klaxxi' });
+
+  assert.equal(process.exitCode, 1, 'process.exitCode must be set to 1 on validation error');
+  assert.equal(fs.existsSync(path.join(dir, 'assignments.csv')), false, 'assignments.csv must not be written on invalid plan');
+  const logged = errs.join('\n');
+  assert.match(logged, /validation rejected/);
+  assert.match(logged, /Bogus Event/);
+});
+
+test('refine: re-renders from persisted encounter without re-resolving', async (t) => {
+  const dir = withStateDir(t);
+  const initialPlan: Assignment[] = [
+    { event: 'Encounter Start (PAR)', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  fs.writeFileSync(path.join(dir, 'committed.json'), JSON.stringify({
+    assignments: initialPlan,
+    roleMappings: { ALL: {}, PROTPALA1: { name: 'Paladino' } },
+    encounter: 'Paragons of the Klaxxi',
+    generatedAt: new Date().toISOString(),
+  }));
+
+  const refinedPlan: Assignment[] = [
+    { event: 'Encounter Start (PAR)', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+    { event: 'Reave', occurrence: 1, roleTag: 'PROTPALA1', timingOffset: -10, spellName: 'Shield Wall', notes: '', spellId: '871' },
+  ];
+  setAgentRunner(async () => ({ data: { assignments: [refinedPlan] } }));
+
+  // Call refine without passing any encounter in opts
+  await liveHandlers.refine({ state: dir, feedback: 'add shield wall' });
+
+  assert.ok(fs.existsSync(path.join(dir, 'assignments.csv')), 'assignments.csv must be written by refine');
+  const csv = fs.readFileSync(path.join(dir, 'assignments.csv'), 'utf8');
+  assert.match(csv, /"Paladino","","Reave"/);
+  const committed = JSON.parse(fs.readFileSync(path.join(dir, 'committed.json'), 'utf8'));
+  assert.equal(committed.encounter, 'Paragons of the Klaxxi');
+});
+
+test('review: re-renders from persisted encounter without re-resolving from user opts', async (t) => {
+  const dir = withStateDir(t);
+  const plan: Assignment[] = [
+    { event: 'Encounter Start (PAR)', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  fs.writeFileSync(path.join(dir, 'committed.json'), JSON.stringify({
+    assignments: plan,
+    roleMappings: { ALL: {} },
+    encounter: 'Paragons of the Klaxxi',
+    generatedAt: new Date().toISOString(),
+  }));
+
+  const stdout: string[] = [];
+  const origLog = console.log;
+  console.log = (...args: unknown[]) => stdout.push(args.map(String).join(' '));
+  t.after(() => { console.log = origLog; });
+
+  // Pass encounter: 'Immerseus' in opts — review must ignore it and use Paragons from committed.json
+  await liveHandlers.review({ state: dir, encounter: 'Immerseus' });
+
+  assert.ok(fs.existsSync(path.join(dir, 'assignments.csv')), 'assignments.csv must be written by review');
+  const csv = fs.readFileSync(path.join(dir, 'assignments.csv'), 'utf8');
+  assert.match(csv, /"Encounter Start \(PAR\)"/);
+
+  const logged = stdout.join('\n');
+  assert.match(logged, /"Player","CD #","BOSS HEALTH \/ SPELL"/, 'review must print CSV to stdout');
+  assert.match(logged, /Player\t\tEvent\tOccurrence/, 'review must keep printing TSV to stdout');
+});
+
+test('review: surfaces grouped errors + non-zero exit when committed plan is invalid', async (t) => {
+  const dir = withStateDir(t);
+  const invalidPlan = [
+    { event: 'Bogus Event', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  fs.writeFileSync(path.join(dir, 'committed.json'), JSON.stringify({
+    assignments: invalidPlan,
+    roleMappings: { ALL: {} },
+    encounter: 'Paragons of the Klaxxi',
+    generatedAt: new Date().toISOString(),
+  }));
+
+  const errs: string[] = [];
+  const origError = console.error;
+  console.error = (...args: unknown[]) => errs.push(args.map(String).join(' '));
+  t.after(() => { console.error = origError; });
+
+  await liveHandlers.review({ state: dir });
+
+  assert.equal(process.exitCode, 1, 'process.exitCode must be set to 1 on validation error');
+  assert.equal(fs.existsSync(path.join(dir, 'assignments.csv')), false, 'assignments.csv must not be written on invalid plan');
+  const logged = errs.join('\n');
+  assert.match(logged, /validation rejected/);
+  assert.match(logged, /Bogus Event/);
 });
