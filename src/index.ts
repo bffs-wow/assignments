@@ -6,6 +6,8 @@ import readline from 'node:readline';
 import { init } from '@flue/runtime';
 import { start, sqlite } from '@flue/runtime/node';
 
+import { fileURLToPath } from 'node:url';
+
 import RaidHelperService from './services/raidhelper.ts';
 import WCLService from './services/wcl.ts';
 import CSVFormatter from './utils/csv_formatter.ts';
@@ -21,7 +23,8 @@ import { AssignmentGenerator } from './agents/assignment-generator.ts';
 import { AssignmentRefiner } from './agents/assignment-refiner.ts';
 import { WCLExplorer } from './agents/wcl-explorer.ts';
 import { resolveBoss } from './serializer/bosses.ts';
-import { renderCountRows } from './serializer/render.ts';
+import type { SooBoss } from './serializer/bosses.ts';
+import { renderCountRows, renderSooAssigns } from './serializer/render.ts';
 import { GoogleSheetsService, resolveSheetsEnv } from './services/google-sheets.ts';
 import { SheetsWriter } from './services/sheets-writer.ts';
 
@@ -42,19 +45,28 @@ const isPlaceholder = (v: string | undefined): boolean => !v || /your_/i.test(v)
 // ---------------------------------------------------------------------------
 // Prompt plumbing (works for interactive terminals AND piped stdin)
 // ---------------------------------------------------------------------------
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+let rl: readline.Interface | null = null;
 const inputLines: string[] = [];
 let inputDone = false;
 let pendingPrompt: ((line: string | null) => void) | null = null;
-rl.on('line', (line) => {
-  if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(line); } else inputLines.push(line);
-});
-rl.on('close', () => {
-  inputDone = true;
-  if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(null); }
-});
+
+function ensureReadline(): readline.Interface {
+  if (!rl) {
+    rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.on('line', (line) => {
+      if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(line); } else inputLines.push(line);
+    });
+    rl.on('close', () => {
+      inputDone = true;
+      if (pendingPrompt) { const r = pendingPrompt; pendingPrompt = null; r(null); }
+    });
+  }
+  return rl;
+}
+
 // null => EOF (piped run had no more input)
 function promptUser(query: string): Promise<string | null> {
+  ensureReadline();
   process.stdout.write(query);
   if (inputLines.length > 0) return Promise.resolve(inputLines.shift() ?? null);
   if (inputDone) return Promise.resolve(null);
@@ -69,9 +81,22 @@ const wclService = (instance?: string) => new WCLService(
   process.env.WCL_CLIENT_ID, process.env.WCL_CLIENT_SECRET, { instance },
 );
 
-const runAgent = async (handle: any, message: string, initialData?: unknown): Promise<any> => {
+export type AgentRunner = (handle: any, message: string, initialData?: unknown) => Promise<any>;
+
+const defaultAgentRunner: AgentRunner = async (handle: any, message: string, initialData?: unknown): Promise<any> => {
   const receipt = await handle.dispatch(initialData === undefined ? message : { message, initialData });
   return handle.read(receipt);
+};
+
+let customAgentRunner: AgentRunner | null = null;
+
+export function setAgentRunner(runner: AgentRunner | null): void {
+  customAgentRunner = runner;
+}
+
+const runAgent = async (handle: any, message: string, initialData?: unknown): Promise<any> => {
+  if (customAgentRunner) return customAgentRunner(handle, message, initialData);
+  return defaultAgentRunner(handle, message, initialData);
 };
 
 // COMMUNITY_RANKS env: "100-500" => mid-tier average-guild kills.
@@ -134,6 +159,34 @@ async function stepCommunity(opts: { encounter?: string; instance?: string; stat
   return reply.text;
 }
 
+/**
+ * Render and write the sheet-compliant CSV artifact (renderSooAssigns).
+ *
+ * Loudly reports grouped validation errors on failure and sets process.exitCode = 1,
+ * never silently dropping rows and never writing an invalid/empty CSV.
+ */
+function saveAndReportCsv(
+  dir: string,
+  input: {
+    assignments: unknown;
+    roleMappings?: Record<string, unknown> | null;
+    boss: SooBoss;
+  },
+  context: 'generate' | 'refine' | 'review',
+): { ok: boolean; csv: string | null } {
+  const { csv, errors } = renderSooAssigns(input);
+  if (errors.length || !csv) {
+    console.error(`\n[${context}] validation rejected the assignments — CSV artifact not written:`);
+    for (const e of errors) {
+      console.error(`  - ${e.field ? `${e.field}: ` : ''}${e.message}`);
+    }
+    process.exitCode = 1;
+    return { ok: false, csv: null };
+  }
+  fs.writeFileSync(path.join(dir, 'assignments.csv'), csv);
+  return { ok: true, csv };
+}
+
 async function stepGenerate(opts: { state?: string; encounter?: string; raidhelperEvent?: string }, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
   // RaidHelper roster is the only hard requirement for generation. If no
@@ -161,13 +214,20 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
       for (const w of diff.warnings) console.warn(`[generate] ${w}`);
     }
   }
-  const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
-  const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
-    timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
-    canonicalEvents: boss?.events ?? [],
-  });
-  const assignments = reply.data?.assignments?.[0];
-  if (!Array.isArray(assignments)) throw new Error('AssignmentGenerator did not submit assignments');
+
+  let assignments: Assignment[];
+  if (Array.isArray(initial)) {
+    assignments = initial as Assignment[];
+  } else {
+    const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
+    const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
+      timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
+      canonicalEvents: boss?.events ?? [],
+    });
+    const agentAssignments = reply.data?.assignments?.[0];
+    if (!Array.isArray(agentAssignments)) throw new Error('AssignmentGenerator did not submit assignments');
+    assignments = agentAssignments;
+  }
 
   if (boss) {
     const { rows, errors } = renderCountRows({ assignments, roleMappings, boss });
@@ -179,6 +239,17 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
   fs.writeFileSync(path.join(dir, 'assignments.tsv'), tsv);
   console.log(`Generated ${assignments.length} assignments.\n-> ${path.join(dir, 'assignments.tsv')}`);
   console.log(tsv);
+
+  if (boss) {
+    const res = saveAndReportCsv(dir, { assignments, roleMappings, boss }, 'generate');
+    if (res.ok) {
+      console.log(`-> ${path.join(dir, 'assignments.csv')}`);
+    }
+  } else {
+    console.error(`\n[generate] unknown encounter "${resolvedEncounter}" — CSV artifact not written.`);
+    process.exitCode = 1;
+  }
+
   await autoPush(dir, { encounter: resolvedEncounter, assignments, roleMappings });
   return assignments;
 }
@@ -195,22 +266,41 @@ async function autoPush(dir: string, opts: { encounter?: string; assignments: As
   }
 }
 
-async function stepRefine(opts: { state?: string }, feedback: string): Promise<Assignment[]> {
+async function stepRefine(opts: { state?: string }, feedback: string, { initial = null }: { initial?: unknown } = {}): Promise<Assignment[]> {
   const dir = resolveState(opts.state);
   const committed = readJSON(dir, 'committed.json');
   if (!committed) throw new Error('no committed assignments — run `generate` first');
   const boss = resolveBoss(committed.encounter);
-  const refiner = init(AssignmentRefiner, { id: `refine-${Date.now()}` });
-  const reply = await runAgent(refiner, 'Apply the raid leader feedback.', {
-    currentAssignments: committed.assignments, humanFeedback: feedback,
-    canonicalEvents: boss?.events ?? [], roleMappings: committed.roleMappings,
-  });
-  const assignments = reply.data?.assignments?.[0];
-  if (!Array.isArray(assignments)) throw new Error('Refiner did not submit assignments');
+
+  let assignments: Assignment[];
+  if (Array.isArray(initial)) {
+    assignments = initial as Assignment[];
+  } else {
+    const refiner = init(AssignmentRefiner, { id: `refine-${Date.now()}` });
+    const reply = await runAgent(refiner, 'Apply the raid leader feedback.', {
+      currentAssignments: committed.assignments, humanFeedback: feedback,
+      canonicalEvents: boss?.events ?? [], roleMappings: committed.roleMappings,
+    });
+    const refinedAssignments = reply.data?.assignments?.[0];
+    if (!Array.isArray(refinedAssignments)) throw new Error('Refiner did not submit assignments');
+    assignments = refinedAssignments;
+  }
+
   writeJSON(dir, 'committed.json', { assignments, roleMappings: committed.roleMappings, encounter: committed.encounter, generatedAt: new Date().toISOString() });
   fs.writeFileSync(path.join(dir, 'assignments.tsv'), `${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
   console.log(`Refined to ${assignments.length} assignments.\n-> ${path.join(dir, 'assignments.tsv')}`);
   console.log(`${CSVFormatter.formatToTSV(assignments, committed.roleMappings)}\n`);
+
+  if (boss) {
+    const res = saveAndReportCsv(dir, { assignments, roleMappings: committed.roleMappings, boss }, 'refine');
+    if (res.ok) {
+      console.log(`-> ${path.join(dir, 'assignments.csv')}`);
+    }
+  } else {
+    console.error(`\n[refine] unknown encounter "${committed.encounter}" — CSV artifact not written.`);
+    process.exitCode = 1;
+  }
+
   await autoPush(dir, { encounter: committed.encounter, assignments, roleMappings: committed.roleMappings });
   return assignments;
 }
@@ -296,9 +386,20 @@ const handlers: Handlers = {
     } catch (err) { console.error('run failed:', err); process.exitCode = 1; }
   },
   review: async (opts: CliOptions) => {
-    const committed = readJSON(resolveState(opts.state), 'committed.json');
+    const dir = resolveState(opts.state);
+    const committed = readJSON(dir, 'committed.json');
     if (!committed) { console.error('no committed assignments'); process.exitCode = 1; return; }
-    console.log(`${CSVFormatter.formatToTSV(committed.assignments, committed.roleMappings)}\n`);
+    const boss = resolveBoss(committed.encounter);
+    if (!boss) {
+      console.error(`\n[review] unknown encounter "${committed.encounter}" — CSV artifact not written.`);
+      process.exitCode = 1;
+      return;
+    }
+    const res = saveAndReportCsv(dir, { assignments: committed.assignments, roleMappings: committed.roleMappings, boss }, 'review');
+    if (res.ok && res.csv) {
+      console.log(res.csv);
+      console.log(`${CSVFormatter.formatToTSV(committed.assignments, committed.roleMappings)}\n`);
+    }
   },
   refine: async (opts: CliOptions) => { try { await stepRefine(opts, opts.feedback); } catch (e) { console.error('refine failed:', errMsg(e)); process.exitCode = 1; } },
   explore: async (opts: CliOptions) => {
@@ -352,23 +453,34 @@ async function interactiveMenu() {
 // ---------------------------------------------------------------------------
 // Entry
 // ---------------------------------------------------------------------------
-if (!isPlaceholder(process.env.OPENCODE_API_KEY) || !isPlaceholder(process.env.GEMINI_API_KEY)) {
-  fs.mkdirSync(path.join(process.cwd(), '.cache'), { recursive: true });
-  await start({ agents: [CommunityAnalyst, AssignmentGenerator, AssignmentRefiner, WCLExplorer], db: sqlite(path.join(process.cwd(), '.cache', 'flue.db')) });
+export const isMain = Boolean(
+  process.argv[1] && (
+    process.argv[1] === fileURLToPath(import.meta.url) ||
+    (fs.existsSync(process.argv[1]) && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url)))
+  )
+);
+
+if (isMain) {
+  if (!isPlaceholder(process.env.OPENCODE_API_KEY) || !isPlaceholder(process.env.GEMINI_API_KEY)) {
+    fs.mkdirSync(path.join(process.cwd(), '.cache'), { recursive: true });
+    await start({ agents: [CommunityAnalyst, AssignmentGenerator, AssignmentRefiner, WCLExplorer], db: sqlite(path.join(process.cwd(), '.cache', 'flue.db')) });
+  }
+
+  const argv = process.argv;
+  try {
+    if (argv.length <= 2) {
+      await interactiveMenu();
+    } else {
+      await createProgram(handlers).parseAsync(argv);
+    }
+  } finally {
+    // Non-interactive shell: try to release the readline handle so the process
+    // can exit after a subcommand. In a TTY the interface stays open (menu loop);
+    // if stdin never closes, give the process a final nudge to exit.
+    if (rl) (rl as readline.Interface).close();
+    process.exitCode = process.exitCode ?? 0;
+    if (!process.stdin.isTTY) setTimeout(() => process.exit(process.exitCode), 250);
+  }
 }
 
-const argv = process.argv;
-try {
-  if (argv.length <= 2) {
-    await interactiveMenu();
-  } else {
-    await createProgram(handlers).parseAsync(argv);
-  }
-} finally {
-  // Non-interactive shell: try to release the readline handle so the process
-  // can exit after a subcommand. In a TTY the interface stays open (menu loop);
-  // if stdin never closes, give the process a final nudge to exit.
-  rl.close();
-  process.exitCode = process.exitCode ?? 0;
-  if (!process.stdin.isTTY) setTimeout(() => process.exit(process.exitCode), 250);
-}
+export { handlers, stepGenerate, stepRefine };

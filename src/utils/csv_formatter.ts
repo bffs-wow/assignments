@@ -1,10 +1,16 @@
 /**
  * Formats AI JSON output into TSV matching the requested spreadsheet schema.
+ *
+ * @deprecated The sheet-compliant CSV artifact (renderSooAssigns in src/serializer/render.ts)
+ * replaces this TSV formatter once the sheet workflow is trusted. Kept for backwards compatibility.
  */
 import type { Assignment } from '../shared/assignments-schema.ts';
 import type { RoleMappings } from '../shared/roster-roles.ts';
 
 class CSVFormatter {
+  /**
+   * @deprecated Replaced by renderSooAssigns in src/serializer/render.ts.
+   */
   static formatToTSV(assignments: Assignment[], roleMappings: RoleMappings): string {
     // Header for the specific encounter format
     let tsv = "Player\t\tEvent\tOccurrence\tRole\tTiming\tSpell\tNotes\tSpellID\n";
