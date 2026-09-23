@@ -13,6 +13,7 @@ import { createProgram } from './cli.ts';
 import type { Handlers, CliOptions } from './cli.ts';
 import { resolveRoleMappings } from './shared/roster-roles.ts';
 import type { RoleMappings } from './shared/roster-roles.ts';
+import { REFERENCE_ALIASES, diffReferenceRoster } from './shared/reference-role-map.ts';
 import type { TimelineEvent } from './services/wcl.ts';
 import type { Assignment } from './shared/assignments-schema.ts';
 import { CommunityAnalyst } from './agents/community-analyst.ts';
@@ -151,6 +152,15 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
 
   const skillsData = JSON.parse(fs.readFileSync(new URL('../src/data/mop_skills.json', import.meta.url), 'utf8'));
   const boss = resolveBoss(resolvedEncounter);
+  if (community?.communityStrategy) {
+    const mentioned = Object.keys(REFERENCE_ALIASES).filter((tag) =>
+      community.communityStrategy.includes(tag),
+    );
+    if (mentioned.length) {
+      const diff = diffReferenceRoster(mentioned, roleMappings);
+      for (const w of diff.warnings) console.warn(`[generate] ${w}`);
+    }
+  }
   const generator = init(AssignmentGenerator, { id: `generate-${Date.now()}` });
   const reply = await runAgent(generator, 'Generate the raid cooldown assignment matrix for this encounter.', {
     timeline, roleMappings, skillsData, communityStrategy: community?.communityStrategy ?? '',
