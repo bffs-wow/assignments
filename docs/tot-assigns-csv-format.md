@@ -1,50 +1,60 @@
-# Siege of Orgrimmar — "Tot Assigns" import format (reference)
+# Siege of Orgrimmar — SOO-Assigns-Import export grid format (reference)
 
-> Context for what the assignment agents (`AssignmentGenerator` / `AssignmentRefiner`) should
-> emit. Source: `C:\Users\seanm\Downloads\AI BFFS SOO Assigns - SOO-Assigns-Import.csv` (the
-> Google Sheet we will sync to). This is the "Translated Tot Assigns" / TotalAssignments
-> WeakAura import schema, not the app's legacy `assignments_output*.tsv` columns.
+> Context for what the assignment agents (`AssignmentGenerator` / `AssignmentRefiner`) and serializer
+> (`renderSooAssigns` / `renderCountRows`) emit and validate.
+>
+> Source: The `SOO-Assigns-Import` tab of the guild's shared Google Sheets workbook ("AI BFFS SOO Assigns"),
+> which feeds the in-game RAIDLEAD WeakAura pack (formerly referred to by legacy names like "Tot Assigns"
+> or TotalAssignments). This document defines the 13-column export grid schema used by the pipeline's
+> `assignments.csv` artifact.
 
 ## File / sheet shape
 
-- Header row (row 2 of sheet): 13 columns
-- One section per boss (all 14 SoO bosses), each with two blocks:
-  1. **HEALTH %** block — health-threshold trigger slots (template rows `,1,Health % (IMM)`,
-     …, `,15,Health % (IMM)`). Unfilled in this sheet today; NPC/boss name lives in a spare
-     column. Future: assignments keyed to boss health %.
-  2. **COUNT** block — the actual cooldown assignments.
+- **Header row** (row 2 of sheet): 13 columns (export grid)
+- **One section per boss** (all 14 SoO bosses in sheet order), each containing two blocks:
+  1. **HEALTH % block** — health-threshold trigger slots: 15 numbered template rows (`Health % (<abbr>)`, CD # 1..15) with the boss/NPC display name in the `NPC NAME` column on row 1, followed by a `LEAVE BLANK` separator row.
+  2. **COUNT block** — the actual cooldown assignments, placed beneath the `COUNT` block header row.
 
 ## Columns (0-indexed)
 
 | # | Header | Meaning | Notes |
 |---|---|---|---|
-| 0 | Player | actual player name | blank when the trigger is `ALL` |
-| 1 | CD # | cooldown slot number | rarely used (`1`); mostly blank |
-| 2 | BOSS HEALTH / SPELL | event / boss ability name | boss-specific events suffixed with a boss abbr, e.g. `Encounter Start (IMM)`, `Swelling Corruption`, `Split`, `Reave`, `Adds CD (NAZ)` |
-| 3 | COUNT / HEALTH % | occurrence count | also `"1,4"` style paired counts appear; in HEALTH% blocks this is the trigger % |
-| 4 | PLAYER / CLASS / ALL | role tag | 42 distinct tags (see below) |
-| 5 | TIME | seconds relative to the event | **negative allowed** (`-20`..`-1` = before), `0`, up to `450`; fractional `0.1`/`0.5`/`1.5` seen |
-| 6 | COOLDOWN SPELL | assigned spell | 22 known spells, **or** literal `Custom Spell Assignment` (see cols 11/12) |
-| 7/8 | (reserved, blank) | | |
-| 9 | ADDITIONAL TEXT | note/annotation | e.g. `STACK`, `PERSONALS`, `Small Personal`, `Big Personal`, `Healthstone to top`, `Stun Adds`, `Grip Gloom`, `Fear Ward`, `Check boss mob alive` |
-| 10 | OVERRIDE TTS | custom text-to-speech | populated on 136 rows |
-| 11 | CUSTOM NAME | real spell for a custom assignment | when `COOLDOWN SPELL = "Custom Spell Assignment"` (e.g. `Lay on Hands`, `Void Shift`, `Healthstone`, `Personal`) |
-| 12 | CUSTOM ICON | spell id | e.g. `537079` (Void Shift), `538745` (Healthstone) |
+| 0 | Player | Actual player name | Bound from role-name mappings; blank for group tags (`ALL`, `MELEEDPS`, `RANGEDDPS`, class tags) or unmapped roles |
+| 1 | CD # | Cooldown slot number | Optional numeric index; mostly blank in data rows |
+| 2 | BOSS HEALTH / SPELL | Event display name | From the closed canonical event vocabulary, suffixed with boss abbr where ambiguous (e.g. `Encounter Start (IMM)`, `Swelling Corruption`, `Reave`, `Death from Above (PAR)`) |
+| 3 | COUNT / HEALTH % | Occurrence count | Single number (e.g. `1`), comma-list (e.g. `"1,4"`), or lone `-1` countdown/pre-event sentinel; trigger % in HEALTH % blocks |
+| 4 | PLAYER/CLASS/ALL | Role tag | Abstract roster slot (e.g. `PROTPALA1`, `DISC1`, `ALL`, `MELEEDPS`, `TANKS`, `HEALERS`, class tags) |
+| 5 | TIME | Timing offset (seconds) | Relative to event; negative allowed for pre-casts (`-20`..`-1`), `0`, or positive up to `450`; fractional allowed (`0.1`, `0.5`, `1.5`) |
+| 6 | COOLDOWN SPELL | Assigned spell | One of 21 canonical spells, **or** the literal `Custom Spell Assignment` |
+| 7 | (reserved) | Blank column | Blank in data rows; header cell carries copy-direction label |
+| 8 | NPC NAME | Scaffold markers | Boss display name on row 1 of HEALTH % block, `LEAVE BLANK` on separator row; blank on assignment data rows |
+| 9 | ADDITIONAL TEXT | Note/annotation | Optional text/instruction (e.g. `STACK`, `tank external`, `bop priest`, `Pop SLT`) |
+| 10 | OVERRIDE TTS | Text-to-speech / Custom spell | Explicit TTS override for canonical spells; for custom assignments (`Custom Spell Assignment`), carries the real spell name (e.g. `Lay on Hands`, `Void Shift`, `Life Cocoon on tank`) per live sheet convention |
+| 11 | CUSTOM NAME | (Unused) | Kept blank by convention in live sheet |
+| 12 | CUSTOM ICON | Spell ID | Spell ID for custom assignments (e.g. `633`, `135739`, `538745`); blank for canonical spells or unknown IDs |
 
 ## Known canonical spells (COOLDOWN SPELL)
 
-`Ancestral Guidance, Anti-Magic Zone, Bloodlust, Demoralizing Banner, Devotion Aura,
+The live sheet recognizes 21 canonical cooldown spells:
+
+```
+Ancestral Guidance, Anti-Magic Zone, Bloodlust, Demoralizing Banner, Devotion Aura,
 Guardian of Ancient Kings, Hand of Protection, Hand of Sacrifice, Healing Tide Totem,
 Pain Suppression, Power Word: Barrier, Rallying Cry, Revival, Shield Wall, Smoke Bomb,
-Spirit Link Totem, Spirit Shell, Stampeding Roar, Tranquility, Vampiric Embrace, Vigilance`
+Spirit Link Totem, Spirit Shell, Stampeding Roar, Tranquility, Vampiric Embrace, Vigilance
+```
 
-## Role tags observed (42)
+Any spell outside this set is rendered as a **custom assignment**:
+- `COOLDOWN SPELL`: Literal `"Custom Spell Assignment"`
+- `OVERRIDE TTS`: The real spell name (or explicit TTS override)
+- `CUSTOM ICON`: Numeric spell ID (if known)
+- `CUSTOM NAME`: Kept blank
 
-- Per-spec/rank: `DISC1-3, HPALA1-2, CDSHA1-3, RSHAM1-2, SPRIEST1-2, BOOMIE1-2, DPSWARR1-3,
-  PROTPALA1, PROTWARR1, UHDK1, FERAL1, FROSTDK1, HOLYPRIEST1, MISTWEAVE1, RETPALA1, ROGUE1-2,
-  RDRUID1, SURVIVAL2, LOCK1-6`
-- Generic class: `DRUID, SHAMAN, PRIEST`
-- Group: `ALL, MELEEDPS, RANGEDDPS`
+## Allowed role tags
+
+- **Per-spec/rank**: `DISC1-3, HPALA1-2, CDSHA1-3, RSHAM1-2, SPRIEST1-2, BOOMIE1-2, DPSWARR1-3, PROTPALA1, PROTWARR1, UHDK1, FERAL1, FROSTDK1, HOLYPRIEST1, MISTWEAVE1, RETPALA1, ROGUE1-2, RDRUID1, SURVIVAL2, LOCK1-6`
+- **Group tags**: `ALL, MELEEDPS, RANGEDDPS, TANKS, HEALERS`
+- **Class tags**: `DEATHKNIGHT, DRUID, HUNTER, MAGE, MONK, PALADIN, PRIEST, ROGUE, SHAMAN, WARLOCK, WARRIOR`
 
 ## Boss abbreviations (event-name suffix)
 
@@ -61,8 +71,7 @@ Spirit Link Totem, Spirit Shell, Stampeding Roar, Tranquility, Vampiric Embrace,
 ## Per-boss event vocabulary (canonical assignment list)
 
 The complete set of valid `BOSS HEALTH / SPELL` values per encounter. This is a **closed
-vocabulary** — agent output for a boss should come from (and be validated against) this list.
-Kept verbatim from the sheet owner:
+vocabulary** — agent output and serializer input are validated against this list:
 
 ```
 SOO_IMMERSEUS
@@ -138,42 +147,28 @@ Call Bombardment  Clump Check  Fixate  Intermission  Phase 2 Start  Phase 3 Star
 Phase 4 Start  Annihilate 1  Annihilate 2  Annihilate 3  Manifest Rage
 ```
 
-Observations:
-- The vocabulary is broader than the current sheet — many events are valid but not yet assigned
-  (e.g. `Corrosive Blast`, `Sha Bolt`, `Sundering Blow`, `Breath of Y'Shaarj`, `Set to Blow`).
-- Ambiguous names carry a boss suffix: `Encounter Start (X)`, `Health % (X)`, `Gouge (FAL/PAR)`,
-  `Death From Above (BLA)` / `Death from Above (PAR)` (note: case differs in the source).
-- Some labels are heuristic, not raw timeline abilities: `Split`, `Adds CD (X)`, `Clump Check`,
-  `Fixate`, `Intermission`, `Rage Ability`, `Banner`, `Overload 1..10`, `Deafening Screech 1..4`.
+## Schema & Serializer Contract
 
-## Implications for agent output (proposed contract)
-
-The current Valibot `assignmentSchema` is `{ event, occurrence, roleTag, timingOffset,
-spellName, notes, spellId }`. To map cleanly onto this sheet later, extend it with the fields
-the sheet actually carries, and let the agent populate them:
+The canonical `Assignment` schema (`src/shared/assignments-schema.ts`) is:
 
 ```ts
-const assignmentSchema = v.object({
-  event: v.string(),            // -> BOSS HEALTH / SPELL (boss-abbr suffix added by the caller)
-  occurrence: v.number(),       // -> COUNT
-  roleTag: v.string(),          // -> PLAYER/CLASS/ALL
-  timingOffset: v.number(),     // -> TIME (allow negatives/fractional)
-  spellName: v.string(),        // -> COOLDOWN SPELL, or the real spell when custom
-  notes: v.string(),            // -> ADDITIONAL TEXT
-  spellId: v.string(),          // -> CUSTOM ICON
-  customName: v.optional(v.string()),   // -> CUSTOM NAME (when custom assignment)
-  tts: v.optional(v.string()),          // -> OVERRIDE TTS
-  player: v.optional(v.string()),       // -> Player (resolved from roleMappings by the caller)
+export const assignmentSchema = v.object({
+  event: v.string(),
+  occurrence: v.union([
+    v.number(),
+    v.pipe(
+      v.string(),
+      v.regex(/^-?\d+(?:\s*,\s*\d+)*$/, 'occurrence must be a number or comma-separated list of numbers'),
+    ),
+  ]),
+  roleTag: v.string(),
+  timingOffset: v.number(),
+  spellName: v.string(),
+  notes: v.optional(v.string(), ''),
+  spellId: v.optional(v.string(), ''),
+  tts: v.optional(v.string(), ''),
+  cd: v.optional(v.number()),
 });
 ```
 
-3. The **event** field is validate against the per-boss vocabulary above: use a per-boss Valibot
-   `v.picklist(...)` (the strictest option) or a post-hoc check that rejects/differs off-list
-   events. The agent currently fabricates event names from the live timeline; prefer
-   canonical vocabulary names where they exist (e.g. emit `Calamity` / `Reave`, not a raw
-   timeline paraphrase). The caller decides the boss mapping and adds the abbreviation suffix.
-
-Decisions for the Sheets thread: whether the agent should emit `customName`+`spellId` itself vs.
-the caller canonicalizing "spellName not in the canonical list" into a `Custom Spell Assignment`
-row; whether `timingOffset` stays integer-only or allows the sheet's fractional/negative values;
-and where the boss-abbreviation suffix and the HEALTH% blocks are applied (caller, not agent).
+The serializer (`renderSooAssigns`) validates every plan against the target boss's canonical event list and allowed role tags before generating the CSV. Validation failures are surfaced loudly with grouped errors and abort CSV creation.
