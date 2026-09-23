@@ -58,18 +58,18 @@ export const CANONICAL_SPELLS = [
 /** HEALTH % template rows per boss (matches the live sheet's 1..15 grid). */
 export const HEALTH_PERCENT_ROWS = 15;
 
-const COL_PLAYER = 0;
-const COL_CD = 1;
-const COL_EVENT = 2;
-const COL_COUNT = 3;
-const COL_ROLE = 4;
-const COL_TIME = 5;
-const COL_SPELL = 6;
-const COL_NPC = 8;
-const COL_ADDITIONAL_TEXT = 9;
-const COL_OVERRIDE_TTS = 10;
-const COL_CUSTOM_NAME = 11;
-const COL_CUSTOM_ICON = 12;
+export const COL_PLAYER = 0;
+export const COL_CD = 1;
+export const COL_EVENT = 2;
+export const COL_COUNT = 3;
+export const COL_ROLE = 4;
+export const COL_TIME = 5;
+export const COL_SPELL = 6;
+export const COL_NPC = 8;
+export const COL_ADDITIONAL_TEXT = 9;
+export const COL_OVERRIDE_TTS = 10;
+export const COL_CUSTOM_NAME = 11;
+export const COL_CUSTOM_ICON = 12;
 
 const HEADER = [
   'Player',
