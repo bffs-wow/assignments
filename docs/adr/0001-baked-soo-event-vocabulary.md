@@ -12,6 +12,15 @@ sheet order and exact spelling — including quirks like `Death From Above (BLA)
 vs `Death from Above (PAR)`, suffix-less Garrosh phase starts, and `SPOILS OF
 PANDAREN` in the sheet header vs WCL's "Spoils of Pandaria".
 
+**Frozen snapshot (2026-09-23)**
+
+The vocabulary is now frozen as a versioned snapshot (the `_frozenSnapshot`
+metadata block in `soo-encounters.json`, T1/issue #49) pending the wow:forever
+transition. All 14 boss entries and their events arrays are locked for the
+duration of SoO progression work. Proposals to add, rename, or remove any
+event must go through a new ADR first — the snapshot is not auto-refreshed
+from the sheet.
+
 **Considered options**
 
 - *Read from the sheet at runtime*: single source of truth and self-validating,
