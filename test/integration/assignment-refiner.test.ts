@@ -13,7 +13,7 @@ import assert from 'node:assert';
 import * as v from 'valibot';
 import { init } from '@flue/runtime';
 import { start, sqlite } from '@flue/runtime/node';
-import { AssignmentRefiner } from '../../src/agents/assignment-refiner.ts';
+import { AssignmentRefiner, buildRefinerPrompt } from '../../src/agents/assignment-refiner.ts';
 import { assignmentSchema } from '../../src/shared/assignments-schema.ts';
 
 const hasKey = Boolean(process.env.GEMINI_API_KEY && !/your_/.test(process.env.GEMINI_API_KEY));
@@ -29,6 +29,34 @@ const currentAssignments = [
   { event: 'Calamity', occurrence: 1, roleTag: 'RSHAM1', timingOffset: 1, spellName: 'Healing Tide Totem', notes: '', spellId: '' },
 ];
 
+test('AssignmentRefiner: prompt includes canonical event whitelist and exact-name instruction', () => {
+  const prompt = buildRefinerPrompt({
+    currentAssignments,
+    humanFeedback: 'move to blue marker',
+    canonicalEvents: ['Encounter Start (FAL)', 'Calamity', 'Defiled Ground'],
+    roleMappings: { RSHAM1: { name: 'Totems' } },
+  });
+  assert.ok(prompt.includes('Canonical Event Whitelist for this boss:'));
+  assert.ok(prompt.includes('["Encounter Start (FAL)","Calamity","Defiled Ground"]'));
+  assert.ok(prompt.includes('Resolved Role Tags:'));
+  assert.ok(prompt.includes('["RSHAM1"]'));
+  assert.ok(prompt.includes('EVENT NAMES MUST BE EXACT: use only event names from the Canonical Event Whitelist below. Do NOT paraphrase.'));
+});
+
+test('AssignmentRefiner: accepts canonicalEvents and roleMappings in initialData without error', async () => {
+  const agent = init(AssignmentRefiner, { id: 'it-assignment-refiner-whitelist' });
+  const receipt = await agent.dispatch({
+    message: 'Apply the raid leader feedback.',
+    initialData: {
+      currentAssignments,
+      humanFeedback: 'add an assignment for everyone to move to the blue marker during Calamity',
+      canonicalEvents: ['Encounter Start (FAL)', 'Calamity'],
+      roleMappings: { RSHAM1: { name: 'Totems' } },
+    },
+  });
+  assert.ok(receipt.submissionId, 'expected dispatch to be accepted without error');
+});
+
 test('AssignmentRefiner: applies human feedback and returns a schema-valid updated matrix', { skip, timeout: 180000 }, async () => {
   const agent = init(AssignmentRefiner, { id: 'it-assignment-refiner' });
   const receipt = await agent.dispatch({
@@ -36,6 +64,8 @@ test('AssignmentRefiner: applies human feedback and returns a schema-valid updat
     initialData: {
       currentAssignments,
       humanFeedback: "add an assignment for everyone to move to the blue marker during Calamity",
+      canonicalEvents: ['Encounter Start (FAL)', 'Calamity'],
+      roleMappings: { RSHAM1: { name: 'Totems' } },
     },
   });
   const reply = await agent.read(receipt);

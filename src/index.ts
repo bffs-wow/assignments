@@ -189,9 +189,11 @@ async function stepRefine(opts: { state?: string }, feedback: string): Promise<A
   const dir = resolveState(opts.state);
   const committed = readJSON(dir, 'committed.json');
   if (!committed) throw new Error('no committed assignments — run `generate` first');
+  const boss = resolveBoss(committed.encounter);
   const refiner = init(AssignmentRefiner, { id: `refine-${Date.now()}` });
   const reply = await runAgent(refiner, 'Apply the raid leader feedback.', {
     currentAssignments: committed.assignments, humanFeedback: feedback,
+    canonicalEvents: boss?.events ?? [], roleMappings: committed.roleMappings,
   });
   const assignments = reply.data?.assignments?.[0];
   if (!Array.isArray(assignments)) throw new Error('Refiner did not submit assignments');
