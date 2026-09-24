@@ -32,9 +32,24 @@ Automate the direct push of generated WoW Classic raid assignments to the design
 ### 1. Authentication
 
 *   **Method:** OAuth 2.0 using the user's personal Google identity.
-*   **Flow:** On first use, a `--login` CLI flag will initiate a browser-based consent flow.
-*   **Token Storage:** The obtained refresh token (along with `client_id` and `client_secret`) will be persisted in the local `.env` file.
-*   **New `.env` Keys:** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`.
+*   **Flow:** On first use, `scripts/google-oauth-wizard.sh` walks the human
+    through the browser consent flow (5 stages: Google Cloud project → enable
+    Sheets API → consent screen → Desktop OAuth client → authorize, which
+    captures the refresh token).
+*   **Token Storage:** The obtained refresh token (along with `client_id` and
+    `client_secret`) will be persisted in the local `.env` file.
+*   **Redirect scope:** The OAuth callback URI is strictly **loopback**
+    (`http://127.0.0.1:<free-port>/` — Google's Desktop-type client accepts
+    any free loopback port and rejects LAN/private IPs unless extra
+    `device_id`/`device_name` params are passed, and even then the consent
+    page may refuse non-loopback redirects). If the browser lives on another
+    machine than the one running the wizard, forward the loopback port via
+    SSH (`ssh -L <port>:127.0.0.1:<port> <host>`). The wizard auto-picks a
+    free port and prints these steps when it detects no local browser.
+*   **Repair path:** `NOT_AUTHENTICATED` (`invalid_grant`/401) → re-run the
+    wizard. Do not re-consent in a different clone — tokens are per-clone.
+*   **New `.env` Keys:** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+    `GOOGLE_REFRESH_TOKEN`.
 
 ### 2. Target Sheet & Tab Configuration
 

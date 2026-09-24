@@ -91,3 +91,31 @@ GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
 GOOGLE_REFRESH_TOKEN=your_google_oauth_refresh_token
 GOOGLE_SHEET_ID=1SqMdIVBKMYRfOaGw4TucVVPpjqm4kvXqEZJo6W1HWms
 ```
+
+#### Refreshing the Google tokens
+
+Google refresh tokens are **per-clone**: each checkout has its own `.env`, so a
+token minted for one clone does not refresh the others. When `push` fails with
+`NOT_AUTHENTICATED` (HTTP 401 on `oauth2.googleapis.com/token`, `invalid_grant`),
+re-run the wizard:
+
+```bash
+bash scripts/google-oauth-wizard.sh
+```
+
+It remembers saved values and only re-consents the refresh token (Stages 1–4
+are pure confirmations on re-runs; one-time browser consent on Stage 5). Key
+facts the wizard handles for you:
+
+*   Callback listener auto-picks a **free loopback port** (8790–8899,
+    override `OAUTH_PORT=<n>`) — the 878x range is occupied by other tools
+    on this host.
+*   Redirect stays `127.0.0.1:<port>/`: Google's Desktop-type OAuth client
+    accepts only loopback. Do **not** rewrite the redirect to a LAN IP in the
+    auth URL — the token exchange must see the byte-identical `redirect_uri`
+    or Google rejects it with `redirect_uri_mismatch`/`invalid_request`.
+*   Headless box? Open the auth URL from a machine that has a browser and
+    forward the loopback port first: `ssh -L <port>:127.0.0.1:<port>
+    <this-host>`. The wizard prints this when it detects no local browser.
+*   Result files (`oauth-url.txt`, `oauth-refresh.txt`, `oauth-result.txt`)
+    land in `.cache/`; the refresh token persists in `.env` via the wizard.
