@@ -393,3 +393,93 @@ test('review: surfaces grouped errors + non-zero exit when committed plan is inv
   assert.match(logged, /validation rejected/);
   assert.match(logged, /Bogus Event/);
 });
+
+// ---------------------------------------------------------------------------
+// Issue #9: Google Sheets push command and error fallback
+// ---------------------------------------------------------------------------
+
+test('push: missing committed assignments errors with non-zero exit', async (t) => {
+  const dir = withStateDir(t);
+  const errs: string[] = [];
+  const origError = console.error;
+  console.error = (...args: unknown[]) => errs.push(args.map(String).join(' '));
+  t.after(() => { console.error = origError; });
+
+  await liveHandlers.push({ state: dir });
+
+  assert.equal(process.exitCode, 1);
+  assert.match(errs.join('\n'), /no committed assignments/);
+});
+
+test('push: unconfigured credentials emits loud warning with CSV/TSV unaffected and non-zero exit', async (t) => {
+  const dir = withStateDir(t);
+  const plan: Assignment[] = [
+    { event: 'Encounter Start (PAR)', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  fs.writeFileSync(path.join(dir, 'committed.json'), JSON.stringify({
+    assignments: plan,
+    roleMappings: { ALL: {} },
+    encounter: 'Paragons of the Klaxxi',
+    generatedAt: new Date().toISOString(),
+  }));
+
+  const errs: string[] = [];
+  const origError = console.error;
+  console.error = (...args: unknown[]) => errs.push(args.map(String).join(' '));
+  t.after(() => { console.error = origError; });
+
+  // Clear google env vars temporarily
+  const origId = process.env.GOOGLE_SHEET_ID;
+  delete process.env.GOOGLE_SHEET_ID;
+  t.after(() => { if (origId) process.env.GOOGLE_SHEET_ID = origId; });
+
+  await liveHandlers.push({ state: dir, yes: true });
+
+  assert.equal(process.exitCode, 1);
+  const logged = errs.join('\n');
+  assert.match(logged, /missing\/unset Google OAuth creds/);
+  assert.match(logged, /your CSV\/TSV artifact is unaffected/);
+});
+
+test('push: invalid plan surfaces grouped errors without attempting push', async (t) => {
+  const dir = withStateDir(t);
+  const invalidPlan = [
+    { event: 'Off Vocabulary Ability', occurrence: 1, roleTag: 'ALL', timingOffset: 0, spellName: 'Bloodlust', notes: '', spellId: '2825' },
+  ];
+  fs.writeFileSync(path.join(dir, 'committed.json'), JSON.stringify({
+    assignments: invalidPlan,
+    roleMappings: { ALL: {} },
+    encounter: 'Paragons of the Klaxxi',
+    generatedAt: new Date().toISOString(),
+  }));
+
+  const errs: string[] = [];
+  const origError = console.error;
+  console.error = (...args: unknown[]) => errs.push(args.map(String).join(' '));
+  t.after(() => { console.error = origError; });
+
+  // Fake creds present so validation check runs
+  const prevEnv = {
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
+    GOOGLE_SHEET_ID: process.env.GOOGLE_SHEET_ID,
+  };
+  process.env.GOOGLE_CLIENT_ID = 'test-client-id';
+  process.env.GOOGLE_CLIENT_SECRET = 'test-secret';
+  process.env.GOOGLE_REFRESH_TOKEN = 'test-refresh';
+  process.env.GOOGLE_SHEET_ID = 'test-sheet-id';
+  t.after(() => {
+    for (const [k, v] of Object.entries(prevEnv)) {
+      if (v !== undefined) process.env[k] = v;
+      else delete process.env[k];
+    }
+  });
+
+  await liveHandlers.push({ state: dir, yes: true });
+
+  assert.equal(process.exitCode, 1);
+  const logged = errs.join('\n');
+  assert.match(logged, /validation rejected the assignments/);
+  assert.match(logged, /Off Vocabulary Ability/);
+});

@@ -25,8 +25,8 @@ import { WCLExplorer } from './agents/wcl-explorer.ts';
 import { resolveBoss } from './serializer/bosses.ts';
 import type { SooBoss } from './serializer/bosses.ts';
 import { renderCountRows, renderSooAssigns } from './serializer/render.ts';
-import { GoogleSheetsService, resolveSheetsEnv } from './services/google-sheets.ts';
-import { SheetsWriter } from './services/sheets-writer.ts';
+import { GoogleSheetsService, resolveSheetsEnv, sheetsCredsPresent } from './services/google-sheets.ts';
+import { SheetAssignmentsWriter } from './services/sheets-writer.ts';
 
 // ---------------------------------------------------------------------------
 // State dir + small JSON helpers (artifacts land in .cache/cli by default)
@@ -256,11 +256,19 @@ async function stepGenerate(opts: { state?: string; encounter?: string; raidhelp
 
 /** Best-effort push after generate/refine when creds are present (never hard-fails). */
 async function autoPush(dir: string, opts: { encounter?: string; assignments: Assignment[]; roleMappings: RoleMappings }): Promise<void> {
-  if (!sheetsCredsPresent()) return;
   const boss = resolveBoss(opts.encounter);
   if (!boss) return;
+  const writer = new SheetAssignmentsWriter();
+  if (!writer.hasCredentials()) return;
   try {
-    await stepPush({ state: dir, encounter: boss.id, yes: true });
+    const res = await writer.push({
+      encounter: boss,
+      assignments: opts.assignments,
+      roleMappings: opts.roleMappings,
+    });
+    if (!res.ok && !res.skipped) {
+      console.error(`\n[push] auto-push to the sheet failed (${res.error}) — your CSV/TSV artifact is unaffected.`);
+    }
   } catch (e) {
     console.error(`\n[push] auto-push to the sheet failed (${errMsg(e)}) — your CSV/TSV artifact is unaffected.`);
   }
@@ -305,13 +313,6 @@ async function stepRefine(opts: { state?: string }, feedback: string, { initial 
   return assignments;
 }
 
-/** Whether the .env carries real Google OAuth creds (a push is possible). */
-function sheetsCredsPresent(): boolean {
-  const env = resolveSheetsEnv(process.env);
-  return Boolean(env.clientId && env.clientSecret && env.refreshToken && env.sheetId) &&
-    !/your_/.test(env.clientId ?? '') && !/your_/.test(env.clientSecret ?? '');
-}
-
 /**
  * B4: push the committed assignments to the test raid sheet's COUNT block.
  *
@@ -328,15 +329,16 @@ async function stepPush(opts: { encounter?: string; state?: string; yes?: boolea
   const boss = resolveBoss(encounter);
   if (!committed || !Array.isArray(committed.assignments)) throw new Error('no committed assignments — run `generate` first');
   if (!boss) throw new Error(`unknown encounter "${encounter}" — use a SOO boss name or id`);
-  if (!sheetsCredsPresent()) {
+
+  const writer = new SheetAssignmentsWriter();
+  if (!writer.hasCredentials()) {
     console.error('\n[push] missing/unset Google OAuth creds (GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN/SHEET_ID) — push skipped.');
     console.error('[push] your CSV/TSV artifact is unaffected (see generate output).');
     process.exitCode = 1;
     return;
   }
-  // Always re-render from the committed plan so the sheet gets the current
-  // renderer's columns (player binding, canonical events) — never a stale
-  // persisted sheets-rows.json snapshot.
+
+  // Pre-validate before confirmation prompt so users don't confirm invalid plans
   const { rows, errors } = renderCountRows({ assignments: committed.assignments, roleMappings: committed.roleMappings, boss });
   if (errors.length) {
     console.error('\n[push] validation rejected the assignments — nothing written to the sheet:');
@@ -344,18 +346,23 @@ async function stepPush(opts: { encounter?: string; state?: string; yes?: boolea
     process.exitCode = 1;
     return;
   }
+
   if (!opts.yes) {
     console.log(`\nPush ${rows.length} assignment(s) to the live test sheet COUNT block for ${boss.sheetName}?`);
     console.log('(existing rows are backed up to backups/ first)');
     const ans = (await promptUser('Type "push" to continue, anything else to abort: '))?.trim();
     if (ans !== 'push') { console.log('push aborted.'); return; }
   }
-  const service = new GoogleSheetsService();
-  const writer = new SheetsWriter({ service });
-  const report = await writer.writeAssignments(boss, rows);
-  console.log(`\n[push] done. ${report.writtenRows.length} row(s) in the ${boss.sheetName} COUNT block` +
-    (report.dropped.length ? `; ${report.dropped.length} dropped (over capacity)` : '') +
-    `. Backups in backups/.`);
+
+  const res = await writer.push({
+    encounter: boss,
+    assignments: committed.assignments,
+    roleMappings: committed.roleMappings,
+  });
+
+  if (!res.ok) {
+    process.exitCode = 1;
+  }
 }
 
 function errMsg(e: unknown): string {
