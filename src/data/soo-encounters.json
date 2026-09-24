@@ -1,4 +1,9 @@
 {
+  "_frozenSnapshot": {
+    "date": "2026-09-23",
+    "reason": "MoP event vocabulary frozen for wow:forever transition; refresh only via deliberate ADR",
+    "schema": "soo-boss-events"
+  },
   "tier": "soo",
   "encounters": [
     {
