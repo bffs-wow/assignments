@@ -203,6 +203,14 @@ export function resolveSheetsEnv(env: Record<string, string | undefined> = proce
   };
 }
 
+/** Whether the environment carries usable Google OAuth credentials. */
+export function sheetsCredsPresent(env: Record<string, string | undefined> = process.env): boolean {
+  const resolved = resolveSheetsEnv(env);
+  return Boolean(resolved.clientId && resolved.clientSecret && resolved.refreshToken && resolved.sheetId) &&
+    !/your_/.test(resolved.clientId ?? '') && !/your_/.test(resolved.clientSecret ?? '') &&
+    !/your_/.test(resolved.refreshToken ?? '') && !/your_/.test(resolved.sheetId ?? '');
+}
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
@@ -239,6 +247,7 @@ const EXPIRY_MARGIN_MS = 60_000;
 export class GoogleSheetsService {
   readonly sheetId: string | undefined;
   readonly tabTitle: string;
+  readonly hasCustomAdapter: boolean;
   private readonly clientId: string | undefined;
   private readonly clientSecret: string | undefined;
   private readonly refreshToken: string | undefined;
@@ -261,6 +270,7 @@ export class GoogleSheetsService {
     this.refreshToken = refreshToken;
     this.sheetId = sheetId;
     this.tabTitle = DEFAULT_TAB;
+    this.hasCustomAdapter = Boolean(options.adapter);
     this.adapter = options.adapter ?? {
       tokenRequest: fetchToken,
       request: fetchRequest,
