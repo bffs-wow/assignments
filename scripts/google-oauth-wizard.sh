@@ -191,6 +191,22 @@ echo "  Target project: $PROJECT   (override with PROJECT=<id> if wrong)"
 SHELL_DEFAULT="1SqMdIVBKMYRfOaGw4TucVVPpjqm4kvXqEZJo6W1HWms"
 BASE="https://console.cloud.google.com/auth"
 
+# Pick a free loopback port for the callback listener. 8787 was the original
+# default but other tools (herdr-webui, collie) squat on the low 878x range.
+# Loopback is REQUIRED — Google rejects LAN/private-IP redirect URIs on
+# Desktop-type clients unless device_id/device_name are passed, and even then
+# the consent screen may refuse the request. Redirect URI stays 127.0.0.1:port
+# end-to-end (auth URL and token exchange must byte-match).
+OAUTH_PORT="${OAUTH_PORT:-}"
+if [[ -z "$OAUTH_PORT" ]]; then
+  for p in {8790..8890}; do
+    if ! (exec 3<>/dev/tcp/127.0.0.1/"$p") 2>/dev/null; then
+      OAUTH_PORT="$p"; break
+    fi
+  done
+fi
+printf '  %scallback listener → http://127.0.0.1:%s/%s (override OAUTH_PORT=<port>)\n' "$DIM" "$OAUTH_PORT" "$RESET"
+
 banner "Google OAuth for the SOO sheets push"
 
 # ── Stage 1: Google Cloud project ─────────────────────────────────────────
@@ -248,15 +264,28 @@ step "Make sure you're signed into your Google account in the browser first."
 ask GOOGLE_SHEET_ID "Google Sheet ID to authorize against:"
 [[ -z "$GOOGLE_SHEET_ID" ]] && GOOGLE_SHEET_ID="$SHELL_DEFAULT" && note "(using the test raid sheet id)"
 write_env GOOGLE_SHEET_ID "$GOOGLE_SHEET_ID"
-note "If you see redirect_uri_mismatch: open the client in Clients → edit → add"
-note "'http://127.0.0.1:8787' as an authorized redirect URI (Desktop type usually"
-note "covers the loopback already) → save → re-run the wizard / stage."
+note "Redirect stays LOOPBACK (http://127.0.0.1:${OAUTH_PORT}/) — Desktop clients only"
+note "auto-accept loopback. If the auth URL or the consent page errors with"
+note "redirect_uri_mismatch / invalid_request: do NOT rewrite the redirect_uri"
+note "in the URL — the token exchange must see the exact same URI. Re-run with"
+note "OAUTH_PORT=<port> pointing at a port you control."
+# Headless / remote browser: if this box can't open a browser itself, the
+# human opens the flow from another machine. Desktop-only clients accept
+# loopback, so route the OTHER machine's loopback here via SSH tunnel.
+if [[ -z "${DISPLAY:-}" ]] && ! command -v wslview >/dev/null 2>&1 && ! command -v explorer.exe >/dev/null 2>&1; then
+  HOST_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  note "No browser on this box — run from the machine where your browser lives:"
+  note "    1) ssh -L ${OAUTH_PORT}:127.0.0.1:${OAUTH_PORT} ${HOST_IP:-<this-host>}"
+  note "    2) open the auth URL printed below on THAT machine"
+  note "    (this wizard's listener is bound to 127.0.0.1:${OAUTH_PORT}; the tunnel"
+  note "     rewrites the other machine's loopback to this one)"
+fi
 cat > .cache/oauth-helper.mjs <<'HELPEREOF'
 import http from 'node:http';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-const [clientId, clientSecret, sheetId] = process.argv.slice(2);
-const port = 8787;
+const [clientId, clientSecret, sheetId, portArg] = process.argv.slice(2);
+const port = Number(portArg);
 const redirectURI = `http://127.0.0.1:${port}/`;
 const state = Math.random().toString(36).slice(2);
 const verifier = crypto.randomBytes(48).toString('base64url');
@@ -297,7 +326,7 @@ const server = http.createServer(async (req, res) => {
 });
 server.listen(port, '127.0.0.1', () => { console.log('listening for the Google redirect on http://127.0.0.1:' + port + '/ ...'); });
 HELPEREOF
-node .cache/oauth-helper.mjs "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$GOOGLE_SHEET_ID" &
+node .cache/oauth-helper.mjs "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$GOOGLE_SHEET_ID" "$OAUTH_PORT" &
 HELPER_PID=$!
 sleep 2
 if [[ -f .cache/oauth-url.txt ]]; then open_url "$(cat .cache/oauth-url.txt)"; fi
