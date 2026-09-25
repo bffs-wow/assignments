@@ -13,31 +13,18 @@ import { assignmentSchema } from '../shared/assignments-schema.ts';
  *
  * Creation data (initialData): { timeline, roleMappings, skillsData, communityStrategy }.
  */
-export function AssignmentGenerator() {
-  useModel(process.env.MODEL_GENERATE ?? 'opencode-go/deepseek-v4-flash');
-
-  const writeAssignments = useDataWriter('assignments', { schema: v.array(assignmentSchema) });
-
-  const { timeline, roleMappings, skillsData, communityStrategy, canonicalEvents } = useInitialData<{
-    timeline: unknown[] | null;
-    roleMappings: Record<string, unknown>;
-    skillsData: unknown;
-    communityStrategy: string;
-    canonicalEvents: string[];
-  }>();
-
-  useTool({
-    name: 'submit_assignments',
-    description: 'Submit the final raid cooldown assignment matrix for the encounter. Call once with an object { assignments: [...] } containing the complete array when every assignment is decided.',
-    input: v.object({ assignments: v.array(assignmentSchema) }),
-    async run({ data }) {
-      writeAssignments(data.assignments);
-      return { output: `Saved ${data.assignments.length} assignments.` };
-    },
-  });
+export function buildGeneratorPrompt(opts: {
+  timeline: unknown[] | null;
+  roleMappings: Record<string, unknown>;
+  skillsData: unknown;
+  communityStrategy: string;
+  canonicalEvents?: string[];
+}): string {
+  const { timeline, roleMappings, skillsData, communityStrategy, canonicalEvents } = opts;
 
   const strategySection = communityStrategy
-    ? `Community Practices (Highly Recommended Strategy to Mimic):\n${communityStrategy}`
+    ? `Community Practices (Recommended Strategy to Mimic):
+${communityStrategy}`
     : '(No community strategy was provided for this encounter.)';
 
   const timelineSection = timeline?.length
@@ -70,8 +57,36 @@ Rules for assignment:
 5. For "Encounter Start", always assign "ALL" -> "Bloodlust".
 6. Do your best to spread out cooldowns so the raid is covered across all dangerous events.
 7. If Community Practices are provided, strongly prioritize mimicking those cooldown assignments for the respective events, assuming the required roles are available in the current roster — but always map their event names to the canonical whitelist.
+8. COMMUNITY-STRATEGY EVENTS MAY NOT EXIST IN THE TIMELINE: the community strategy text is prose written from memory and sometimes names events that never actually occur in real kills (e.g. "Magnetic Crush" on Blackfuse is commonly hallucinated — the real event there is "Shredder" bursts resolved by Overload). Only assign CDs to events that exist in the Canonical Event Whitelist for this boss, and prefer events that appear in the Encounter Timeline; if a community-strategy event name does not appear in the whitelist, treat that practice as inapplicable and move its cooldown budget to the nearest whitelisted high-risk event instead.
+9. SHREDDER/LATE-PHASE PRE-CALLS ARE FIRST-OCCURRENCE-ONLY: a fixed pre-call offset (e.g. the Blackfuse Shredder -16s lead-in) is reliable only for the FIRST occurrence of that event; later occurrences repeat on irregular gaps. For occurrence 2+, attach the CD directly to the target event (no offset) or leave the slot empty — do not reuse the fixed negative-time offset for later occurrences.
 
 When the full assignment matrix is ready, call submit_assignments once with { assignments: [...] } — the complete array. Do not describe the assignments in prose — submit them via the tool.`;
+}
+
+export function AssignmentGenerator() {
+  useModel(process.env.MODEL_GENERATE ?? 'opencode-go/deepseek-v4-flash');
+
+  const writeAssignments = useDataWriter('assignments', { schema: v.array(assignmentSchema) });
+
+  const { timeline, roleMappings, skillsData, communityStrategy, canonicalEvents } = useInitialData<{
+    timeline: unknown[] | null;
+    roleMappings: Record<string, unknown>;
+    skillsData: unknown;
+    communityStrategy: string;
+    canonicalEvents: string[];
+  }>();
+
+  useTool({
+    name: 'submit_assignments',
+    description: 'Submit the final raid cooldown assignment matrix for the encounter. Call once with an object { assignments: [...] } containing the complete array when every assignment is decided.',
+    input: v.object({ assignments: v.array(assignmentSchema) }),
+    async run({ data }) {
+      writeAssignments(data.assignments);
+      return { output: `Saved ${data.assignments.length} assignments.` };
+    },
+  });
+
+  return buildGeneratorPrompt({ timeline, roleMappings, skillsData, communityStrategy, canonicalEvents });
 }
 
 AssignmentGenerator.initialData = v.object({
