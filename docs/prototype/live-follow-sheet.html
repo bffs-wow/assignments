@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<!--
+  PROTOTYPE — WoW:Forever live-follow sheet format (P1 / issue #53 / docs/prototype/live-follow-sheet.html)
+
+  Question: "What should the live-follow sheet look like?" (UI branch of skills/prototype — sub-shape B,
+  no existing page; this IS the page). Answer settles G1 column/section decisions for the redesign map (#47).
+
+  Three variants, switchable via ?variant=A|B|C (and the floating bottom bar / arrow keys), per skills/prototype/UI.md:
+    A — Document plan   : raid-lead PLAN spine (kill order list → positions → notes), prose-ish, closest to the SOO ASSIGNS ancestor
+    B — Grid plan       : spreadsheet-shaped time/position/players grid with phase bands and A/B/C team blocks
+    C — Checklist       : per-phase pull-execution checklist, memory-aid mnemonics, checkboxes
+
+  Every variant shows the the SAME two bosses so layout comparison is honest:
+    - Immerseus  : SIMPLE — few positions, fits on one screen (scroll to next boss)
+    - Garrosh    : COMPLEX — many positions; complex bosses get their own TAB per G1 addendum
+  Event vocabulary below is cut from the frozen soo-encounters.json snapshot (T1, issue #49) for authenticity.
+
+  RULES (skills/prototype):
+  - Throwaway. No build, no package.json wiring, no tests. Double-click to run.
+  - Watermark is intentional: this is a consultation artifact, not shipped UI.
+  - Below the markup: plain-language iteration notes (what changed across variants and why).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTOTYPE — WoW:Forever Live-Follow Sheet</title>
+<style>
+  :root{
+    --sheet-bg:#fff; --grid-line:#d3d6db; --head-bg:#f0f3f6; --head-line:#c7ccd4;
+    --ink:#1f2329; --muted:#6b7280; --accent:#0a7d33; --accent-soft:#e7f3eb;
+    --prot:#b45309; --prot-bg:#fdf3e4; --band-p1:#e8eaed; --band-p2:#fdeaea; --band-p3:#e8f0fd;
+    --chip-a:#d9ead3; --chip-b:#f3d9c6; --chip-c:#d3e3f3; --chip-x:#ece3f5;
+    --sel:#c6e0f0; --font:13px/1.45 "Segoe UI", Roboto, Arial, sans-serif; --mono:12px/1.4 Consolas, "Courier New", monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font:var(--font); color:var(--ink); background:#e8eaed; padding-bottom:64px}
+
+  /* ---- watermark banner ---- */
+  .watermark{position:fixed; top:0; left:0; right:0; z-index:50; background:repeating-linear-gradient(45deg,#f59e0b,#f59e0b 24px,#fbbf24 24px,#fbbf24 48px);
+    color:#7c2d12; font-weight:700; font-size:12px; letter-spacing:2px; text-align:center; padding:5px 0; box-shadow:0 1px 4px rgba(0,0,0,.35)}
+  .watermark b{background:#fff8; padding:1px 8px; border-radius:3px}
+
+  /* ---- mimic Google Sheets chrome ---- */
+  .chrome{background:#fff; border-bottom:1px solid var(--head-line); padding-top:26px}
+  .toolbar{display:flex; gap:6px; align-items:center; padding:4px 10px; border-bottom:1px solid var(--head-line); font-size:12px; color:var(--muted); flex-wrap:wrap}
+  .toolbar .docname{font-weight:600; color:var(--ink); font-size:13px}
+  .toolbar .spacer{flex:1}
+  .toolbar button, .toolbar .fake{background:#fff; border:1px solid var(--head-line); border-radius:4px; padding:3px 8px; color:var(--ink); cursor:pointer}
+  .toolbar .fake{cursor:default; color:var(--muted)}
+  .tabstrip{display:flex; align-items:flex-end; padding:0 8px; gap:2px; background:#f8f9fa}
+  .tab{background:#eef0f3; border:1px solid var(--head-line); border-bottom:none; border-radius:6px 6px 0 0; padding:6px 16px; font-size:12px; color:var(--muted); cursor:pointer}
+  .tab.active{background:#fff; color:var(--ink); font-weight:600; border-bottom:2px solid #fff}
+
+  /* ---- the sheet canvas ---- */
+  .sheet{max-width:1180px; margin:10px auto; background:var(--sheet-bg); border:1px solid var(--head-line); box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .sheethead{display:flex; align-items:baseline; gap:14px; padding:8px 12px; border-bottom:2px solid var(--head-line); background:var(--head-bg); flex-wrap:wrap}
+  .sheethead .tierlabel{font-size:11px; letter-spacing:1px; color:var(--muted); text-transform:uppercase}
+  .sheethead h1{font-size:17px}
+  .sheethead .night span{font-weight:700}
+  .sheethead .tonight{margin-left:auto; font-size:12px; color:var(--muted); border-left:2px solid var(--head-line); padding-left:12px}
+
+  /* ---- boss section: one boss = one screen (scroll to next) ---- */
+  .boss{scroll-margin-top:70px}
+  .boss .bosshead{display:flex; align-items:center; gap:10px; padding:7px 12px; border-bottom:1px solid var(--head-line); background:#f7f9fb}
+  .boss .bosshead h2{font-size:15px}
+  .boss .bosshead .tag{font-size:11px; padding:2px 8px; border-radius:10px; background:var(--accent-soft); color:var(--accent); border:1px solid #bfddc8}
+  .boss .bosshead .tag.complex{background:#fdeaea; color:#b3261e; border-color:#f2c4c0}
+  .boss .bosshead .kolead{font-size:12px; color:var(--muted)}
+  .boss .bosshead .phasebadge{margin-left:auto; font-family:var(--mono); color:var(--muted); font-size:11px}
+
+  /* ============ VARIANT A — document plan ============ */
+  body.v-a .gridwrap{display:none}
+  body.v-a body.v-c{display:block}
+  .plan{display:flex; flex-direction:column; gap:10px; padding:10px 12px}
+  .plan .section{border:1px solid var(--grid-line); border-radius:6px; overflow:hidden}
+  .plan .section h3{font-size:12px; letter-spacing:.5px; text-transform:uppercase; color:var(--muted); background:var(--head-bg); border-bottom:1px solid var(--grid-line); padding:5px 10px}
+  .plan .section .body{padding:8px 10px}
+  .ko{list-style:none; counter-reset:ko}
+  .ko li{display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed var(--grid-line)}
+  .ko li:last-child{border-bottom:none}
+  .ko li::before{counter-increment:ko; content:counter(ko); font-family:var(--mono); font-size:11px; background:var(--sel); border-radius:4px; min-width:22px; text-align:center; padding:1px 3px; color:#1a365d}
+  .ko .arrow{color:var(--muted)}
+  .posrow{display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed var(--grid-line); flex-wrap:wrap}
+  .posrow:last-child{border-bottom:none}
+  .posrow .time{font-family:var(--mono); font-weight:700; color:#b3261e; background:#fff1f0; border:1px solid #f2c4c0; border-radius:4px; padding:1px 6px; white-space:nowrap}
+  .posrow .who{color:var(--muted); font-style:italic; padding:1px 4px; border-bottom:1px dashed #9aa4b0; min-width:120px}
+  .posrow .who:empty::after{content:"— name to fill —"; color:#c0c7cf}
+  .posrow .role{font-weight:600}
+  .posrow .note{color:var(--muted); font-size:12px}
+  .plan .fill{margin-top:8px}
+  .plan .fill .line{border-bottom:1px dashed #9aa4b0; padding:2px; color:#c0c7cf; min-height:18px}
+  .plan .fill .line:empty::after{content:"raid-lead curation line…"}
+  .teamrowA{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+  .teamA{border:1px solid var(--grid-line); border-radius:5px; padding:5px 8px; min-width:150px; flex:1}
+  .teamA b{font-size:11px; display:block; margin-bottom:3px}
+  .teamA .slots{font-size:12px; color:var(--muted)}
+
+  /* ============ VARIANT B — grid plan ============ */
+  body.v-b .planwrap{display:none}
+  .gridbody{padding:8px 12px}
+  table.grid{border-collapse:collapse; width:100%; min-width:820px}
+  table.grid th,table.grid td{border:1px solid var(--grid-line); padding:5px 8px; text-align:left; vertical-align:top}
+  table.grid thead th{background:#f2f5f8; font-size:11px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted); position:sticky; top:0}
+  tr.phase-p1 td{background:var(--band-p1)} tr.phase-p2 td{background:var(--band-p2)} tr.phase-p3 td{background:var(--band-p3)}
+  td.time{font-family:var(--mono); font-weight:700; white-space:nowrap; width:88px}
+  td.pos b{display:block; font-size:12.5px}
+  td.pos small{color:var(--muted); font-size:11px}
+  td.fillin{border-left:2px dashed #9aa4b0 !important; background:#fbfcfe !important; color:#9aa4b0}
+  td.fillin:empty::after{content:"fill-in"; font-size:11px; color:#c0c7cf; font-style:italic}
+  .teamrowB{display:flex; gap:10px; margin-top:10px}
+  .teamB{flex:1; border:1px solid var(--grid-line); border-radius:6px; overflow:hidden}
+  .teamB .thead{padding:4px 8px; font-weight:700; font-size:12px; border-bottom:1px solid var(--grid-line)}
+  .teamB.a .thead{background:var(--chip-a)} .teamB.b .thead{background:var(--chip-b)} .teamB.c .thead{background:var(--chip-c)}
+  .teamB .slotb{display:flex; justify-content:space-between; gap:6px; padding:3px 8px; border-bottom:1px dashed var(--grid-line); font-size:12px}
+  .teamB .slotb .name{color:#9aa4b0; border-bottom:1px dashed #9aa4b0; min-width:90px}
+  .teamB .slotb .name:empty::after{content:"—"; }
+  .teamB .slotb .chips{display:flex; gap:3px}
+  .chip{font-size:10px; border-radius:3px; padding:0 5px; line-height:16px; font-weight:600}
+  .chip.a{background:var(--chip-a)} .chip.b{background:var(--chip-b)} .chip.c{background:var(--chip-c)} .chip.x{background:var(--chip-x)}
+
+  /* ============ VARIANT C — checklist ============ */
+  body.v-c .planwrap{display:none}
+  .clwrap{padding:10px 12px; display:flex; flex-direction:column; gap:10px}
+  .clphase{border:1px solid var(--grid-line); border-radius:6px}
+  .clphase .ph{display:flex; align-items:center; gap:8px; padding:6px 10px; background:var(--head-bg); border-bottom:1px solid var(--grid-line); font-weight:600; font-size:13px}
+  .clphase .ph .pic{font-size:11px; color:var(--muted); font-weight:400}
+  .cl{display:flex; align-items:flex-start; gap:8px; padding:6px 10px; border-bottom:1px dashed var(--grid-line)}
+  .cl:last-of-type{border-bottom:none}
+  .cl .box{width:15px; height:15px; border:1.5px solid var(--head-line); border-radius:3px; margin-top:2px; cursor:pointer; flex:none}
+  .cl.done .box{background:var(--accent); border-color:var(--accent)}
+  .cl .txt{flex:1}
+  .cl .txt b{font-weight:600}
+  .cl .txt .call{color:var(--muted); font-style:italic; font-size:12px}
+  .cl .txt .mem{font-family:var(--mono); font-size:11px; color:var(--muted); background:#f4f6f8; border-radius:3px; padding:0 5px}
+  .cl .pri{font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px; flex:none}
+  .pri.hi{background:#fdeaea; color:#b3261e; border:1px solid #f2c4c0}
+  .pri.mid{background:#fdf3e4; color:#b45309; border:1px solid #eed9b0}
+  .pri.low{background:#eef0f3; color:#6b7280; border:1px solid #d8dce2}
+  .cladd{margin:6px 10px; font-size:12px; color:#9aa4b0}
+
+  /* ---- variant switcher (floating bottom bar, per skills/prototype/UI.md) ---- */
+  .switcher{position:fixed; bottom:10px; left:50%; transform:translateX(-50%); z-index:60; display:flex; align-items:center; gap:10px;
+    background:#1f2329; color:#fff; border-radius:22px; padding:6px 14px; box-shadow:0 2px 8px rgba(0,0,0,.4); font-size:13px; user-select:none}
+  .switcher button{background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:2px 8px; border-radius:4px}
+  .switcher button:hover{background:#3a3f47}
+  .switcher .cur b{color:#fbbf24}
+  .switcher .hint{font-size:11px; color:#b9bec6}
+  .variantlabel{position:fixed; bottom:58px; left:50%; transform:translateX(-50%); z-index:60; background:#fff; border:1px solid var(--head-line); border-radius:12px; padding:4px 12px; font-size:12px; color:var(--muted); box-shadow:0 1px 4px rgba(0,0,0,.15)}
+
+  /* tab content */
+  .tabpage{display:none}.tabpage.active{display:block}
+
+  @media (max-width:820px){ .sheet{margin:6px} }
+</style>
+</head>
+<body class="v-a" version="PROTOTYPE-2026-09-23">
+
+<div class="watermark">◆ PROTOTYPE — BINARY STILL BEING EXPLORED — throwaway, not shipped, not merged ◆ <b>docs/prototype/live-follow-sheet.html</b></div>
+
+<div class="chrome">
+  <div class="toolbar">
+    <span class="docname">WoW:Forever Assigns — MoP (live-follow) [PROTOTYPE]</span>
+    <span class="spacer"></span>
+    <span class="fake">⋮ +</span>
+    <button title="throwaway">⛶ Full screen</button>
+    <button title="throwaway">↻</button>
+  </div>
+  <div class="tabstrip">
+    <div class="tab active" data-tab="soo">MO-SOO</div>
+    <div class="tab" data-tab="garrosh">GARROSH ⚠ (complex — own tab)</div>
+  </div>
+</div>
+
+<!-- ================= TAB: SOO (Immerseus = simple boss demo, scroll to next) ================= -->
+<div class="tabpage active" id="tab-soo">
+<div class="sheet">
+  <div class="sheethead">
+    <div>
+      <div class="tierlabel">Tier · Siege of Orgrimmar · one boss = one screen, scroll down</div>
+      <h1 class="editable">Raid night 2026-09-24 — Siege of Orgrimmar</h1>
+    </div>
+    <div class="night">Roster: <span>42 signed</span> · Notes: <span class="editable">soak assignment drill, new externals rotation</span></div>
+    <div class="tonight">Tonight: Immerseus → Fallen Protectors → <s>Norushen</s> …</div>
+  </div>
+
+  <!-- ============ BOSS 1: Immerseus (SIMPLE) ============ -->
+  <section class="boss" id="boss-immerseus">
+    <div class="bosshead">
+      <h2 class="editable">Immerseus</h2>
+      <span class="tag">SIMPLE · few positions</span>
+      <span class="kolead">Kill order: after Fallen Protectors, before Norushen</span>
+      <span class="phasebadge">P1 → P2 (split 50%)</span>
+    </div>
+
+    <!-- PLAN spine: this is what "format = raid-lead plan shape" means -->
+    <div class="plan" id="plan-immerseus">
+      <div class="section">
+        <h3>Kill order — the plan spine</h3>
+        <div class="body"><ul class="ko">
+          <li>Pull boss to center</li><li class="arrow">→</li>
+          <li>Burst P1 (burn adds: Swirl, Corrosive Blast)</li><li class="arrow">→</li>
+          <li><b>Split at 50% (Reform)</b></li><li class="arrow">→</li>
+          <li>Lust &amp; finish blobs (Swelling Corruption)</li><li class="arrow">→</li>
+          <li>Kill</li>
+        </ul></div>
+      </div>
+
+      <div class="section">
+        <h3>Coordinated positions — the few important roles (curated)</h3>
+        <div class="body">
+          <div class="posrow"><span class="time">P1 · pull</span><span class="role">Spreader ×2</span><span class="who editable"></span><span class="note">stand 8yd off, Swirl overlap</span></div>
+          <div class="posrow"><span class="time">P1 · 60%</span><span class="role">External tank</span><span class="who editable"></span><span class="note">tank Swelling Corruption blob away</span></div>
+          <div class="posrow"><span class="time">P2 · split</span><span class="role">Soaker ×3</span><span class="who editable"></span><span class="note">collect Sha Bolt cones, first 3 to Reform</span></div>
+          <div class="posrow"><span class="time">P2 · burn</span><span class="role">Interrupt rotation</span><span class="who editable"></span><span class="note">Corrosive Blast lock</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Roster fill-in — blank slots for raid-lead curation (sync from RaidHelper: aspirational)</h3>
+        <div class="body">
+          <div class="teamrowA">
+            <div class="teamA"><b>Group A</b><span class="slots">Soak prio:<span class="who editable"></span><br>Spreads:<span class="who editable"></span></span></div>
+            <div class="teamA"><b>Group B</b><span class="slots">Soak prio:<span class="who editable"></span><br>Spreads:<span class="who editable"></span></span></div>
+            <div class="teamA"><b>Group C</b><span class="slots">Soak prio:<span class="who editable"></span><br>Spreads:<span class="who editable"></span></span></div>
+          </div>
+          <div class="fill"><div class="line editable"></div><div class="line editable"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANT B grid for Immerseus -->
+    <div class="gridwrap"><div class="gridbody">
+      <table class="grid">
+        <thead><tr><th>Time</th><th>Position</th><th>Players (raid-lead fill-in)</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="phase-p1"><td class="time">P1 · pull</td><td class="pos"><b>Spreaders ×2</b><small>Swirl separation</small></td><td class="fillin editable" colspan="1"></td><td>8yd off, no overlap</td></tr>
+          <tr class="phase-p1"><td class="time">P1 · 60%</td><td class="pos"><b>External tank</b><small>Swelling Corruption</small></td><td class="fillin editable"></td><td>kite blob away from raid</td></tr>
+          <tr class="phase-p2"><td class="time">P2 · split</td><td class="pos"><b>Soakers ×3</b><small>first to Reform</small></td><td class="fillin editable"></td><td>Sha Bolt cones</td></tr>
+          <tr class="phase-p2"><td class="time">P2 · burn</td><td class="pos"><b>Interrupt rotation</b><small>Corrosive Blast</small></td><td class="fillin editable"></td><td>3-man lock</td></tr>
+        </tbody>
+      </table>
+      <div class="teamrowB">
+        <div class="teamB a"><div class="thead">Group A</div><div class="slotb"><span>Soak prio</span><span class="name editable"></span></div><div class="slotb"><span>Spread</span><span class="name editable"></span></div></div>
+        <div class="teamB b"><div class="thead">Group B</div><div class="slotb"><span>Soak prio</span><span class="name editable"></span></div><div class="slotb"><span>Spread</span><span class="name editable"></span></div></div>
+        <div class="teamB c"><div class="thead">Group C</div><div class="slotb"><span>Soak prio</span><span class="name editable"></span></div><div class="slotb"><span>Spread</span><span class="name editable"></span></div></div>
+      </div>
+    </div></div>
+
+    <!-- VARIANT C checklist for Immerseus -->
+    <div class="clwrap">
+      <div class="clphase"><div class="ph">Phase 1 <span class="pic">· burn setup ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Spread 8yd — Swirl incoming</b><br><span class="call">"Spread on Swirl"</span> <span class="mem">memo: S-tile</span></div><div class="pri hi">PRI</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Kill adds clockwise</b> <span class="call">"Adds left"</span></div><div class="pri mid">ROT</div></div>
+      </div>
+      <div class="clphase"><div class="ph">Phase 2 <span class="pic">· split ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>First 3 to Reform (soakers)</b> <span class="call">"Soakers in"</span></div><div class="pri hi">PRI</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Lust on second blob</b></div><div class="pri mid">LUST</div></div>
+      </div>
+      <div class="cladd">+ raid-lead curation lines…</div>
+    </div>
+  </section>
+
+  <!-- ===== BOSS 2 (simple-to-mid) : Galakras ===== (shows scroll-down-to-next) -->
+  <section class="boss" id="boss-galakras">
+    <div class="bosshead">
+      <h2 class="editable">Galakras</h2>
+      <span class="tag">MEDIUM · towers + boss</span>
+      <span class="kolead">Scroll from Immerseus: this is the "next boss below"</span>
+      <span class="phasebadge">Tower phase → P2</span>
+    </div>
+    <div class="plan" id="plan-galakras">
+      <div class="section"><h3>Kill order — the plan spine</h3><div class="body"><ul class="ko">
+        <li>Two A/B split groups (15/15)</li><li class="arrow">→</li>
+        <li>Towers up (Grunt CD + Demolisher CD)</li><li class="arrow">→</li>
+        <li>Boss pull on 2nd tower down</li><li class="arrow">→</li>
+        <li>P2: Crusher's Call spread + Flames out</li><li class="arrow">→</li>
+        <li>Kill</li>
+      </ul></div></div>
+      <div class="section"><h3>Coordinated positions</h3><div class="body">
+        <div class="posrow"><span class="time">Tower A</span><span class="role">Tower team ×5</span><span class="who editable"></span><span class="note">Grunt + Demolisher interrupts</span></div>
+        <div class="posrow"><span class="time">Tower B</span><span class="role">Tower team ×5</span><span class="who editable"></span><span class="note">second tower, then drag boss</span></div>
+        <div class="posrow"><span class="time">P2</span><span class="role">Flames runner</span><span class="who editable"></span><span class="note">Flames of Galakrond exits</span></div>
+      </div></div>
+    </div>
+    <div class="gridwrap"></div>
+    <div class="clwrap"></div>
+  </section>
+</div>
+</div>
+
+<!-- ================= TAB: GARROSH (complex boss -> own tab) ================= -->
+<div class="tabpage" id="tab-garrosh">
+<div class="sheet">
+  <div class="sheethead">
+    <div>
+      <div class="tierlabel">Tier · Siege of Orgrimmar · GARROSH — complex boss, own tab per G1</div>
+      <h1 class="editable">Garrosh Hellscream — live-follow</h1>
+    </div>
+    <div class="night">Roster: <span>42</span> · Notes: <span class="editable">phase 2 swap points, 4 intermissions</span></div>
+    <div class="tonight">Tonight: P1 swirls → P2 kiting → intermission watch</div>
+  </div>
+
+  <section class="boss" id="boss-garrosh">
+    <div class="bosshead">
+      <h2 class="editable">Garrosh Hellscream</h2>
+      <span class="tag complex">COMPLEX · own tab</span>
+      <span class="kolead">Positions split per phase, special cursor slot</span>
+      <span class="phasebadge">P1 → P2 → P3 → P4</span>
+    </div>
+
+    <div class="plan" id="plan-garrosh">
+      <div class="section">
+        <h3>Kill order — the plan spine</h3>
+        <div class="body"><ul class="ko">
+          <li>P1: stack + swirls out (Desecrate P1)</li><li class="arrow">→</li>
+          <li>P2: kite line, Warbringers control</li><li class="arrow">→</li>
+          <li>Intermission ×2: Emp. Whirling Corruption bait</li><li class="arrow">→</li>
+          <li>P3: split raid 2 sides, Touch of Y'Shaarj stacks</li><li class="arrow">→</li>
+          <li>P4: Malice spread + Annihilate line (1/2/3)</li><li class="arrow">→</li>
+          <li>Kill</li>
+        </ul></div>
+      </div>
+
+      <div class="section">
+        <h3>Coordinated positions — the few important roles per phase (curated)</h3>
+        <div class="body">
+          <div class="posrow"><span class="time">P1</span><span class="role">Swirl soaker ×4</span><span class="who editable"></span><span class="note">Desecrate P1 north fixed spots</span></div>
+          <div class="posrow"><span class="time">P1</span><span class="role">Warsong interrupt</span><span class="who editable"></span><span class="note">Hellscream's Warsong lock</span></div>
+          <div class="posrow"><span class="time">P2</span><span class="role">External kiter</span><span class="who editable"></span><span class="note">kite line A→B, swap on fixate</span></div>
+          <div class="posrow"><span class="time">P2</span><span class="role">Warbringer finders ×2</span><span class="who editable"></span><span class="note">pull both adds, stun chain</span></div>
+          <div class="posrow"><span class="time">Inter</span><span class="role">Emp. Whirling bait (cursor slot)</span><span class="who editable"></span><span class="note">special position — mark + ping</span></div>
+          <div class="posrow"><span class="time">P3</span><span class="role">Side leads ×2</span><span class="who editable"></span><span class="note">left/right split calling</span></div>
+          <div class="posrow"><span class="time">P4</span><span class="role">Malice spreaders ×5</span><span class="who editable"></span><span class="note">fixed 5-way spread</span></div>
+          <div class="posrow"><span class="time">P4</span><span class="role">Annihilate line</span><span class="who editable"></span><span class="note">1/2/3 line, 1st = tank</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Roster fill-in — sub-group blocks (A/B/C, 40–50 man roster)</h3>
+        <div class="body">
+          <div class="teamrowA">
+            <div class="teamA"><b>Group A · lead <span class="who editable"></span></b><span class="slots">Swirl×2: <span class="who editable"></span><br>Malice×2: <span class="who editable"></span><br>Annihilate: <span class="who editable"></span></span></div>
+            <div class="teamA"><b>Group B · lead <span class="who editable"></span></b><span class="slots">Swirl×2: <span class="who editable"></span><br>Malice×2: <span class="who editable"></span><br>Kiter: <span class="who editable"></span></span></div>
+            <div class="teamA"><b>Group C · lead <span class="who editable"></span></b><span class="slots">Swirl×2: <span class="who editable"></span><br>Bait: <span class="who editable"></span><br>Warbringers: <span class="who editable"></span></span></div>
+          </div>
+          <div class="fill"><div class="line editable"></div><div class="line editable"></div><div class="line editable"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANT B grid for Garrosh -->
+    <div class="gridwrap"><div class="gridbody">
+      <table class="grid">
+        <thead><tr><th>Phase</th><th>Time</th><th>Position</th><th>Players (fill-in)</th><th>Sub</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="phase-p1"><td>P1</td><td class="time">pull</td><td class="pos"><b>Swirl soakers ×4</b><small>Desecrate P1</small></td><td class="fillin editable"></td><td><span class="chip a">A</span><span class="chip b">B</span></td><td>north fixed spots</td></tr>
+          <tr class="phase-p1"><td>P1</td><td class="time">35%</td><td class="pos"><b>Warsong interrupt</b></td><td class="fillin editable"></td><td><span class="chip x">R</span></td><td>lock channel</td></tr>
+          <tr class="phase-p2"><td>P2</td><td class="time">start</td><td class="pos"><b>External kiter</b><small>cursor slot</small></td><td class="fillin editable"></td><td><span class="chip b">B</span></td><td>line A→B swap</td></tr>
+          <tr class="phase-p2"><td>P2</td><td class="time">adds</td><td class="pos"><b>Warbringer finders ×2</b></td><td class="fillin editable"></td><td><span class="chip a">A</span><span class="chip c">C</span></td><td>stun chain</td></tr>
+          <tr class="phase-p3"><td>Inter</td><td class="time">×2</td><td class="pos"><b>Emp. Whirling bait</b><small>special cursor</small></td><td class="fillin editable"></td><td><span class="chip c">C</span></td><td>mark + ping</td></tr>
+          <tr class="phase-p3"><td>P3</td><td class="time">split</td><td class="pos"><b>Side leads ×2</b></td><td class="fillin editable"></td><td><span class="chip a">A</span><span class="chip b">B</span></td><td>left/right</td></tr>
+          <tr class="phase-p3"><td>P3</td><td class="time">Touch</td><td class="pos"><b>Stack callers ×2</b></td><td class="fillin editable"></td><td><span class="chip x">R</span></td><td>touch stacks</td></tr>
+          <tr class="phase-p4"><td>P4</td><td class="time">Malice</td><td class="pos"><b>Spreaders ×5</b></td><td class="fillin editable"></td><td><span class="chip a">A</span><span class="chip b">B</span><span class="chip c">C</span></td><td>5-way fixed</td></tr>
+          <tr class="phase-p4"><td>P4</td><td class="time">Annih</td><td class="pos"><b>Annihilate line</b><small>1/2/3</small></td><td class="fillin editable"></td><td><span class="chip x">T</span></td><td>1st = tank</td></tr>
+        </tbody>
+      </table>
+      <div class="teamrowB">
+        <div class="teamB a"><div class="thead">Group A (lead: <span class="name editable"></span>)</div><div class="slotb"><span>Swirl</span><span class="name editable"></span><span class="name editable"></span></div><div class="slotb"><span>Malice</span><span class="name editable"></span><span class="name editable"></span></div><div class="slotb"><span>Annihilate</span><span class="name editable"></span></div></div>
+        <div class="teamB b"><div class="thead">Group B (lead: <span class="name editable"></span>)</div><div class="slotb"><span>Swirl</span><span class="name editable"></span><span class="name editable"></span></div><div class="slotb"><span>Malice</span><span class="name editable"></span><span class="name editable"></span></div><div class="slotb"><span>Kiter</span><span class="name editable"></span></div></div>
+        <div class="teamB c"><div class="thead">Group C (lead: <span class="name editable"></span>)</div><div class="slotb"><span>Swirl</span><span class="name editable"></span><span class="name editable"></span></div><div class="slotb"><span>Bait</span><span class="name editable"></span></div><div class="slotb"><span>Warbringers</span><span class="name editable"></span></div></div>
+      </div>
+    </div></div>
+
+    <!-- VARIANT C checklist for Garrosh -->
+    <div class="clwrap">
+      <div class="clphase"><div class="ph">Phase 1 <span class="pic">· stack & swirls ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Swirls out north, fixed spots</b> <span class="call">"Swirls going out"</span> <span class="mem">memo: 4 N-spots</span></div><div class="pri hi">PRI</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Kick Warsong channel</b> <span class="call">"Kick"</span></div><div class="pri mid">ROT</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Don't stack on Swirling Corruption</b></div><div class="pri low">CARE</div></div>
+      </div>
+      <div class="clphase"><div class="ph">Phase 2 <span class="pic">· kiting ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Kiter on cursor line A→B</b> <span class="call">"Kite now / swap"</span></div><div class="pri hi">PRI</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Warbringers to tanks, stun chain</b></div><div class="pri mid">KILL</div></div>
+      </div>
+      <div class="clphase"><div class="ph">Intermission <span class="pic">· ×2 ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Bait Emp. Whirling Corruption</b> <span class="call">"Bait far"</span> <span class="mem">cursor slot</span></div><div class="pri hi">PRI</div></div>
+      </div>
+      <div class="clphase"><div class="ph">Phase 3/4 <span class="pic">· split & burn ·</span></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Split left/right, Touch stacks &le;4</b></div><div class="pri mid">STACK</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Malice 5-way spread</b> <span class="call">"Malice spread"</span></div><div class="pri hi">PRI</div></div>
+        <div class="cl"><div class="box"></div><div class="txt"><b>Annihilate line 1/2/3</b></div><div class="pri hi">PRI</div></div>
+      </div>
+      <div class="cladd">+ raid-lead curation lines…</div>
+    </div>
+  </section>
+</div>
+</div>
+
+<div class="variantlabel"></div>
+<div class="switcher">
+  <button id="prev" title="previous variant">‹</button>
+  <span class="cur"><b id="vkey">A</b> · <span id="vname">Document plan</span></span>
+  <button id="next" title="next variant">›</button>
+  <span class="hint">?variant=A|B|C · ← → to switch · click cells to type</span>
+</div>
+
+<script>
+  /* ------------------------------------------------------------------
+     PROTOTYPE state: three variants, same data. No persistence (per skill).
+     Variant switches update location.search so the view is shareable.
+     ------------------------------------------------------------------ */
+  const VARIANTS = {
+    A: { name: "Document plan", bodyClass: "v-a" },
+    B: { name: "Grid plan",     bodyClass: "v-b" },
+    C: { name: "Checklist",     bodyClass: "v-c" },
+  };
+  let current = new URLSearchParams(location.search).get('variant');
+  if (!(current in VARIANTS)) current = 'A';
+
+  function applyVariant(k) {
+    current = k;
+    document.body.classList.remove('v-a','v-b','v-c');
+    document.body.classList.add(VARIANTS[k].bodyClass);
+    document.getElementById('vkey').textContent = k;
+    document.getElementById('vname').textContent = VARIANTS[k].name;
+    const label = document.querySelector('.variantlabel');
+    label.textContent = `Variant ${k} — ${VARIANTS[k].name}: ${k==='A'?'plan spine (kill order → positions → notes)':k==='B'?'spreadsheet grid with phase bands + A/B/C team blocks':'per-phase pull checklist with memory aids'}`;
+    const url = new URL(location.href);
+    url.searchParams.set('variant', k);
+    history.replaceState(null, '', url);
+  }
+  applyVariant(current);
+
+  document.getElementById('prev').onclick = () => applyVariant(['C','A','B'].reduce((a)=> a, current === 'A' ? 'C' : String.fromCharCode(current.charCodeAt(0) - 1)));
+  const order = ['A','B','C'];
+  document.getElementById('next').onclick = () => applyVariant(order[(order.indexOf(current)+1)%3]);
+  document.getElementById('prev').onclick = () => applyVariant(order[(order.indexOf(current)+2)%3]);
+
+  document.addEventListener('keydown', (e) => {
+    if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('next').click(); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); document.getElementById('prev').click(); }
+  });
+
+  /* ---- tabs: complex boss gets own tab ---- */
+  document.querySelectorAll('.tab').forEach((t) => {
+    t.onclick = () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tabpage').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+    };
+  });
+
+  /* ---- editable cells + checkbox toggles (throwaway interactivity) ---- */
+  document.querySelectorAll('.editable').forEach(el => {
+    el.contentEditable = 'true';
+    el.spellcheck = false;
+    el.onkeydown = (e) => { if (e.key === 'Enter') e.preventDefault(); };
+  });
+  document.querySelectorAll('.cl .box').forEach(box => {
+    box.onclick = () => box.parentElement.classList.toggle('done');
+  });
+
+  /* ---- throwaway full-screen toggle (no build wiring) ---- */
+  document.querySelector('.toolbar button').onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+  };
+</script>
+</body>
+</html>
+
+<!-- =====================================================================
+  PLAIN-LANGUAGE SUMMARY — what changed across iterations and why
+
+  Iteration 1 → Variant A "Document plan":
+    Started from the SOO ASSIGNS ancestor (CONTEXT.md: kill order, spreads,
+    soak notes). It reads like the raid-lead's spoken plan: numbered kill
+    order spine, then the handful of curated positions each with a TIME tag.
+    Why: G1 answer said "plan shape, not a dry table" — this is the plan.
+
+  Iteration 2 → Variant B "Grid plan":
+    A raid lead reacting to A said "I need the times in a column to glance,
+    and I want the roster visible". Grid = spreadsheet-native, phase color
+    bands (P1/P2/P3), a fill-in column for player names, and A/B/C team
+    sub-group blocks so a 40–50 man roster is chunked, not one long list.
+
+  Iteration 3 → Variant C "Checklist":
+    Pull-execution view: per-phase checkbox list, priority chips, memory
+    mnemonics in mono. Tests whether the raid lead prefers "what to do next"
+    over "who stands where". Radical because it drops the position table
+    entirely — the sheet becomes a cue sheet, not a map.
+
+  Cross-cutting changes decided while iterating:
+    - Two bosses always side by side: simple (Immerseus) vs complex (Garrosh
+      on its own tab per the G1 addendum) so the layout comparison is real.
+    - Night-level header (raid day, roster count, notes) sits once at the top
+      of each tab, not per boss — it changes nightly, not per pull.
+    - Blank fill-in cells everywhere (dashed borders + "fill-in" hint):
+      RaidHelper sync is aspirational (never in this prototype); the LOOK of
+      the blank slot is what Sean asked to judge.
+    - A/B/C team blocks appear in both A and B: sub-group visual grouping is
+      the one structural piece every variant kept.
+  ===================================================================== -->
